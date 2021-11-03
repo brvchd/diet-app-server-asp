@@ -25,7 +25,8 @@ namespace diet_server_api.Services.Implementation
             if (existingUser) throw new UserExistsExpection();
             var salt = HashPassword.GenerateSalt();
             var password = HashPassword.GeneratePassword(request.Password, salt);
-            var user = new User(){
+            var user = new User()
+            {
                 Firstname = request.FirstName,
                 Lastname = request.LastName,
                 Dateofbirth = request.DateOfBirth,
@@ -37,10 +38,11 @@ namespace diet_server_api.Services.Implementation
                 Salt = salt
             };
             _dbContext.Users.Add(user);
-            
+
             //TO-DO token generation;
 
-            var patient = new Patient(){
+            var patient = new Patient()
+            {
                 IduserNavigation = user,
                 Ispending = true,
                 Gender = request.Gender,
@@ -51,16 +53,73 @@ namespace diet_server_api.Services.Implementation
             };
             _dbContext.Patients.Add(patient);
 
-            var measurements = new Measurement(){
+            var measurements = new Measurement()
+            {
                 IdpatientNavigation = patient,
                 Height = request.Height,
                 Weight = request.Weight,
-                Date =  DateTime.UtcNow,
+                Date = DateTime.UtcNow,
                 Hipcircumference = request.HipCircumference,
                 Waistcircumference = request.WaistCircumference,
                 Whomeasured = request.FirstName + " " + request.LastName
             };
 
+            _dbContext.Measurements.Add(measurements);
+
+            var questionary = new Questionary()
+            {
+                IdpatientNavigation = patient,
+                Databadania = DateTime.UtcNow,
+                Education = request.Education,
+                Profession = request.Profession,
+                Mainproblems = request.MainProblems,
+                Hypertension = request.Hypertension,
+                Insulinresistance = request.InsulinResistance,
+                Diabetes = request.Diabetes,
+                Hypothyroidism = request.Hypothyroidism,
+                Intestinaldiseases = request.IntestinalDiseases,
+                Otherdiseases = request.OtherDiseases,
+                Medications = request.Medications,
+                Supplementstaken = request.SupplementsTaken,
+                Avgsleep = request.AvgSleep,
+                Usuallywakeup = request.UsuallyWakeUp,
+                Usuallygotosleep = request.UsuallyGoToSleep,
+                Regularwalk = request.RegularWalk,
+                Excercisingperday = request.ExercisingPerDay,
+                Sporttypes = request.SportTypes,
+                Exercisingperweek = request.ExercisingPerWeek,
+                Waterglasses = request.WaterGlasses,
+                Coffeeglasses = request.CoffeeGlasses,
+                Teaglasses = request.TeaGlasses,
+                Energydrinkglasses = request.EnergyDrinkGlasses,
+                Juiceglasses = request.JuiceGlasses,
+                Alcoholinfo = request.AlcoholInfo,
+                Cigs = request.Cigs,
+                Breakfast = request.Breakfast,
+                Secondbreakfast = request.SecondBreakfast,
+                Lunch = request.Lunch,
+                Afternoonmeal = request.AfternoonMeal,
+                Dinner = request.Dinner,
+                Favfooditems = request.FavouriteFoodItems,
+                Notfavfooditems = request.NotFavouriteFoodItems,
+                Hypersensitivityproducts = request.HypersensitivityProducts,
+                Alergieproducts = request.AlergieProducts,
+                Betweenmealsfood = request.FoodBetweenMeals
+            };
+            _dbContext.Questionaries.Add(questionary);
+
+            foreach (var mealTake in request.Meals)
+            {
+                var meal = new Mealsbeforediet(){
+                    IdquestionaryNavigation = questionary,
+                    Mealnumber = mealTake.MealNumber,
+                    Hour = mealTake.Time.TimeOfDay,
+                    Foodtoeat = mealTake.FoodToEat
+                };
+                _dbContext.Mealsbeforediets.Add(meal);
+            }
+
+            await _dbContext.SaveChangesAsync();
             return new SurveyUserCreationResponse();
         }
 

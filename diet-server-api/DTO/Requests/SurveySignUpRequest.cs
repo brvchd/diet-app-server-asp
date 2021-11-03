@@ -135,13 +135,12 @@ namespace diet_server_api.DTO.Requests
         [MaxLength(5)]
         [MinLength(1)]
         public MealsBeforeDiet[] Meals { get; set; }
-
         public class MealsBeforeDiet
         {
             [Required]
             public int MealNumber { get; set; }
             [Required]
-            public TimeSpan Time { get; set; }
+            public DateTime Time { get; set; }
             [MaxLength(150)]
             public string FoodToEat { get; set; }
         }

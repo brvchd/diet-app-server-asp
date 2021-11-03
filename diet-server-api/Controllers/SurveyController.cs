@@ -32,7 +32,7 @@ namespace diet_server_api.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp(SurveySignUpRequest request)
         {
-
+            await _surveyService.CreateUserFromSurveyAsync(request);
             return Ok();
         }
         [HttpPost("test")]

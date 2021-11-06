@@ -36,20 +36,21 @@ namespace diet_server_api
             services.AddScoped<ISurvey, Survey>();
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("elephantDb")));
-             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidateLifetime = true,
-                            ValidIssuer = "diet-app-server",
-                            ValidAudience = "Clients",
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]))
-                        };
-                    });
-            services.AddCors(options => {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                   .AddJwtBearer(options =>
+                   {
+                       options.TokenValidationParameters = new TokenValidationParameters
+                       {
+                           ValidateIssuer = true,
+                           ValidateAudience = true,
+                           ValidateLifetime = true,
+                           ValidIssuer = "diet-app-server",
+                           ValidAudience = "Clients",
+                           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]))
+                       };
+                   });
+            services.AddCors(options =>
+            {
                 options.AddDefaultPolicy(builder =>
                 {
                     builder.WithOrigins("http://localhost:4200");
@@ -68,6 +69,8 @@ namespace diet_server_api
             }
 
             app.UseRouting();
+            
+            app.UseCors();
 
             app.UseAuthorization();
 
@@ -75,7 +78,8 @@ namespace diet_server_api
             {
                 endpoints.MapControllers();
             });
-            app.Use(next => async context =>{
+            app.Use(next => async context =>
+            {
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync("ERROR: Page not found");
             });

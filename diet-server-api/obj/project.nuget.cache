@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "8xXnNmH//Ti1rq9A1nIvNaTK7d1LztkU73tgjn4U39SBq7ezTl4GW8lkQ9EgxNam9yKI8V9s/h5DJ8URt7b2dA==",
+  "dgSpecHash": "408yjZTpYfKr2iWltiZI5hhT8KFoiu9DgvpkfK/QtrNX7ZpBqGHp5jRtSAPiRkdt/F/k8b9NA/mfC3AfbdJpag==",
   "success": true,
   "projectFilePath": "/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/diet-server-api.csproj",
   "expectedPackageFiles": [
@@ -39,7 +39,8 @@
     "/Users/dima/.nuget/packages/system.diagnostics.diagnosticsource/5.0.1/system.diagnostics.diagnosticsource.5.0.1.nupkg.sha512",
     "/Users/dima/.nuget/packages/system.identitymodel.tokens.jwt/6.7.1/system.identitymodel.tokens.jwt.6.7.1.nupkg.sha512",
     "/Users/dima/.nuget/packages/system.runtime.compilerservices.unsafe/4.6.0/system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512",
-    "/Users/dima/.nuget/packages/system.security.cryptography.cng/4.5.0/system.security.cryptography.cng.4.5.0.nupkg.sha512"
+    "/Users/dima/.nuget/packages/system.security.cryptography.cng/4.5.0/system.security.cryptography.cng.4.5.0.nupkg.sha512",
+    "/Users/dima/.nuget/packages/microsoft.netcore.app.host.osx-x64/5.0.9/microsoft.netcore.app.host.osx-x64.5.0.9.nupkg.sha512"
   ],
   "logs": []
 }

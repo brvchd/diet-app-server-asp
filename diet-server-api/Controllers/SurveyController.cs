@@ -35,10 +35,5 @@ namespace diet_server_api.Controllers
             await _surveyService.CreateUserFromSurveyAsync(request);
             return Ok();
         }
-        [HttpPost("test")]
-        public IActionResult test(testbody body)
-        {
-            return Ok(body);
-        }
     }
 }

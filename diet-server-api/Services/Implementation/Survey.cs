@@ -23,8 +23,8 @@ namespace diet_server_api.Services.Implementation
         {
             var existingUser = await _dbContext.Users.AnyAsync(e => e.Email.Equals(request.Email));
             if (existingUser) throw new UserExistsExpection();
-            var salt = HashPassword.GenerateSalt();
-            var password = HashPassword.GeneratePassword(request.Password, salt);
+            var salt = SaltGenerator.GenerateSalt();
+            var password = PasswordGenerator.GeneratePassword(request.Password, salt);
             var user = new User()
             {
                 Firstname = request.FirstName,

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace diet_server_api.DTO.Requests
 {
-    public class testbody
+    public class Testbody
     {
         [Required]
-        public int a { get; set; }
+        public int A { get; set; }
         [Required]
-        public string b { get; set; }
-        public string c { get; set; }
-        public int? d { get; set; }
+        public string B { get; set; }
+        public string C { get; set; }
+        public int? D { get; set; }
     }
 }

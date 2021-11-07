@@ -911,11 +911,6 @@ namespace diet_server_api.Models
                     .HasMaxLength(255)
                     .HasColumnName("email");
 
-                entity.Property(e => e.Token)
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnName("token");
-
                 entity.Property(e => e.Uniquekey)
                     .IsRequired()
                     .HasMaxLength(255)

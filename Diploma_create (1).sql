@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-07 16:49:14.962
+-- Last modification date: 2021-11-07 16:49:44.946
 
 -- tables
 -- Table: Day
@@ -253,7 +253,6 @@ CREATE TABLE Supplement (
 CREATE TABLE Temp_User (
     email varchar(255)  NOT NULL,
     uniqueKey varchar(255)  NOT NULL,
-    Token varchar(255)  NOT NULL,
     CONSTRAINT Temp_User_pk PRIMARY KEY (email)
 );
 

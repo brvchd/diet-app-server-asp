@@ -9,6 +9,5 @@ namespace diet_server_api.Models
     {
         public string Email { get; set; }
         public string Uniquekey { get; set; }
-        public string Token { get; set; }
     }
 }

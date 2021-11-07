@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using diet_server_api.Models;
 
@@ -821,10 +820,9 @@ namespace diet_server_api.Migrations
                         .HasColumnType("character varying(150)")
                         .HasColumnName("alergieproducts");
 
-                    b.Property<string>("Avgsleep")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)")
+                    b.Property<decimal>("Avgsleep")
+                        .HasPrecision(4, 1)
+                        .HasColumnType("numeric(4,1)")
                         .HasColumnName("avgsleep");
 
                     b.Property<string>("Betweenmealsfood")
@@ -1052,12 +1050,6 @@ namespace diet_server_api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("email");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("token");
 
                     b.Property<string>("Uniquekey")
                         .IsRequired()

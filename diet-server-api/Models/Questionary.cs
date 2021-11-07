@@ -26,7 +26,7 @@ namespace diet_server_api.Models
         public string Otherdiseases { get; set; }
         public string Medications { get; set; }
         public string Supplementstaken { get; set; }
-        public string Avgsleep { get; set; }
+        public decimal Avgsleep { get; set; }
         public string Usuallywakeup { get; set; }
         public string Usuallygotosleep { get; set; }
         public bool Regularwalk { get; set; }

@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-07 16:49:44.946
+-- Last modification date: 2021-11-07 19:14:57.503
 
 -- tables
 -- Table: Day
@@ -205,7 +205,7 @@ CREATE TABLE Questionary (
     OtherDiseases varchar(300)  NULL,
     Medications varchar(150)  NULL,
     SupplementsTaken varchar(300)  NULL,
-    AvgSleep varchar(5)  NOT NULL,
+    AvgSleep decimal(4,1)  NOT NULL,
     UsuallyWakeup varchar(10)  NOT NULL,
     UsuallyGoToSleep varchar(10)  NOT NULL,
     RegularWalk boolean  NOT NULL,

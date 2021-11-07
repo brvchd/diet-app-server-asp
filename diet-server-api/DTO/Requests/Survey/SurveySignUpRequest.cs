@@ -76,8 +76,9 @@ namespace diet_server_api.DTO.Requests
         public string Medications { get; set; }
         public string SupplementsTaken { get; set; }
         [Required]
-        [MaxLength(5)]
-        public string AvgSleep { get; set; }
+        [MinLength(1)]
+        [MaxLength(50)]
+        public decimal AvgSleep { get; set; }
         [Required]
         [MaxLength(10)]
         public string UsuallyWakeUp { get; set; }

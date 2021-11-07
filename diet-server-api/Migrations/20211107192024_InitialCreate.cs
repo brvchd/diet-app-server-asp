@@ -142,8 +142,7 @@ namespace diet_server_api.Migrations
                 columns: table => new
                 {
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    uniquekey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    token = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                    uniquekey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -434,7 +433,7 @@ namespace diet_server_api.Migrations
                     otherdiseases = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     medications = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     supplementstaken = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    avgsleep = table.Column<string>(type: "character varying(5)", maxLength: 5, nullable: false),
+                    avgsleep = table.Column<decimal>(type: "numeric(4,1)", precision: 4, scale: 1, nullable: false),
                     usuallywakeup = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     usuallygotosleep = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     regularwalk = table.Column<bool>(type: "boolean", nullable: false),

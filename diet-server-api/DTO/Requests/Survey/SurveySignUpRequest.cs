@@ -76,14 +76,12 @@ namespace diet_server_api.DTO.Requests
         public string Medications { get; set; }
         public string SupplementsTaken { get; set; }
         [Required]
-        [MinLength(1)]
-        [MaxLength(50)]
         public decimal AvgSleep { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(20)]
         public string UsuallyWakeUp { get; set; }
         [Required]
-        [MaxLength(10)]
+        [MaxLength(20)]
         public string UsuallyGoToSleep { get; set; }
         [Required]
         public bool RegularWalk { get; set; }

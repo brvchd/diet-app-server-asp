@@ -832,12 +832,12 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Usuallygotosleep)
                     .IsRequired()
-                    .HasMaxLength(10)
+                    .HasMaxLength(20)
                     .HasColumnName("usuallygotosleep");
 
                 entity.Property(e => e.Usuallywakeup)
                     .IsRequired()
-                    .HasMaxLength(10)
+                    .HasMaxLength(20)
                     .HasColumnName("usuallywakeup");
 
                 entity.Property(e => e.Waterglasses).HasColumnName("waterglasses");

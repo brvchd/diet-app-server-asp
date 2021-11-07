@@ -14,7 +14,7 @@
         "outputPath": "/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/dima/.config/NuGet/NuGet.Config"
+          "/Users/dima/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"

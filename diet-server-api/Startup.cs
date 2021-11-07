@@ -45,7 +45,7 @@ namespace diet_server_api
                            ValidateAudience = true,
                            ValidateLifetime = true,
                            ValidIssuer = "diet-app-server",
-                           ValidAudience = "Clients",
+                           ValidAudience = "diet-app-client",
                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]))
                        };
                    });
@@ -61,13 +61,13 @@ namespace diet_server_api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "diet_server_api v1"));
             }
 
-            app.UseRouting();
+            app.UseCors(x => x
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .WithOrigins("http://localhost:4200", "https://localhost:4200")
+                            .AllowCredentials());
 
-           app.UseCors(x => x
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true) // allow any origin
-                .AllowCredentials()); // allow credentials
+            app.UseRouting();
 
             app.UseAuthorization();
 

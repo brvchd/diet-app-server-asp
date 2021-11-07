@@ -10,7 +10,7 @@ using diet_server_api.Models;
 namespace diet_server_api.Migrations
 {
     [DbContext(typeof(mdzcojxmContext))]
-    [Migration("20211103015905_InitialCreate")]
+    [Migration("20211107165649_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -382,8 +382,10 @@ namespace diet_server_api.Migrations
                         .HasColumnType("character varying(150)")
                         .HasColumnName("foodtoeat");
 
-                    b.Property<TimeSpan>("Hour")
-                        .HasColumnType("time without time zone")
+                    b.Property<string>("Hour")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
                         .HasColumnName("hour");
 
                     b.Property<int>("Idquestionary")
@@ -1053,6 +1055,12 @@ namespace diet_server_api.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("email");
 
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("token");
+
                     b.Property<string>("Uniquekey")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -1072,10 +1080,6 @@ namespace diet_server_api.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("iduser")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime?>("Dateexpire")
-                        .HasColumnType("date")
-                        .HasColumnName("dateexpire");
 
                     b.Property<DateTime>("Dateofbirth")
                         .HasColumnType("date")
@@ -1121,6 +1125,10 @@ namespace diet_server_api.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)")
                         .HasColumnName("refreshtoken");
+
+                    b.Property<DateTime?>("Refreshtokenexp")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("refreshtokenexp");
 
                     b.Property<string>("Role")
                         .IsRequired()

@@ -22,7 +22,7 @@ namespace diet_server_api.Controllers
             try
             {
                 var userExists = await _surveyService.ValidateSurveyCredentialsAsync(request);
-                return Ok();
+                return Ok(new { email = request.Email });
             }
             catch (UserDoesNotExistsException ex)
             {
@@ -32,8 +32,8 @@ namespace diet_server_api.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp(SurveySignUpRequest request)
         {
-            await _surveyService.CreateUserFromSurveyAsync(request);
-            return Ok();
+            var response = await _surveyService.CreateUserFromSurveyAsync(request);
+            return CreatedAtAction("signup", response);
         }
     }
 }

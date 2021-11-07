@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests;
 using diet_server_api.DTO.Responses;
@@ -7,14 +6,13 @@ using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation
 {
     public class Survey : ISurvey
-    {
-        private readonly mdzcojxmContext _dbContext;
+    {        private readonly mdzcojxmContext _dbContext;
+        private const string PATIEN_ROLE = "PATIENT";
         public Survey(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
@@ -33,13 +31,11 @@ namespace diet_server_api.Services.Implementation
                 Email = request.Email,
                 Password = password,
                 Pesel = request.PESEL,
-                Role = request.Role,
+                Role = PATIEN_ROLE,
                 Phonenumber = request.PhoneNumber,
                 Salt = salt
             };
             _dbContext.Users.Add(user);
-
-            //TO-DO token generation;
 
             var patient = new Patient()
             {
@@ -110,17 +106,18 @@ namespace diet_server_api.Services.Implementation
 
             foreach (var mealTake in request.Meals)
             {
-                var meal = new Mealsbeforediet(){
+                var meal = new Mealsbeforediet()
+                {
                     IdquestionaryNavigation = questionary,
                     Mealnumber = mealTake.MealNumber,
-                    Hour = mealTake.Time.TimeOfDay,
+                    Hour = mealTake.AtTime,
                     Foodtoeat = mealTake.FoodToEat
                 };
                 _dbContext.Mealsbeforediets.Add(meal);
             }
 
             await _dbContext.SaveChangesAsync();
-            return new SurveyUserCreationResponse();
+            return new SurveyUserCreationResponse() { Message = "Created" };
         }
 
         public async Task<bool> ValidateSurveyCredentialsAsync(SurveyCheckCredentialsRequest request)

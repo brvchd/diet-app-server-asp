@@ -142,7 +142,8 @@ namespace diet_server_api.Migrations
                 columns: table => new
                 {
                     email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    uniquekey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                    uniquekey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    token = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -165,7 +166,7 @@ namespace diet_server_api.Migrations
                     password = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     salt = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     refreshtoken = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    dateexpire = table.Column<DateTime>(type: "date", nullable: true)
+                    refreshtokenexp = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -581,7 +582,7 @@ namespace diet_server_api.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     idquestionary = table.Column<int>(type: "integer", nullable: false),
                     mealnumber = table.Column<int>(type: "integer", nullable: false),
-                    hour = table.Column<TimeSpan>(type: "time without time zone", nullable: false),
+                    hour = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     foodtoeat = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false)
                 },
                 constraints: table =>

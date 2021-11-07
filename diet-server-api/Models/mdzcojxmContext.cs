@@ -9,15 +9,15 @@ namespace diet_server_api.Models
 {
     public partial class mdzcojxmContext : DbContext
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _config;
         public mdzcojxmContext()
         {
         }
 
-        public mdzcojxmContext(DbContextOptions<mdzcojxmContext> options, IConfiguration configuration)
+        public mdzcojxmContext(DbContextOptions<mdzcojxmContext> options, IConfiguration config)
             : base(options)
         {
-            _configuration = configuration;
+            _config = config;
         }
 
         public virtual DbSet<Day> Days { get; set; }
@@ -50,8 +50,7 @@ namespace diet_server_api.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-
-                optionsBuilder.UseNpgsql(_configuration.GetConnectionString("elephantDb"));
+                optionsBuilder.UseNpgsql(_config.GetConnectionString("elephantDb"));
             }
         }
 
@@ -383,7 +382,8 @@ namespace diet_server_api.Models
                     .HasColumnName("foodtoeat");
 
                 entity.Property(e => e.Hour)
-                    .HasColumnType("time without time zone")
+                    .IsRequired()
+                    .HasMaxLength(30)
                     .HasColumnName("hour");
 
                 entity.Property(e => e.Idquestionary).HasColumnName("idquestionary");
@@ -911,6 +911,11 @@ namespace diet_server_api.Models
                     .HasMaxLength(255)
                     .HasColumnName("email");
 
+                entity.Property(e => e.Token)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnName("token");
+
                 entity.Property(e => e.Uniquekey)
                     .IsRequired()
                     .HasMaxLength(255)
@@ -925,10 +930,6 @@ namespace diet_server_api.Models
                 entity.ToTable("users");
 
                 entity.Property(e => e.Iduser).HasColumnName("iduser");
-
-                entity.Property(e => e.Dateexpire)
-                    .HasColumnType("date")
-                    .HasColumnName("dateexpire");
 
                 entity.Property(e => e.Dateofbirth)
                     .HasColumnType("date")
@@ -967,6 +968,8 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Refreshtoken)
                     .HasMaxLength(300)
                     .HasColumnName("refreshtoken");
+
+                entity.Property(e => e.Refreshtokenexp).HasColumnName("refreshtokenexp");
 
                 entity.Property(e => e.Role)
                     .IsRequired()

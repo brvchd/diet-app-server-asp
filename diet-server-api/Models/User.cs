@@ -18,7 +18,7 @@ namespace diet_server_api.Models
         public string Password { get; set; }
         public string Salt { get; set; }
         public string Refreshtoken { get; set; }
-        public DateTime? Dateexpire { get; set; }
+        public DateTime? Refreshtokenexp { get; set; }
 
         public virtual Doctor Doctor { get; set; }
         public virtual Patient Patient { get; set; }

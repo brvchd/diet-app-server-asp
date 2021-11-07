@@ -6,13 +6,17 @@ namespace diet_server_api.DTO.Requests
     public class SurveySignUpRequest
     {
         [Required]
+        [MaxLength(50)]
+        [EmailAddress]
+        public string AccessEmail { get; set; }
+
+        [Required]
         [MaxLength(30)]
         public string FirstName { get; set; }
         [Required]
         [MaxLength(30)]
         public string LastName { get; set; }
         [Required]
-        [MaxLength(30)]
         public DateTime DateOfBirth { get; set; }
         [Required]
         [EmailAddress]
@@ -24,9 +28,6 @@ namespace diet_server_api.DTO.Requests
         [Required]
         [MaxLength(11, ErrorMessage = "Invalid PESEL format")]
         public string PESEL { get; set; }
-        [Required]
-        [MaxLength(30)]
-        public string Role { get; set; }
         [Required]
         [MaxLength(50)]
         public string Password { get; set; }
@@ -48,8 +49,6 @@ namespace diet_server_api.DTO.Requests
         public decimal Height { get; set; }
         [Required]
         public decimal Weight { get; set; }
-        [Required]
-        public DateTime Date { get; set; }
         [Required]
         public decimal HipCircumference { get; set; }
         [Required]
@@ -140,7 +139,8 @@ namespace diet_server_api.DTO.Requests
             [Required]
             public int MealNumber { get; set; }
             [Required]
-            public DateTime Time { get; set; }
+            [MaxLength(30)]
+            public string AtTime { get; set; }
             [MaxLength(150)]
             public string FoodToEat { get; set; }
         }

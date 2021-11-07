@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-03 01:54:54.613
+-- Last modification date: 2021-11-07 16:49:14.962
 
 -- tables
 -- Table: Day
@@ -108,7 +108,7 @@ CREATE TABLE MealsBeforeDiet (
     IdMeal serial  NOT NULL,
     idQuestionary int  NOT NULL,
     MealNumber int  NOT NULL,
-    Hour time  NOT NULL,
+    Hour varchar(30)  NOT NULL,
     FoodToEat varchar(150)  NOT NULL,
     CONSTRAINT MealsBeforeDiet_pk PRIMARY KEY (IdMeal)
 );
@@ -253,6 +253,7 @@ CREATE TABLE Supplement (
 CREATE TABLE Temp_User (
     email varchar(255)  NOT NULL,
     uniqueKey varchar(255)  NOT NULL,
+    Token varchar(255)  NOT NULL,
     CONSTRAINT Temp_User_pk PRIMARY KEY (email)
 );
 
@@ -269,7 +270,7 @@ CREATE TABLE Users (
     Password varchar(50)  NOT NULL,
     Salt varchar(150)  NOT NULL,
     RefreshToken varchar(300)  NULL,
-    DateExpire date  NULL,
+    RefreshTokenExp timestamp  NULL,
     CONSTRAINT Users_pk PRIMARY KEY (idUser)
 );
 

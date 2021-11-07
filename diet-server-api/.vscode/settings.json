@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "bin/Release/net5.0/publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/7c20e07d-d499-444e-a06e-c60f4c815254/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/dietapplication"
+}

@@ -21,6 +21,7 @@ namespace diet_server_api.Services.Implementation
         {
             var existingUser = await _dbContext.Users.AnyAsync(e => e.Email.Equals(request.Email));
             if (existingUser) throw new UserExistsExpection();
+            await DeleteTempUser(request.AccessEmail);
             var salt = SaltGenerator.GenerateSalt();
             var password = PasswordGenerator.GeneratePassword(request.Password, salt);
             var user = new User()
@@ -125,6 +126,14 @@ namespace diet_server_api.Services.Implementation
             var existingUser = await _dbContext.TempUsers.AnyAsync(e => e.Email == request.Email && e.Uniquekey == request.UniqueKey);
             if (!existingUser) throw new UserDoesNotExistsException();
             return true;
+        }
+
+        public async Task DeleteTempUser(string email)
+        {
+            var user = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == email);
+            if(user == null) throw new UserDoesNotExistsException();
+            _dbContext.TempUsers.Remove(user);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

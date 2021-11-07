@@ -58,7 +58,7 @@ namespace diet_server_api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "diet_server_api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("api/swagger/v1/swagger.json", "diet_server_api v1"));
             }
 
             app.UseCors(x => x

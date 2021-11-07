@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace diet_server_api.Controllers
 {
     [ApiController]
-    [Route("survey")]
+    [Route("api/survey")]
     public class SurveyController : ControllerBase
     {
         private readonly ISurvey _surveyService;
@@ -32,8 +32,20 @@ namespace diet_server_api.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp(SurveySignUpRequest request)
         {
-            var response = await _surveyService.CreateUserFromSurveyAsync(request);
-            return CreatedAtAction("signup", response);
+            try
+            {
+                var response = await _surveyService.CreateUserFromSurveyAsync(request);
+                return CreatedAtAction("signup", response);
+            }
+            catch (UserExistsExpection e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (UserDoesNotExistsException e)
+            {
+                return NotFound(e.Message);
+            }
+
         }
     }
 }

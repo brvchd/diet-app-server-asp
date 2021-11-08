@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests;
 using diet_server_api.DTO.Responses;
+using diet_server_api.DTO.Responses.Survey;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Models;
@@ -124,11 +125,11 @@ namespace diet_server_api.Services.Implementation
             return new SurveyUserCreationResponse() { Message = "Created" };
         }
 
-        public async Task<SurveyUserCreationResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request)
+        public async Task<SurveyAccessResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request)
         {
             var existingUser = await _dbContext.TempUsers.AnyAsync(e => e.Email == request.Email && e.Uniquekey == request.UniqueKey);
             if (!existingUser) throw new UserNotFound();
-            return new SurveyUserCreationResponse(){Message = "Access granted!"};
+            return new SurveyAccessResponse(){Email = request.Email};
         }
 
         public async Task DeleteTempUser(string email)

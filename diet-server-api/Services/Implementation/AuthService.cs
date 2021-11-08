@@ -30,7 +30,7 @@ namespace diet_server_api.Services.Implementation
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email == request.Email);
             if (user == null) throw new UserNotFound();
-            var passwordToCompare = PasswordGenerator.GeneratePassword(request.Email, user.Salt);
+            var passwordToCompare = PasswordGenerator.GeneratePassword(request.Password, user.Salt);
             if (passwordToCompare != user.Password) throw new IncorrectCredentials();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecretKey"]));

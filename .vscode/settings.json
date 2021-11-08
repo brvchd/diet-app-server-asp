@@ -1,4 +1,0 @@
-{
-    "appService.deploySubpath": "diet-server-api",
-    "appService.defaultWebAppToDeploy": "/subscriptions/7c20e07d-d499-444e-a06e-c60f4c815254/resourceGroups/appsvc_windows_centralus/providers/Microsoft.Web/sites/dietappapi"
-}

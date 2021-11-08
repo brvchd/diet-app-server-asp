@@ -10,17 +10,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation
 {
-    public class Survey : ISurvey
-    {        private readonly mdzcojxmContext _dbContext;
+    public class SurveyService : ISurveyService
+    {
+        private readonly mdzcojxmContext _dbContext;
         private const string PATIEN_ROLE = "PATIENT";
-        public Survey(mdzcojxmContext dbContext)
+        public SurveyService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public async Task<SurveyUserCreationResponse> CreateUserFromSurveyAsync(SurveySignUpRequest request)
+        public async Task<SurveyUserCreationResponse> CreateUserFromSurvey(SurveySignUpRequest request)
         {
             var existingUser = await _dbContext.Users.AnyAsync(e => e.Email.Equals(request.Email));
-            if (existingUser) throw new UserExistsExpection();
+
+            if (existingUser) throw new UserAlreadyExists();
+
             await DeleteTempUser(request.AccessEmail);
             var salt = SaltGenerator.GenerateSalt();
             var password = PasswordGenerator.GeneratePassword(request.Password, salt);
@@ -121,17 +124,17 @@ namespace diet_server_api.Services.Implementation
             return new SurveyUserCreationResponse() { Message = "Created" };
         }
 
-        public async Task<bool> ValidateSurveyCredentialsAsync(SurveyCheckCredentialsRequest request)
+        public async Task<SurveyUserCreationResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request)
         {
             var existingUser = await _dbContext.TempUsers.AnyAsync(e => e.Email == request.Email && e.Uniquekey == request.UniqueKey);
-            if (!existingUser) throw new UserDoesNotExistsException();
-            return true;
+            if (!existingUser) throw new UserNotFound();
+            return new SurveyUserCreationResponse(){Message = "Access granted!"};
         }
 
         public async Task DeleteTempUser(string email)
         {
             var user = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == email);
-            if(user == null) throw new UserDoesNotExistsException();
+            if (user == null) throw new UserNotFound();
             _dbContext.TempUsers.Remove(user);
             await _dbContext.SaveChangesAsync();
         }

@@ -10,8 +10,8 @@ namespace diet_server_api.Controllers
     [Route("api/survey")]
     public class SurveyController : ControllerBase
     {
-        private readonly ISurvey _surveyService;
-        public SurveyController(ISurvey surveyService)
+        private readonly ISurveyService _surveyService;
+        public SurveyController(ISurveyService surveyService)
         {
             _surveyService = surveyService;
         }
@@ -21,10 +21,10 @@ namespace diet_server_api.Controllers
         {
             try
             {
-                var userExists = await _surveyService.ValidateSurveyCredentialsAsync(request);
-                return Ok(new { email = request.Email });
+                var response = await _surveyService.ValidateSurveyCredentials(request);
+                return Ok(response);
             }
-            catch (UserDoesNotExistsException ex)
+            catch (UserNotFound ex)
             {
                 return NotFound(ex.Message);
             }
@@ -34,16 +34,16 @@ namespace diet_server_api.Controllers
         {
             try
             {
-                var response = await _surveyService.CreateUserFromSurveyAsync(request);
+                var response = await _surveyService.CreateUserFromSurvey(request);
                 return CreatedAtAction("signup", response);
             }
-            catch (UserExistsExpection e)
+            catch (UserAlreadyExists ex)
             {
-                return BadRequest(e.Message);
+                return BadRequest(ex.Message);
             }
-            catch (UserDoesNotExistsException e)
+            catch (UserNotFound ex)
             {
-                return NotFound(e.Message);
+                return NotFound(ex.Message);
             }
 
         }

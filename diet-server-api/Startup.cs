@@ -33,7 +33,8 @@ namespace diet_server_api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "diet_server_api", Version = "v1" });
             });
-            services.AddScoped<ISurvey, Survey>();
+            services.AddScoped<ISurveyService, SurveyService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("elephantDb")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -58,7 +59,7 @@ namespace diet_server_api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("swagger/v1/swagger.json", "diet_server_api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "diet_server_api v1"));
             }
             //dev
             app.UseSwagger();

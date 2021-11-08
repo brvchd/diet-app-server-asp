@@ -22,8 +22,12 @@ namespace diet_server_api.Services.Implementation
         public async Task<SurveyUserCreationResponse> CreateUserFromSurvey(SurveySignUpRequest request)
         {
 
-            var existingUser = await _dbContext.Users.AnyAsync(e => e.Email == request.Email || e.Pesel == request.PESEL || e.Phonenumber == request.PhoneNumber);
+            var existingUser = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
             if (existingUser) throw new UserAlreadyExists();
+            var existingPesel = await _dbContext.Users.AnyAsync(e => e.Pesel == request.PESEL);
+            if(existingPesel) throw new UserAlreadyExists("PESEL already exists");
+            var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
+            if(existingPhoneNumber) throw new UserAlreadyExists("Phone number already exists");
 
             await DeleteTempUser(request.AccessEmail);
             var salt = SaltGenerator.GenerateSalt();

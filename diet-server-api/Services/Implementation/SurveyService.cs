@@ -21,8 +21,8 @@ namespace diet_server_api.Services.Implementation
         }
         public async Task<SurveyUserCreationResponse> CreateUserFromSurvey(SurveySignUpRequest request)
         {
-            var existingUser = await _dbContext.Users.AnyAsync(e => e.Email.Equals(request.Email));
 
+            var existingUser = await _dbContext.Users.AnyAsync(e => e.Email == request.Email || e.Pesel == request.PESEL || e.Phonenumber == request.PhoneNumber);
             if (existingUser) throw new UserAlreadyExists();
 
             await DeleteTempUser(request.AccessEmail);

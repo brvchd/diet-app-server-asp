@@ -62,14 +62,13 @@ namespace diet_server_api.Services.Implementation
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var accessToken = TokenGenerator.GenerateToken(user.Iduser, user.Role, user.Firstname, user.Lastname, creds);
-            var refreshToken = RefreshTokenGenerator.GenerateRefreshToken();
 
             await _dbContext.SaveChangesAsync();
 
             return new RefreshTokenResponse()
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
-                RefreshToken = refreshToken
+                RefreshToken = user.Refreshtoken
             };
         }
     }

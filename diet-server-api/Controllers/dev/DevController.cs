@@ -18,6 +18,7 @@ namespace diet_server_api.Controllers.dev
         }
 
         [HttpPost]
+        [Route("tempuser")]
         public async Task<IActionResult> AddTempUser(TemporaryUser user)
         {
             var exists = await _dbContext.TempUsers.AnyAsync(e => e.Email == user.Email);
@@ -29,6 +30,19 @@ namespace diet_server_api.Controllers.dev
             await _dbContext.TempUsers.AddAsync(tempUser);
             await _dbContext.SaveChangesAsync();
             return Ok(tempUser);
+        }
+
+        [HttpGet]
+        [Route("tempusers")]
+        public async Task<IActionResult> GetTempUser()
+        {
+            return Ok(await _dbContext.TempUsers.ToListAsync());
+        }
+        [HttpGet]
+        [Route("users")]
+        public async Task<IActionResult> GetUsers ()
+        {
+            return Ok(await _dbContext.Users.ToListAsync());
         }
 
     }

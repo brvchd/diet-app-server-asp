@@ -14,7 +14,7 @@ namespace diet_server_api.Services.Implementation
     public class SurveyService : ISurveyService
     {
         private readonly mdzcojxmContext _dbContext;
-        private const string PATIEN_ROLE = "PATIENT";
+        private const string PATIENT_ROLE = "PATIENT";
         public SurveyService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
@@ -24,12 +24,18 @@ namespace diet_server_api.Services.Implementation
 
             var existingUser = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
             if (existingUser) throw new UserAlreadyExists();
-            var existingPesel = await _dbContext.Users.AnyAsync(e => e.Pesel == request.PESEL);
-            if(existingPesel) throw new UserAlreadyExists("PESEL already exists");
-            var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
-            if(existingPhoneNumber) throw new UserAlreadyExists("Phone number already exists");
 
-            await DeleteTempUser(request.AccessEmail);
+            var existingPesel = await _dbContext.Users.AnyAsync(e => e.Pesel == request.PESEL);
+            if (existingPesel) throw new UserAlreadyExists("PESEL already exists");
+
+            var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
+            if (existingPhoneNumber) throw new UserAlreadyExists("Phone number already exists");
+
+            var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.Email);
+            if (tempUser == null) throw new UserNotFound("No such user");
+
+            _dbContext.TempUsers.Remove(tempUser);
+
             var salt = SaltGenerator.GenerateSalt();
             var password = PasswordGenerator.GeneratePassword(request.Password, salt);
             var user = new User()
@@ -40,11 +46,11 @@ namespace diet_server_api.Services.Implementation
                 Email = request.Email,
                 Password = password,
                 Pesel = request.PESEL,
-                Role = PATIEN_ROLE,
+                Role = PATIENT_ROLE,
                 Phonenumber = request.PhoneNumber,
                 Salt = salt
             };
-            _dbContext.Users.Add(user);
+            await _dbContext.Users.AddAsync(user);
 
             var patient = new Patient()
             {
@@ -56,7 +62,7 @@ namespace diet_server_api.Services.Implementation
                 Flatnumber = request.FlatNumber,
                 Streetnumber = request.StreetNumber,
             };
-            _dbContext.Patients.Add(patient);
+            await _dbContext.Patients.AddAsync(patient);
 
             var measurements = new Measurement()
             {
@@ -69,7 +75,7 @@ namespace diet_server_api.Services.Implementation
                 Whomeasured = request.FirstName + " " + request.LastName
             };
 
-            _dbContext.Measurements.Add(measurements);
+            await _dbContext.Measurements.AddAsync(measurements);
 
             var questionary = new Questionary()
             {
@@ -111,7 +117,7 @@ namespace diet_server_api.Services.Implementation
                 Alergieproducts = request.AlergieProducts,
                 Betweenmealsfood = request.FoodBetweenMeals
             };
-            _dbContext.Questionaries.Add(questionary);
+            await _dbContext.Questionaries.AddAsync(questionary);
 
             foreach (var mealTake in request.Meals)
             {
@@ -122,7 +128,7 @@ namespace diet_server_api.Services.Implementation
                     Hour = mealTake.AtTime,
                     Foodtoeat = mealTake.FoodToEat
                 };
-                _dbContext.Mealsbeforediets.Add(meal);
+                await _dbContext.Mealsbeforediets.AddAsync(meal);
             }
 
             await _dbContext.SaveChangesAsync();
@@ -133,15 +139,7 @@ namespace diet_server_api.Services.Implementation
         {
             var existingUser = await _dbContext.TempUsers.AnyAsync(e => e.Email == request.Email && e.Uniquekey == request.UniqueKey);
             if (!existingUser) throw new UserNotFound();
-            return new SurveyAccessResponse(){Email = request.Email};
-        }
-
-        public async Task DeleteTempUser(string email)
-        {
-            var user = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == email);
-            if (user == null) throw new UserNotFound();
-            _dbContext.TempUsers.Remove(user);
-            await _dbContext.SaveChangesAsync();
+            return new SurveyAccessResponse() { Email = request.Email };
         }
     }
 }

@@ -9,7 +9,5 @@ namespace diet_server_api.Services.Interfaces
     {
         public Task<SurveyAccessResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request);
         public Task<SurveyUserCreationResponse> CreateUserFromSurvey(SurveySignUpRequest request);
-        public Task DeleteTempUser(string email);
-
     }
 }

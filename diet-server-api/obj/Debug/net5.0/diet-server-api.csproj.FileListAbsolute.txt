@@ -1,3 +1,10 @@
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.csproj.AssemblyReference.cache
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.GeneratedMSBuildEditorConfig.editorconfig
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.AssemblyInfoInputs.cache
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.AssemblyInfo.cs
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.csproj.CoreCompileInputs.cache
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.MvcApplicationPartsAssemblyInfo.cs
+/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.MvcApplicationPartsAssemblyInfo.cache
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/bin/Debug/net5.0/appsettings.Development.json
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/bin/Debug/net5.0/appsettings.json
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/bin/Debug/net5.0/diet-server-api
@@ -27,13 +34,6 @@
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/bin/Debug/net5.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/bin/Debug/net5.0/System.Diagnostics.DiagnosticSource.dll
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/bin/Debug/net5.0/System.IdentityModel.Tokens.Jwt.dll
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.csproj.AssemblyReference.cache
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.GeneratedMSBuildEditorConfig.editorconfig
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.AssemblyInfoInputs.cache
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.AssemblyInfo.cs
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.csproj.CoreCompileInputs.cache
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.MvcApplicationPartsAssemblyInfo.cs
-/Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.MvcApplicationPartsAssemblyInfo.cache
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/scopedcss/bundle/diet-server-api.styles.css
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/staticwebassets/diet-server-api.StaticWebAssets.Manifest.cache
 /Users/dima/Documents/Diploma/diet-app-server-asp/diet-server-api/obj/Debug/net5.0/diet-server-api.RazorTargetAssemblyInfo.cache

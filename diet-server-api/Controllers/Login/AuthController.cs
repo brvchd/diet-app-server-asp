@@ -33,6 +33,10 @@ namespace diet_server_api.Controllers.Login
             {
                 return BadRequest(ex.Message);
             }
+            catch(UserIsPending ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("refresh")]

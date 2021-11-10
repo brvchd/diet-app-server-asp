@@ -32,7 +32,10 @@ namespace diet_server_api.Services.Implementation
             if (user == null) throw new UserNotFound();
             var passwordToCompare = PasswordGenerator.GeneratePassword(request.Password, user.Salt);
             if (passwordToCompare != user.Password) throw new IncorrectCredentials();
-
+            if(user.Role == "PATIENT") {
+                var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Ispending);
+                if(patient != null) throw new UserIsPending();
+            }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

@@ -31,7 +31,7 @@ namespace diet_server_api.Services.Implementation
             var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
             if (existingPhoneNumber) throw new UserAlreadyExists("Phone number already exists");
 
-            var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.Email);
+            var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.AccessEmail);
             if (tempUser == null) throw new UserNotFound("No such user");
 
             _dbContext.TempUsers.Remove(tempUser);

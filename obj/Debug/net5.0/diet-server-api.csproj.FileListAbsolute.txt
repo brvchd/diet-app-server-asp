@@ -1,7 +1,0 @@
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.csproj.AssemblyReference.cache
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.GeneratedMSBuildEditorConfig.editorconfig
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.AssemblyInfoInputs.cache
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.AssemblyInfo.cs
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.csproj.CoreCompileInputs.cache
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.MvcApplicationPartsAssemblyInfo.cs
-/Users/dima/Documents/Diploma/diet-app-server-asp/obj/Debug/net5.0/diet-server-api.MvcApplicationPartsAssemblyInfo.cache

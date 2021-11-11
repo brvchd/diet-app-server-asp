@@ -33,7 +33,7 @@ namespace diet_server_api.Services.Implementation
             var passwordToCompare = PasswordGenerator.GeneratePassword(request.Password, user.Salt);
             if (passwordToCompare != user.Password) throw new IncorrectCredentials();
             if(user.Role == "PATIENT") {
-                var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Ispending);
+                var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Ispending == true && e.Iduser == user.Iduser);
                 if(patient != null) throw new UserIsPending();
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["SecretKey"]));

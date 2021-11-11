@@ -68,10 +68,14 @@ namespace diet_server_api
             app.UseCors(x => x
                             .AllowAnyMethod()
                             .AllowAnyHeader()
-                            .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:7000", "https://localhost:7000")
-                            .AllowCredentials());
+                            .AllowAnyOrigin());
+                            //.WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:7000", "https://localhost:7000")
+                            //.AllowCredentials());
+                            
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

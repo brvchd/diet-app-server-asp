@@ -27,6 +27,7 @@ namespace diet_server_api.Models
         public decimal? Pal { get; set; }
         public string Streetnumber { get; set; }
         public string Correctedvalue { get; set; }
+        public decimal? Cpm { get; set; }
 
         public virtual User IduserNavigation { get; set; }
         public virtual ICollection<Diet> Diets { get; set; }

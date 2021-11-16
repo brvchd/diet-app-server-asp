@@ -4,7 +4,7 @@ using diet_server_api.DTO.Responses;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface IPatientRepositoryService
+    public interface IPatientRepository
     {
         public Task<SurveyUserCreationResponse> CreatePatient(SurveySignUpRequest request);
     }

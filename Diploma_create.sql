@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-15 21:10:29.373
+-- Last modification date: 2021-11-16 03:04:52.641
 
 -- tables
 -- Table: Day
@@ -137,6 +137,7 @@ CREATE TABLE Note (
     idPatient serial  NOT NULL,
     idDoctor serial  NOT NULL,
     dateOfNote date  NOT NULL,
+    Message varchar(1000)  NOT NULL,
     CONSTRAINT Note_pk PRIMARY KEY (idNote)
 );
 
@@ -159,6 +160,7 @@ CREATE TABLE Patient (
     PAL decimal(3,2)  NULL,
     StreetNumber varchar(10)  NOT NULL,
     correctedValue varchar(70)  NULL,
+    CPM decimal(6,2)  NULL,
     CONSTRAINT Patient_pk PRIMARY KEY (idUser)
 );
 

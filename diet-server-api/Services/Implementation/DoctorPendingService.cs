@@ -124,5 +124,15 @@ namespace diet_server_api.Services.Implementation
             };
             return response;
         }
+
+        public async Task AcceptPatient(PendingPatientAccept request)
+        {
+            var user = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == request.IdPatient);
+            if(user == null) throw new UserNotFound("Patient not found");
+            user.Correctedvalue = request.CorrectedValue;
+            user.Cpm = request.CPM;
+            user.Ispending = false;
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

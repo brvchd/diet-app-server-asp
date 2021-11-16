@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class TempUserRepositoryService : ITempUserRepositoryService
+    public class TempUserRepository : ITempUserRepository
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public TempUserRepositoryService(mdzcojxmContext dbContext)
+        public TempUserRepository(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }

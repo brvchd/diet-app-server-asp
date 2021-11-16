@@ -12,11 +12,11 @@ namespace diet_server_api.Controllers.Admin
     [Route("api/admin")]
     public class AdminController : ControllerBase
     {
-        private readonly IDoctorRepositoryService _doctorRepoService;
-        private readonly ITempUserRepositoryService _tempUserRepoService;
+        private readonly IDoctorRepository _doctorRepoService;
+        private readonly ITempUserRepository _tempUserRepoService;
         private readonly IUserRepository _userRepo;
 
-        public AdminController(IDoctorRepositoryService doctorRepoService, ITempUserRepositoryService tempUserRepoService, IUserRepository userRepo)
+        public AdminController(IDoctorRepository doctorRepoService, ITempUserRepository tempUserRepoService, IUserRepository userRepo)
         {
             _doctorRepoService = doctorRepoService;
             _tempUserRepoService = tempUserRepoService;
@@ -32,7 +32,7 @@ namespace diet_server_api.Controllers.Admin
             try
             {
                 var response = await _tempUserRepoService.AddTempUser(user);
-                return CreatedAtAction("create temp user", response);
+                return CreatedAtAction(nameof(AddTempUser), response);
 
             }
             catch (UserAlreadyExists ex)
@@ -66,7 +66,7 @@ namespace diet_server_api.Controllers.Admin
             try
             {
                 var response = await _doctorRepoService.CreateDoctor(request);
-                return CreatedAtAction("create new doctor", response);
+                return CreatedAtAction(nameof(CreateDoctor), response);
             }
             catch (UserAlreadyExists ex)
             {

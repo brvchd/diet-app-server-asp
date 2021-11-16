@@ -60,5 +60,23 @@ namespace diet_server_api.Controllers.doctor
             }
 
         }
+
+        [HttpPost]
+        [Authorize(Roles = "DOCTOR")]
+        [Route("patient")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AcceptPatient(PendingPatientAccept request)
+        {
+            try
+            {
+                await _doctorService.AcceptPatient(request);
+                return Ok();
+            }
+            catch (UserNotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

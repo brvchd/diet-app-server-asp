@@ -436,11 +436,11 @@ namespace diet_server_api.Models
                     .HasColumnName("date");
 
                 entity.Property(e => e.Height)
-                    .HasPrecision(4, 1)
+                    .HasPrecision(10, 2)
                     .HasColumnName("height");
 
                 entity.Property(e => e.Hipcircumference)
-                    .HasPrecision(4, 1)
+                    .HasPrecision(10, 2)
                     .HasColumnName("hipcircumference");
 
                 entity.Property(e => e.Idpatient).HasColumnName("idpatient");
@@ -448,13 +448,13 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Thighcircumference).HasColumnName("thighcircumference");
 
                 entity.Property(e => e.Waistcircumference)
-                    .HasPrecision(4, 1)
+                    .HasPrecision(10, 2)
                     .HasColumnName("waistcircumference");
 
                 entity.Property(e => e.Waistlowercircumference).HasColumnName("waistlowercircumference");
 
                 entity.Property(e => e.Weight)
-                    .HasPrecision(4, 1)
+                    .HasPrecision(10, 2)
                     .HasColumnName("weight");
 
                 entity.Property(e => e.Whomeasured)
@@ -489,6 +489,11 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Idpatient)
                     .ValueGeneratedOnAdd()
                     .HasColumnName("idpatient");
+
+                entity.Property(e => e.Message)
+                    .IsRequired()
+                    .HasMaxLength(1000)
+                    .HasColumnName("message");
 
                 entity.HasOne(d => d.IddoctorNavigation)
                     .WithMany(p => p.Notes)
@@ -543,6 +548,10 @@ namespace diet_server_api.Models
                     .HasMaxLength(70)
                     .HasColumnName("correctedvalue");
 
+                entity.Property(e => e.Cpm)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("cpm");
+
                 entity.Property(e => e.Flatnumber)
                     .HasMaxLength(10)
                     .HasColumnName("flatnumber");
@@ -555,7 +564,7 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Ispending).HasColumnName("ispending");
 
                 entity.Property(e => e.Pal)
-                    .HasPrecision(3, 2)
+                    .HasPrecision(10, 2)
                     .HasColumnName("pal");
 
                 entity.Property(e => e.Street)
@@ -666,7 +675,7 @@ namespace diet_server_api.Models
                 entity.Property(e => e.IdproductParameter).HasColumnName("idproduct_parameter");
 
                 entity.Property(e => e.Amount)
-                    .HasPrecision(11, 2)
+                    .HasPrecision(10, 2)
                     .HasColumnName("amount");
 
                 entity.Property(e => e.Idparameter).HasColumnName("idparameter");
@@ -736,7 +745,7 @@ namespace diet_server_api.Models
                     .HasColumnName("alergieproducts");
 
                 entity.Property(e => e.Avgsleep)
-                    .HasPrecision(4, 1)
+                    .HasPrecision(10, 2)
                     .HasColumnName("avgsleep");
 
                 entity.Property(e => e.Betweenmealsfood)
@@ -765,11 +774,11 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Energydrinkglasses).HasColumnName("energydrinkglasses");
 
                 entity.Property(e => e.Excercisingperday)
-                    .HasPrecision(3, 2)
+                    .HasPrecision(10, 2)
                     .HasColumnName("excercisingperday");
 
                 entity.Property(e => e.Exercisingperweek)
-                    .HasPrecision(3, 2)
+                    .HasPrecision(10, 2)
                     .HasColumnName("exercisingperweek");
 
                 entity.Property(e => e.Favfooditems)

@@ -40,9 +40,10 @@ namespace diet_server_api
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IDoctorPendingService, DoctorPendingService>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITempUserRepositoryService, TempUserRepositoryService>();
-            services.AddScoped<IPatientRepositoryService, PatientRepositoryService>();
-            services.AddScoped<IDoctorRepositoryService, DoctorRepositoryService>();
+            services.AddScoped<ITempUserRepository, TempUserRepository>();
+            services.AddScoped<IPatientRepository, PatientRepository>();
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("elephantDb")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

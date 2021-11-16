@@ -4,7 +4,7 @@ using diet_server_api.DTO.Responses.Admin;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface IDoctorRepositoryService
+    public interface IDoctorRepository
     {
         public Task<DoctorCreatorResponse> CreateDoctor(DoctorCreatorRequest request);
     }

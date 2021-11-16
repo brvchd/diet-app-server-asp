@@ -13,9 +13,9 @@ namespace diet_server_api.Controllers
     public class SurveyController : ControllerBase
     {
         private readonly ISurveyService _surveyService;
-        private readonly IPatientRepositoryService _patientRepoService;
+        private readonly IPatientRepository _patientRepoService;
 
-        public SurveyController(ISurveyService surveyService, IPatientRepositoryService patientRepoService)
+        public SurveyController(ISurveyService surveyService, IPatientRepository patientRepoService)
         {
             _surveyService = surveyService;
             _patientRepoService = patientRepoService;
@@ -45,7 +45,7 @@ namespace diet_server_api.Controllers
             try
             {
                 var response = await _patientRepoService.CreatePatient(request);
-                return CreatedAtAction("signup", response);
+                return CreatedAtAction(nameof(SignUp), response);
             }
             catch (UserAlreadyExists ex)
             {

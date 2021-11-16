@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class PatientRepositoryService : IPatientRepositoryService
+    public class PatientRepository : IPatientRepository
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public PatientRepositoryService(mdzcojxmContext dbContext)
+        public PatientRepository(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }

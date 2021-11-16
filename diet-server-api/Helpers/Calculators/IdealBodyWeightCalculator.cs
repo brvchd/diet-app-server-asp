@@ -7,9 +7,6 @@ namespace diet_server_api.Helpers.Calculators
     {
         public static decimal CalculateWeight(string gender, decimal height)
         {
-            gender = gender.Trim();
-            if (gender != "Male" || gender != "Female") throw new IncorrectGender();
-
             decimal result = 0;
 
             if (gender == "Female")

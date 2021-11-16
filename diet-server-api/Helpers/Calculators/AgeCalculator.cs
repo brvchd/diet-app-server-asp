@@ -6,7 +6,8 @@ namespace diet_server_api.Helpers.Calculators
     {
         public static int CalculateAge(DateTime dob)
         {
-            int age = DateTime.Now.AddYears(-dob.Year).Year;
+            int age = DateTime.Today.Year - dob.Year;
+            if (dob.Date > DateTime.Today.AddYears(-age)) age--; 
             return age;
         }
     }

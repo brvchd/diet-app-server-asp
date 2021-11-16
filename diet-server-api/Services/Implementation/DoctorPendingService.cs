@@ -30,7 +30,7 @@ namespace diet_server_api.Services.Implementation
                 FirstName = user.Firstname,
                 LastName = user.Lastname,
                 IsPending = patient.Ispending
-            }).Where(e => e.IsPending == true).Select(e => new PendingPatientResponse() { IdUser = e.IdPatient, FirstName = e.FirstName, LastName = e.LastName }).ToListAsync();
+            }).Where(e => e.IsPending == true).Select(e => new PendingPatientResponse() { IdUser = e.IdPatient, FirstName = e.FirstName, LastName = e.LastName }).OrderByDescending(e=>e.IdUser).ToListAsync();
 
             return users;
         }

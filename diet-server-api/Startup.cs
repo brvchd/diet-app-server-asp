@@ -93,6 +93,12 @@ namespace diet_server_api
             {
                 endpoints.MapControllers();
             });
+            
+            app.Use(next => async context =>
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync("ERROR: Page not found");
+            });
         }
     }
 }

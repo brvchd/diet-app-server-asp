@@ -539,6 +539,10 @@ namespace diet_server_api.Models
                     .HasMaxLength(50)
                     .HasColumnName("city");
 
+                entity.Property(e => e.Correctedvalue)
+                    .HasMaxLength(70)
+                    .HasColumnName("correctedvalue");
+
                 entity.Property(e => e.Flatnumber)
                     .HasMaxLength(10)
                     .HasColumnName("flatnumber");

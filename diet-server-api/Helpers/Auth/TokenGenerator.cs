@@ -10,8 +10,8 @@ namespace diet_server_api.Helpers.Auth
 {
     public class TokenGenerator
     {
-        public static JwtSecurityToken GenerateToken(int userId, string role, string firstName, string lastName, SigningCredentials creds){
-            
+        public static JwtSecurityToken GenerateToken(int userId, string role, string firstName, string lastName, SigningCredentials creds)
+        {
 
             var claims = new[]{
                 new Claim(ClaimTypes.NameIdentifier, Convert.ToString(userId)),
@@ -24,7 +24,7 @@ namespace diet_server_api.Helpers.Auth
                 issuer: "diet-app-server",
                 audience: "diet-app-client",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(1.0),
                 signingCredentials: creds
                 );
 

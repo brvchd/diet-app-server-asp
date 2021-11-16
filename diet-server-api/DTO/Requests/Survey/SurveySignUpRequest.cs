@@ -78,9 +78,11 @@ namespace diet_server_api.DTO.Requests
         [Required]
         public decimal AvgSleep { get; set; }
         [Required]
+        [MinLength(11)]
         [MaxLength(20)]
         public string UsuallyWakeUp { get; set; }
         [Required]
+        [MinLength(11)]
         [MaxLength(20)]
         public string UsuallyGoToSleep { get; set; }
         [Required]

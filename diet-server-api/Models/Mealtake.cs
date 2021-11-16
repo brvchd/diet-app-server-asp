@@ -13,8 +13,8 @@ namespace diet_server_api.Models
         }
 
         public int Idmealtake { get; set; }
-        public TimeSpan Time { get; set; }
         public int Idday { get; set; }
+        public TimeSpan Time { get; set; }
 
         public virtual Day IddayNavigation { get; set; }
         public virtual ICollection<Individualrecipe> Individualrecipes { get; set; }

@@ -2,12 +2,13 @@ using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Auth;
 using diet_server_api.Exceptions;
 using diet_server_api.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace diet_server_api.Controllers.Login
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -17,6 +18,9 @@ namespace diet_server_api.Controllers.Login
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Login(LoginRequest request)
         {
             try
@@ -33,13 +37,16 @@ namespace diet_server_api.Controllers.Login
             {
                 return BadRequest(ex.Message);
             }
-            catch(UserIsPending ex)
+            catch (UserIsPending ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
         [HttpPost("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
         {
             try

@@ -1,7 +1,10 @@
+using System;
 using System.Text;
 using diet_server_api.Models;
 using diet_server_api.Services.Implementation;
+using diet_server_api.Services.Implementation.Repository;
 using diet_server_api.Services.Interfaces;
+using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +38,11 @@ namespace diet_server_api
             });
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IDoctorPendingService, DoctorPendingService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITempUserRepositoryService, TempUserRepositoryService>();
+            services.AddScoped<IPatientRepositoryService, PatientRepositoryService>();
+            services.AddScoped<IDoctorRepositoryService, DoctorRepositoryService>();
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("elephantDb")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -47,6 +55,7 @@ namespace diet_server_api
                            ValidateLifetime = true,
                            ValidIssuer = "diet-app-server",
                            ValidAudience = "diet-app-client",
+                           ClockSkew = TimeSpan.Zero,
                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]))
                        };
                    });
@@ -69,9 +78,9 @@ namespace diet_server_api
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowAnyOrigin());
-                            //.WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:7000", "https://localhost:7000")
-                            //.AllowCredentials());
-                            
+            //.WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:7000", "https://localhost:7000")
+            //.AllowCredentials());
+
 
             app.UseRouting();
 
@@ -82,11 +91,6 @@ namespace diet_server_api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-            app.Use(next => async context =>
-            {
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync("ERROR: Page not found");
             });
         }
     }

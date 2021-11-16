@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-07 19:14:57.503
+-- Last modification date: 2021-11-15 21:10:29.373
 
 -- tables
 -- Table: Day
@@ -98,8 +98,8 @@ CREATE TABLE Meal (
 -- Table: MealTake
 CREATE TABLE MealTake (
     idMealTake serial  NOT NULL,
-    time time  NOT NULL,
     idDay int  NOT NULL,
+    time time  NOT NULL,
     CONSTRAINT MealTake_pk PRIMARY KEY (idMealTake)
 );
 
@@ -158,6 +158,7 @@ CREATE TABLE Patient (
     FlatNumber varchar(10)  NULL,
     PAL decimal(3,2)  NULL,
     StreetNumber varchar(10)  NOT NULL,
+    correctedValue varchar(70)  NULL,
     CONSTRAINT Patient_pk PRIMARY KEY (idUser)
 );
 
@@ -206,8 +207,8 @@ CREATE TABLE Questionary (
     Medications varchar(150)  NULL,
     SupplementsTaken varchar(300)  NULL,
     AvgSleep decimal(4,1)  NOT NULL,
-    UsuallyWakeup varchar(10)  NOT NULL,
-    UsuallyGoToSleep varchar(10)  NOT NULL,
+    UsuallyWakeup varchar(20)  NOT NULL,
+    UsuallyGoToSleep varchar(20)  NOT NULL,
     RegularWalk boolean  NOT NULL,
     ExcercisingPerDay decimal(3,2)  NOT NULL,
     SportTypes varchar(300)  NULL,

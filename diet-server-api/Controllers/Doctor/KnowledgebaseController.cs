@@ -26,6 +26,7 @@ namespace diet_server_api.Controllers.Doctor
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AddDisease(AddDiseaseRequest request)
         {
             try
@@ -44,6 +45,7 @@ namespace diet_server_api.Controllers.Doctor
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AddSupplement(AddSupplementRequest request)
         {
             try

@@ -24,6 +24,7 @@ namespace diet_server_api.Controllers.Doctor
         [HttpPost]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AddNote(AddNoteRequest request)
         {
             try

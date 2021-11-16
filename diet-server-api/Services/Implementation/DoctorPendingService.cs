@@ -36,12 +36,13 @@ namespace diet_server_api.Services.Implementation
         }
 
 
-        public async Task<PendingPatientDataResponse> GetPatientData(PendingPatientDataRequest request)
+        public async Task<PendingPatientDataResponse> GetPatientData(int idpatient)
         {
-            var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == request.UserId);
+            var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient);
             if (!userExists) throw new UserNotFound();
             var patient = await _dbContext.Users.Join(_dbContext.Patients, user => user.Iduser, patient => patient.Iduser, (user, patient) => new
             {
+                user.Iduser,
                 user.Firstname,
                 user.Lastname,
                 user.Email,
@@ -50,12 +51,12 @@ namespace diet_server_api.Services.Implementation
                 user.Phonenumber,
                 patient.Gender,
                 Age = AgeCalculator.CalculateAge(user.Dateofbirth)
-            }).SingleAsync();
+            }).FirstOrDefaultAsync(e => e.Iduser == idpatient);
 
-            var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == request.UserId);
+            var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idpatient);
             if (measurments == null) throw new MeasurmentsNotFound();
 
-            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == request.UserId);
+            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idpatient);
             if (questionary == null) throw new QuestionaryNotFound();
 
             var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);

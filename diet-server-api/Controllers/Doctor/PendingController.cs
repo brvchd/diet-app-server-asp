@@ -24,6 +24,7 @@ namespace diet_server_api.Controllers.doctor
         [Authorize(Roles = "DOCTOR")]
         [Route("patients")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetPatients()
         {
             var response = await _doctorService.GetPatients();
@@ -35,11 +36,12 @@ namespace diet_server_api.Controllers.doctor
         [Route("patient")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetPatient(PendingPatientDataRequest request)
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetPatient(int idpatient)
         {
             try
             {
-                var response = await _doctorService.GetPatientData(request);
+                var response = await _doctorService.GetPatientData(idpatient);
                 return Ok(response);
             }
             catch (UserNotFound ex)
@@ -66,6 +68,7 @@ namespace diet_server_api.Controllers.doctor
         [Route("patient")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AcceptPatient(PendingPatientAccept request)
         {
             try

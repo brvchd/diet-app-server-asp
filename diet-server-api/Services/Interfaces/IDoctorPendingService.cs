@@ -10,5 +10,6 @@ namespace diet_server_api.Services.Interfaces
         public Task<List<PendingPatientResponse>> GetPatients();
         public Task<PendingPatientDataResponse> GetPatientData(int id);
         public Task AcceptPatient(PendingPatientAccept request);
+        public Task RejectPendingPatient(int idPatient);
     }
 }

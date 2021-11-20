@@ -20,11 +20,12 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddNoteResponse> AddNote(AddNoteRequest request)
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == request.IdPatient);
-            if(!patientExists) throw new UserNotFound("Patient not found!");
+            if (!patientExists) throw new UserNotFound("Patient not found!");
             var doctorExists = await _dbContext.Doctors.AnyAsync(e => e.Iduser == request.IdDoctor);
-            if(!doctorExists) throw new UserNotFound("Doctor not found!");
-            
-            var note = new Note(){
+            if (!doctorExists) throw new UserNotFound("Doctor not found!");
+
+            var note = new Note()
+            {
                 Iddoctor = request.IdDoctor,
                 Idpatient = request.IdPatient,
                 Message = request.Note
@@ -33,7 +34,8 @@ namespace diet_server_api.Services.Implementation.Repository
             await _dbContext.Notes.AddAsync(note);
             await _dbContext.SaveChangesAsync();
 
-            return new AddNoteResponse(){
+            return new AddNoteResponse()
+            {
                 IdNote = note.Idnote,
                 Message = note.Message
             };

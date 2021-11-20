@@ -1,9 +1,6 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace diet_server_api.Helpers.Auth
@@ -24,7 +21,7 @@ namespace diet_server_api.Helpers.Auth
                 issuer: "diet-app-server",
                 audience: "diet-app-client",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(1.0),
+                expires: DateTime.Now.AddMinutes(10),
                 signingCredentials: creds
                 );
 

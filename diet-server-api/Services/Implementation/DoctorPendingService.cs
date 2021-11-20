@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
 using diet_server_api.DTO.Responses.Doctor;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Helpers.Calculators;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces;
@@ -30,7 +31,7 @@ namespace diet_server_api.Services.Implementation
                 FirstName = user.Firstname,
                 LastName = user.Lastname,
                 IsPending = patient.Ispending
-            }).Where(e => e.IsPending == true).Select(e => new PendingPatientResponse() { IdUser = e.IdPatient, FirstName = e.FirstName, LastName = e.LastName }).OrderByDescending(e=>e.IdUser).ToListAsync();
+            }).Where(e => e.IsPending == true).Select(e => new PendingPatientResponse() { IdUser = e.IdPatient, FirstName = e.FirstName, LastName = e.LastName }).OrderByDescending(e => e.IdUser).ToListAsync();
 
             return users;
         }
@@ -38,7 +39,7 @@ namespace diet_server_api.Services.Implementation
 
         public async Task<PendingPatientDataResponse> GetPatientData(int idpatient)
         {
-            var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient);
+            var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient && e.Role == Roles.PATIENT);
             if (!userExists) throw new UserNotFound();
             var patient = await _dbContext.Users.Join(_dbContext.Patients, user => user.Iduser, patient => patient.Iduser, (user, patient) => new
             {
@@ -98,7 +99,7 @@ namespace diet_server_api.Services.Implementation
                 Medications = questionary.Medications,
                 DietSupplements = questionary.Supplementstaken,
                 GetUpInterval = questionary.Usuallywakeup,
-                GoToSleepInterval = questionary.Usuallywakeup,
+                GoToSleepInterval = questionary.Usuallygotosleep,
                 AvgSleep = questionary.Avgsleep,
                 SportsPerDay = questionary.Excercisingperday,
                 SportsPerWeek = questionary.Exercisingperweek,
@@ -129,10 +130,29 @@ namespace diet_server_api.Services.Implementation
         public async Task AcceptPatient(PendingPatientAccept request)
         {
             var user = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == request.IdPatient);
-            if(user == null) throw new UserNotFound("Patient not found");
+            if (user == null) throw new UserNotFound("Patient not found");
             user.Correctedvalue = request.CorrectedValue;
             user.Cpm = request.CPM;
             user.Ispending = false;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RejectPendingPatient(int idPatient)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT);
+            if (user == null) throw new UserNotFound();
+            var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == idPatient);
+            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
+            var measurements = await _dbContext.Measurements.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
+            var mealsList = await _dbContext.Mealsbeforediets.Where(e => e.Idquestionary == questionary.Idquestionary).ToListAsync();
+            foreach (var meal in mealsList)
+            {
+                _dbContext.Mealsbeforediets.Remove(meal);
+            }
+            _dbContext.Questionaries.Remove(questionary);
+            _dbContext.Measurements.Remove(measurements);
+            _dbContext.Patients.Remove(patient);
+            _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
         }
     }

@@ -63,7 +63,7 @@ namespace diet_server_api.Controllers.doctor
 
         }
 
-        [HttpPost]
+        [HttpPatch]
         [Authorize(Roles = "DOCTOR")]
         [Route("patient")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -81,5 +81,24 @@ namespace diet_server_api.Controllers.doctor
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpDelete]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RejectPatient(int idPatient)
+        {
+            try
+            {
+                await _doctorService.RejectPendingPatient(idPatient);
+                return Ok("Patient rejected successfully");
+            }
+            catch (UserNotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
     }
 }

@@ -7,5 +7,6 @@ namespace diet_server_api.Services.Interfaces.Repository
     public interface IPatientRepository
     {
         public Task<SurveyUserCreationResponse> CreatePatient(SurveySignUpRequest request);
+
     }
 }

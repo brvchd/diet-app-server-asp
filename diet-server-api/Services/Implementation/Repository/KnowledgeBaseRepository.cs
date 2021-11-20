@@ -20,15 +20,17 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddDiseaseResponse> AddDisease(AddDiseaseRequest request)
         {
             var exists = await _dbContext.Diseases.AnyAsync(e => e.Name == request.Name);
-            if(exists) throw new DiseaseAlreadyExists();
-            var disease = new Disease(){
+            if (exists) throw new DiseaseAlreadyExists();
+            var disease = new Disease()
+            {
                 Name = request.Name,
                 Description = request.Description,
                 Recomendation = request.Recomendation
             };
             await _dbContext.Diseases.AddAsync(disease);
             await _dbContext.SaveChangesAsync();
-            return new AddDiseaseResponse(){
+            return new AddDiseaseResponse()
+            {
                 IdDisease = disease.Iddisease,
                 Name = disease.Name,
                 Description = disease.Description
@@ -38,14 +40,16 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddSupplementResponse> AddSupplement(AddSupplementRequest request)
         {
             var exists = await _dbContext.Supplements.AnyAsync(e => e.Name == request.Name);
-            if(exists) throw new SupplementAlreadyExists();
-            var supplement = new Supplement(){
+            if (exists) throw new SupplementAlreadyExists();
+            var supplement = new Supplement()
+            {
                 Name = request.Name,
                 Description = request.Description
             };
             await _dbContext.Supplements.AddAsync(supplement);
             await _dbContext.SaveChangesAsync();
-            return new AddSupplementResponse() {
+            return new AddSupplementResponse()
+            {
                 IdSupplement = supplement.Idsuppliment,
                 Name = supplement.Name,
                 Description = supplement.Description

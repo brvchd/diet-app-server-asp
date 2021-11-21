@@ -6,6 +6,7 @@ using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace diet_server_api.Controllers.Doctor
 {
@@ -15,7 +16,8 @@ namespace diet_server_api.Controllers.Doctor
     {
         private readonly INotesRepository _notesRepo;
 
-        public NotesController(INotesRepository notesRepo)
+
+        public NotesController(INotesRepository notesRepo, IPatientRepository patientRepo)
         {
             _notesRepo = notesRepo;
         }

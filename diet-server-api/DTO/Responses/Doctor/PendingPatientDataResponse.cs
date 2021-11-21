@@ -1,9 +1,11 @@
+using System;
 using static diet_server_api.DTO.Requests.SurveySignUpRequest;
 
 namespace diet_server_api.DTO.Responses.Doctor
 {
     public class PendingPatientDataResponse
     {
+        public DateTime DateOfSurvey { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

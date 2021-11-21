@@ -43,6 +43,7 @@ namespace diet_server_api
             services.AddScoped<ITempUserRepository, TempUserRepository>();
             services.AddScoped<IPatientRepository, PatientRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<INotesRepository, NotesRepository>();
             services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("elephantDb")));

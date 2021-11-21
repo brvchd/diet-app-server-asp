@@ -73,6 +73,7 @@ namespace diet_server_api.Services.Implementation
 
             var response = new PendingPatientDataResponse()
             {
+                DateOfSurvey = questionary.Databadania,
                 FirstName = patient.Firstname,
                 LastName = patient.Lastname,
                 Email = patient.Email,

@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
 using diet_server_api.Exceptions;
-using diet_server_api.Helpers;
 using diet_server_api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -57,7 +57,18 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return BadRequest(ex.Message);
             }
-
         }
+
+        [HttpGet]
+        [Route("supplements")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetSupplements()
+        {
+            var response = await _knowledgeRepo.GetSupplements();
+            return Ok(response);
+        }
+
     }
 }

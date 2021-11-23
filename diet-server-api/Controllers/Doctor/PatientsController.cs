@@ -21,13 +21,23 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Authorize(Roles = "DOCTOR")]
+        //[Authorize(Roles = "DOCTOR")]
         [Route("patients")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetPatients(int page)
         {
             var response = await _patientRepo.GetPatientsByPage(page);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("patients/search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> SearchPatients([FromQuery] string firstName, [FromQuery] string lastName)
+        {
+            var response = await _patientRepo.GetPatientsByName(firstName, lastName);
             return Ok(response);
         }
     }

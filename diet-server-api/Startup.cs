@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,9 +33,23 @@ namespace diet_server_api
         {
 
             services.AddControllers();
+            services.Configure<ApiBehaviorOptions>(options =>
+                options.SuppressMapClientErrors = true
+            );
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "diet_server_api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "diet_server_api",
+                    Description = "Diet Applciation API for thesis final project",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Dmytro Borovych",
+                        Email = "dmitryborovich@gmail.com",
+                        Url = new Uri("https://github.com/brvchd"),
+                    }
+                });
             });
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IAuthService, AuthService>();

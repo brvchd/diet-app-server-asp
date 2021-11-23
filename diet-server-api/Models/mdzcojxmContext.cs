@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -8,10 +6,7 @@ namespace diet_server_api.Models
 {
     public partial class mdzcojxmContext : DbContext
     {
-        public mdzcojxmContext()
-        {
-        }
-
+        public mdzcojxmContext() { }
         public mdzcojxmContext(DbContextOptions<mdzcojxmContext> options)
             : base(options)
         {

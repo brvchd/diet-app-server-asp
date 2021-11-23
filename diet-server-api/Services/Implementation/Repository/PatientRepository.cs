@@ -10,6 +10,7 @@ using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
@@ -142,17 +143,28 @@ namespace diet_server_api.Services.Implementation.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<GetPatientsByPageResponse> GetPatientsByPage(int page = 1)
+        public async Task<List<PatientSearchResponse>> GetPatientsByName(string firstName, string lastName)
         {
+            var patients = await _dbContext.Users.Where(e => e.Firstname == firstName && e.Lastname == lastName && e.Role == Roles.PATIENT && e.Patient.Ispending == false).Select(e => new PatientSearchResponse {
+                IdPatient = e.Iduser,
+                FirstName = e.Firstname,
+                LastName = e.Lastname
+            }).ToListAsync();
+            return patients;
+        }
+
+        public async Task<PatientsByPageResponse> GetPatientsByPage(int page = 1)
+        {
+            if (page < 1) page = 1;
             int pageSize = 7;
             var rows = await _dbContext.Patients.Where(e => e.Ispending == false).CountAsync();
-            var patients = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == false).OrderBy(e => e.Firstname).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new GetPatientsByPageResponse.PatientByPage
+            var patients = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == false).OrderBy(e => e.Firstname).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new PatientsByPageResponse.PatientByPage
             {
                 IdPatient = e.Iduser,
                 FirstName = e.Firstname,
                 LastName = e.Lastname
             }).ToListAsync();
-            return new GetPatientsByPageResponse()
+            return new PatientsByPageResponse()
             {
                 Patients = patients,
                 PageNumber = page,

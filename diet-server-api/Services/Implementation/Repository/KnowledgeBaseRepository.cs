@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
 using diet_server_api.DTO.Responses.Doctor;
@@ -54,6 +56,16 @@ namespace diet_server_api.Services.Implementation.Repository
                 Name = supplement.Name,
                 Description = supplement.Description
             };
+        }
+
+        public async Task<List<GetSupplementsResponse>> GetSupplements()
+        {
+            var supplements = await _dbContext.Supplements.Select(e => new GetSupplementsResponse
+            {
+                SupplementName = e.Name,
+                Description = e.Description
+            }).ToListAsync();
+            return supplements;
         }
     }
 }

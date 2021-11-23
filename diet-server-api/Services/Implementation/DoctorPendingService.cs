@@ -10,6 +10,7 @@ using diet_server_api.Helpers.Calculators;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using static diet_server_api.DTO.Requests.SurveySignUpRequest;
 
 namespace diet_server_api.Services.Implementation
@@ -25,14 +26,12 @@ namespace diet_server_api.Services.Implementation
 
         public async Task<List<PendingPatientResponse>> GetPatients()
         {
-            var users = await _dbContext.Users.Join(_dbContext.Patients, user => user.Iduser, patient => patient.Iduser, (user, patient) => new
+            var users = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == true).Select(e => new PendingPatientResponse
             {
-                IdPatient = patient.Iduser,
-                FirstName = user.Firstname,
-                LastName = user.Lastname,
-                IsPending = patient.Ispending
-            }).Where(e => e.IsPending == true).Select(e => new PendingPatientResponse() { IdUser = e.IdPatient, FirstName = e.FirstName, LastName = e.LastName }).OrderByDescending(e => e.IdUser).ToListAsync();
-
+                IdUser = e.Iduser,
+                FirstName = e.Firstname,
+                LastName = e.Lastname
+            }).OrderByDescending(e => e.IdUser).ToListAsync();
             return users;
         }
 
@@ -41,17 +40,16 @@ namespace diet_server_api.Services.Implementation
         {
             var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient && e.Role == Roles.PATIENT);
             if (!userExists) throw new UserNotFound();
-            var patient = await _dbContext.Users.Join(_dbContext.Patients, user => user.Iduser, patient => patient.Iduser, (user, patient) => new
-            {
-                user.Iduser,
-                user.Firstname,
-                user.Lastname,
-                user.Email,
-                user.Pesel,
-                Adress = patient.City + " " + patient.Street + " " + patient.Flatnumber,
-                user.Phonenumber,
-                patient.Gender,
-                Age = AgeCalculator.CalculateAge(user.Dateofbirth)
+            var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new {
+                e.Iduser,
+                e.Firstname,
+                e.Lastname,
+                e.Email,
+                e.Pesel,
+                Address = $"{e.Patient.Street}, {e.Patient.Flatnumber}, {e.Patient.City}",
+                e.Phonenumber,
+                e.Patient.Gender,
+                Age = AgeCalculator.CalculateAge(e.Dateofbirth)
             }).FirstOrDefaultAsync(e => e.Iduser == idpatient);
 
             var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idpatient);
@@ -78,7 +76,7 @@ namespace diet_server_api.Services.Implementation
                 LastName = patient.Lastname,
                 Email = patient.Email,
                 PESEL = patient.Pesel,
-                Address = patient.Adress,
+                Address = patient.Address,
                 PhoneNumber = patient.Phonenumber,
                 Gender = patient.Gender,
                 Age = patient.Age,

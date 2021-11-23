@@ -31,7 +31,7 @@ namespace diet_server_api.Controllers.doctor
         }
 
         [HttpGet]
-        [Authorize(Roles = "DOCTOR")]
+        //[Authorize(Roles = "DOCTOR")]
         [Route("patient")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

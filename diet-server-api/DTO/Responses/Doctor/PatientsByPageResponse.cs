@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace diet_server_api.DTO.Responses.Doctor
 {
-    public class GetPatientsByPageResponse
+    public class PatientsByPageResponse
     {
         public int PageSize { get; set; }
         public int PageNumber { get; set; }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
 using diet_server_api.DTO.Responses.Doctor;
@@ -39,6 +41,18 @@ namespace diet_server_api.Services.Implementation.Repository
                 IdNote = note.Idnote,
                 Message = note.Message
             };
+        }
+
+        public async Task<List<GetNotesResponse>> GetNotes(int idPatient = 1)
+        {
+            var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == idPatient && e.Ispending == false);
+            if (!patientExists) throw new UserNotFound("Patient not found!");
+            var notes = await _dbContext.Notes.Where(e => e.Idpatient == idPatient).Select(e => new GetNotesResponse
+            {
+                NoteText = e.Message,
+                NoteCreated = e.Dateofnote
+            }).OrderByDescending(e => e.NoteCreated).ToListAsync();
+            return notes;
         }
     }
 }

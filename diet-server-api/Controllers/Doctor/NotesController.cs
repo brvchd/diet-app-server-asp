@@ -11,13 +11,13 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 namespace diet_server_api.Controllers.Doctor
 {
     [ApiController]
-    [Route("api/notes")]
+    [Route("api/doctor/notes")]
     public class NotesController : ControllerBase
     {
         private readonly INotesRepository _notesRepo;
 
 
-        public NotesController(INotesRepository notesRepo, IPatientRepository patientRepo)
+        public NotesController(INotesRepository notesRepo)
         {
             _notesRepo = notesRepo;
         }
@@ -33,6 +33,24 @@ namespace diet_server_api.Controllers.Doctor
             {
                 var response = await _notesRepo.AddNote(request);
                 return CreatedAtAction(nameof(AddNote), response);
+            }
+            catch (UserNotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetNotes([FromQuery] int idPatient)
+        {
+            try
+            {
+                var response = await _notesRepo.GetNotes(idPatient);
+                return Ok(response);
             }
             catch (UserNotFound ex)
             {

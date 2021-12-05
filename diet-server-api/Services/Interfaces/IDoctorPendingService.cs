@@ -7,9 +7,9 @@ namespace diet_server_api.Services.Interfaces
 {
     public interface IDoctorPendingService
     {
-        public Task<List<PendingPatientResponse>> GetPatients();
-        public Task<PendingPatientDataResponse> GetPatientData(int id);
-        public Task AcceptPatient(PendingPatientAccept request);
-        public Task RejectPendingPatient(int idPatient);
+        Task<List<PendingPatientResponse>> GetPatients();
+        Task<PendingPatientDataResponse> GetPatientData(int id);
+        Task AcceptPatient(PendingPatientAccept request);
+        Task RejectPendingPatient(int idPatient);
     }
 }

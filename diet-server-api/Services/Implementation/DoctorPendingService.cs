@@ -40,7 +40,8 @@ namespace diet_server_api.Services.Implementation
         {
             var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient && e.Role == Roles.PATIENT);
             if (!userExists) throw new UserNotFound();
-            var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new {
+            var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new
+            {
                 e.Iduser,
                 e.Firstname,
                 e.Lastname,

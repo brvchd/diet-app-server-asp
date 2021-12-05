@@ -61,7 +61,9 @@ namespace diet_server_api
             services.AddScoped<INotesRepository, NotesRepository>();
             services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
             services.AddDbContext<mdzcojxmContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("elephantDb")));
+                opt
+                .UseNpgsql(Configuration.GetConnectionString("elephantDb"))
+                .EnableSensitiveDataLogging());
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    .AddJwtBearer(options =>
                    {

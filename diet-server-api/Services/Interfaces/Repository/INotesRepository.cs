@@ -7,7 +7,7 @@ namespace diet_server_api.Services.Interfaces.Repository
 {
     public interface INotesRepository
     {
-        public Task<AddNoteResponse> AddNote(AddNoteRequest request);
-        public Task<List<GetNotesResponse>> GetNotes(int idPatient);
+        Task<AddNoteResponse> AddNote(AddNoteRequest request);
+        Task<List<GetNotesResponse>> GetNotes(int idPatient);
     }
 }

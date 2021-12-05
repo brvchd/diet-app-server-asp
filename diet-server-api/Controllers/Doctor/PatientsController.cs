@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using diet_server_api.Exceptions;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        //[Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR")]
         [Route("patients")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -33,12 +34,21 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("patients/search")]
+        [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> SearchPatients([FromQuery] string firstName, [FromQuery] string lastName)
         {
-            var response = await _patientRepo.GetPatientsByName(firstName, lastName);
-            return Ok(response);
+
+            try
+            {
+                var response = await _patientRepo.GetPatientsByName(firstName, lastName);
+                return Ok(response);
+            }
+            catch (UserNotFound ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -6,6 +6,6 @@ namespace diet_server_api.Services.Interfaces.Repository
 {
     public interface IDoctorRepository
     {
-        public Task<DoctorCreatorResponse> CreateDoctor(DoctorCreatorRequest request);
+        Task<DoctorCreatorResponse> CreateDoctor(DoctorCreatorRequest request);
     }
 }

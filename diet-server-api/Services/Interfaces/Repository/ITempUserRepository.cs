@@ -7,8 +7,8 @@ namespace diet_server_api.Services.Interfaces.Repository
 {
     public interface ITempUserRepository
     {
-        public Task<TempUser> AddTempUser(TemporaryUserRequest user);
-        public Task<List<TempUser>> GetTempUsers();
-        public Task DeleteTempUser(string email);
+        Task<TempUser> AddTempUser(TemporaryUserRequest user);
+        Task<List<TempUser>> GetTempUsers();
+        Task DeleteTempUser(string email);
     }
 }

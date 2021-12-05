@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +31,8 @@ namespace diet_server_api.Services.Implementation.Repository
             {
                 Iddoctor = request.IdDoctor,
                 Idpatient = request.IdPatient,
-                Message = request.Note
+                Message = request.Note,
+                Dateofnote = DateTime.UtcNow
             };
 
             await _dbContext.Notes.AddAsync(note);

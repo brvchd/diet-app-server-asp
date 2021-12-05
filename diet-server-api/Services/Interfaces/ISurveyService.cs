@@ -6,7 +6,7 @@ namespace diet_server_api.Services.Interfaces
 {
     public interface ISurveyService
     {
-        public Task<SurveyAccessResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request);
+        Task<SurveyAccessResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request);
 
     }
 }

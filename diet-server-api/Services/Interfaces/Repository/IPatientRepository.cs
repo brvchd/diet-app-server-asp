@@ -8,10 +8,10 @@ namespace diet_server_api.Services.Interfaces.Repository
 {
     public interface IPatientRepository
     {
-        public Task<SurveyUserCreationResponse> CreatePatient(SurveySignUpRequest request);
-        public Task<PatientsByPageResponse> GetPatientsByPage(int page);
-        public Task<List<PatientSearchResponse>> GetPatientsByName(string firstName, string lastName);
-        public Task GetAllPatients();
+        Task<SurveyUserCreationResponse> CreatePatient(SurveySignUpRequest request);
+        Task<PatientsByPageResponse> GetPatientsByPage(int page);
+        Task<List<PatientSearchResponse>> GetPatientsByName(string firstName, string lastName);
+        Task GetAllPatients();
 
     }
 }

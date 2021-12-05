@@ -6,6 +6,6 @@ namespace diet_server_api.Services.Interfaces.Repository
 {
     public interface IUserRepository
     {
-        public Task<List<User>> GetUsers();
+        Task<List<User>> GetUsers();
     }
 }

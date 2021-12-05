@@ -6,7 +6,7 @@ namespace diet_server_api.Services.Interfaces
 {
     public interface IAuthService
     {
-        public Task<LoginResponse> Login(LoginRequest request);
-        public Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request);
+        Task<LoginResponse> Login(LoginRequest request);
+        Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request);
     }
 }

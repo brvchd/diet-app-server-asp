@@ -43,6 +43,7 @@ namespace diet_server_api.Models
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseNpgsql("Host=tai.db.elephantsql.com;Database=mdzcojxm;Username=mdzcojxm;Password=Ko_V9TI2V1PH2XI3DC1VYYt2pBTqRopP");
+                optionsBuilder.EnableSensitiveDataLogging();
             }
         }
 

@@ -1,6 +1,7 @@
-using System.Security.AccessControl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests;
 using diet_server_api.DTO.Responses;
@@ -10,7 +11,6 @@ using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
@@ -145,12 +145,26 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<List<PatientSearchResponse>> GetPatientsByName(string firstName, string lastName)
         {
-            var patients = await _dbContext.Users.Where(e => e.Firstname == firstName && e.Lastname == lastName && e.Role == Roles.PATIENT && e.Patient.Ispending == false).Select(e => new PatientSearchResponse {
-                IdPatient = e.Iduser,
-                FirstName = e.Firstname,
-                LastName = e.Lastname
-            }).ToListAsync();
-            return patients;
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                var patients = await _dbContext.Users.Where(e => e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false).Select(e => new PatientSearchResponse
+                {
+                    IdPatient = e.Iduser,
+                    FirstName = e.Firstname,
+                    LastName = e.Lastname
+                }).ToListAsync();
+                return patients;
+            }
+            else
+            {
+                var patients = await _dbContext.Users.Where(e => e.Firstname.ToLower() == firstName.ToLower() && e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false).Select(e => new PatientSearchResponse
+                {
+                    IdPatient = e.Iduser,
+                    FirstName = e.Firstname,
+                    LastName = e.Lastname
+                }).ToListAsync();
+                return patients;
+            }
         }
 
         public async Task<PatientsByPageResponse> GetPatientsByPage(int page = 1)

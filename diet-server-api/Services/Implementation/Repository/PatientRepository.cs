@@ -153,6 +153,7 @@ namespace diet_server_api.Services.Implementation.Repository
                     FirstName = e.Firstname,
                     LastName = e.Lastname
                 }).ToListAsync();
+                if(patients.Count == 0) throw new SearchNotFound("No such patient found");
                 return patients;
             }
             else
@@ -163,6 +164,7 @@ namespace diet_server_api.Services.Implementation.Repository
                     FirstName = e.Firstname,
                     LastName = e.Lastname
                 }).ToListAsync();
+                if(patients.Count == 0) throw new SearchNotFound("Not found");
                 return patients;
             }
         }
@@ -176,7 +178,8 @@ namespace diet_server_api.Services.Implementation.Repository
             {
                 IdPatient = e.Iduser,
                 FirstName = e.Firstname,
-                LastName = e.Lastname
+                LastName = e.Lastname,
+                DateOfBirth = e.Dateofbirth
             }).ToListAsync();
             return new PatientsByPageResponse()
             {

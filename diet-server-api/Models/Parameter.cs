@@ -14,7 +14,7 @@ namespace diet_server_api.Models
 
         public int Idparameter { get; set; }
         public string Name { get; set; }
-        public string Unit { get; set; }
+        public string Measureunit { get; set; }
 
         public virtual ICollection<ProductParameter> ProductParameters { get; set; }
     }

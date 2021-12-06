@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
@@ -99,49 +100,66 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
-        public async Task<SearchDiseaseResponse> SearchDisease(string diseaseName)
+        public async Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName)
         {
             if (string.IsNullOrWhiteSpace(diseaseName))
             {
                 throw new IncorrectParameter();
             }
-            var disease = await _dbContext.Diseases.FirstOrDefaultAsync(e => e.Name.ToLower() == diseaseName.ToLower().Trim());
-            if (disease != null)
-            {
-                return new SearchDiseaseResponse()
+            var disease = await _dbContext.Diseases.Where(e => e.Name.ToLower() == diseaseName.ToLower().Trim()).Select(e => new SearchDiseaseResponse()
                 {
-                    IdDisease = disease.Iddisease,
-                    DiseaseName = disease.Name,
-                    Description = disease.Description,
-                    Recommendation = disease.Recomendation
-                };
-            }
-            else
-            {
-                throw new DiseaseNotFound();
-            }
+                    IdDisease = e.Iddisease,
+                    Name = e.Name,
+                    Description = e.Description,
+                    Recommendation = e.Recomendation
+                }).ToListAsync();
+            if(disease.Count == 0) throw new SearchNotFound("Disease not found");
+            return disease;
         }
 
-        public async Task<SearchSupplementResponse> SearchSupplement(string supplementName)
+        public async Task<List<SearchSupplementResponse>> SearchSupplement(string supplementName)
         {
             if (string.IsNullOrWhiteSpace(supplementName))
             {
                 throw new IncorrectParameter();
             }
-            var supplement = await _dbContext.Supplements.FirstOrDefaultAsync(e => e.Name.ToLower() == supplementName.ToLower().Trim());
-            if (supplement != null)
-            {
-                return new SearchSupplementResponse()
+            var supplement = await _dbContext.Supplements.Where(e => e.Name.ToLower() == supplementName.ToLower().Trim()).Select(e => new SearchSupplementResponse()
                 {
-                    IdSupplement = supplement.Idsuppliment,
-                    SupplementName = supplement.Name,
-                    Description = supplement.Description
-                };
-            }
-            else
+                    IdSupplement = e.Idsuppliment,
+                    SupplementName = e.Name,
+                    Description = e.Description
+                }).ToListAsync();
+            if(supplement.Count == 0) throw new SearchNotFound("Supplement not found");
+            return supplement;
+        }
+
+        public async Task<AddProductResponse> AddProduct(AddProductRequest request)
+        {
+            var productExists = await _dbContext.Products.AnyAsync(e => e.Name.ToLower() == request.Name.ToLower().Trim());
+            if(productExists) throw new System.Exception();
+            var newproduct = new Product()
             {
-                throw new SupplementNotFound();
+                Name = request.Name,
+                Unit = request.Unit,
+                Size = request.Size,
+                Homemeasure = request.HomeMeasure,
+                Homemeasuresize = request.HomeMeasureSize
+            };
+            await _dbContext.Products.AddAsync(newproduct);
+            foreach (var parameter in request.Parameters)
+            {
+                var productParameter = new ProductParameter(){
+                    IdproductNavigation = newproduct,
+                    Idparameter = parameter.IdParameter,
+                    Amount = parameter.Amount
+                };
+                await _dbContext.ProductParameters.AddAsync(productParameter);
             }
+            await _dbContext.SaveChangesAsync();
+            return new AddProductResponse() {
+                IdProduct = newproduct.Idproduct,
+                Name = newproduct.Name
+            };
         }
     }
 }

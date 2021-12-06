@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -6,7 +8,10 @@ namespace diet_server_api.Models
 {
     public partial class mdzcojxmContext : DbContext
     {
-        public mdzcojxmContext() { }
+        public mdzcojxmContext()
+        {
+        }
+
         public mdzcojxmContext(DbContextOptions<mdzcojxmContext> options)
             : base(options)
         {
@@ -42,8 +47,8 @@ namespace diet_server_api.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseNpgsql("Host=tai.db.elephantsql.com;Database=mdzcojxm;Username=mdzcojxm;Password=Ko_V9TI2V1PH2XI3DC1VYYt2pBTqRopP");
-                optionsBuilder.EnableSensitiveDataLogging();
             }
         }
 
@@ -513,15 +518,15 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idparameter).HasColumnName("idparameter");
 
+                entity.Property(e => e.Measureunit)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("measureunit");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnName("name");
-
-                entity.Property(e => e.Unit)
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnName("unit");
             });
 
             modelBuilder.Entity<Patient>(entity =>
@@ -646,14 +651,23 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idproduct).HasColumnName("idproduct");
 
-                entity.Property(e => e.Homemeasure).HasColumnName("homemeasure");
+                entity.Property(e => e.Homemeasure)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("homemeasure");
+
+                entity.Property(e => e.Homemeasuresize)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("homemeasuresize");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(30)
                     .HasColumnName("name");
 
-                entity.Property(e => e.Servingsizeingramms).HasColumnName("servingsizeingramms");
+                entity.Property(e => e.Size)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("size");
 
                 entity.Property(e => e.Unit)
                     .IsRequired()

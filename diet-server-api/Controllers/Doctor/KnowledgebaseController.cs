@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
 using diet_server_api.Exceptions;
+using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -97,7 +98,7 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return BadRequest(ex.Message);
             }
-            catch (DiseaseNotFound ex)
+            catch (SearchNotFound ex)
             {
                 return NotFound(ex.Message);
             }
@@ -110,6 +111,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+
         public async Task<IActionResult> SearchSupplement([FromQuery] string supplementName)
         {
             try
@@ -121,10 +123,18 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return BadRequest(ex.Message);
             }
-            catch (SupplementNotFound ex)
+            catch (SearchNotFound ex)
             {
                 return NotFound(ex.Message);
             }
+        }
+
+        [HttpPost]
+        [Route("product")]
+        public async Task<IActionResult> AddProduct (AddProductRequest request)
+        {
+            var response = await _knowledgeRepo.AddProduct(request);
+            return Ok(response);
         }
     }
 }

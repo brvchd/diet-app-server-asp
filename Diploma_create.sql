@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-16 03:04:52.641
+-- Last modification date: 2021-11-28 20:38:11.096
 
 -- tables
 -- Table: Day
@@ -117,11 +117,11 @@ CREATE TABLE MealsBeforeDiet (
 CREATE TABLE Measurements (
     idMeasurement serial  NOT NULL,
     idPatient int  NOT NULL,
-    Height decimal(4,1)  NOT NULL,
-    Weight decimal(4,1)  NOT NULL,
+    Height decimal(10,2)  NOT NULL,
+    Weight decimal(10,2)  NOT NULL,
     Date date  NOT NULL,
-    HipCircumference decimal(4,1)  NOT NULL,
-    WaistCircumference decimal(4,1)  NOT NULL,
+    HipCircumference decimal(10,2)  NOT NULL,
+    WaistCircumference decimal(10,2)  NOT NULL,
     BicepsCircumference int  NULL,
     ChestCircumference int  NULL,
     ThighCircumference int  NULL,
@@ -145,7 +145,7 @@ CREATE TABLE Note (
 CREATE TABLE Parameter (
     idParameter serial  NOT NULL,
     Name varchar(100)  NOT NULL,
-    Unit varchar(100)  NOT NULL,
+    MeasureUnit varchar(100)  NOT NULL,
     CONSTRAINT Parameter_pk PRIMARY KEY (idParameter)
 );
 
@@ -157,10 +157,10 @@ CREATE TABLE Patient (
     City varchar(50)  NOT NULL,
     Street varchar(50)  NOT NULL,
     FlatNumber varchar(10)  NULL,
-    PAL decimal(3,2)  NULL,
+    PAL decimal(10,2)  NULL,
     StreetNumber varchar(10)  NOT NULL,
     correctedValue varchar(70)  NULL,
-    CPM decimal(6,2)  NULL,
+    CPM decimal(10,2)  NULL,
     CONSTRAINT Patient_pk PRIMARY KEY (idUser)
 );
 
@@ -169,8 +169,9 @@ CREATE TABLE Product (
     idProduct serial  NOT NULL,
     Name varchar(30)  NOT NULL,
     Unit varchar(50)  NOT NULL,
-    servingSizeInGramms int  NOT NULL,
-    homeMeasure int  NOT NULL,
+    Size decimal(10,2)  NOT NULL,
+    HomeMeasure varchar(50)  NOT NULL,
+    HomeMeasureSize decimal(10,2)  NOT NULL,
     CONSTRAINT Product_pk PRIMARY KEY (idProduct)
 );
 
@@ -188,7 +189,7 @@ CREATE TABLE Product_Parameter (
     idProduct_Parameter serial  NOT NULL,
     idProduct int  NOT NULL,
     idParameter int  NOT NULL,
-    Amount decimal(11,2)  NOT NULL,
+    Amount decimal(10,2)  NOT NULL,
     CONSTRAINT Product_Parameter_pk PRIMARY KEY (idProduct_Parameter)
 );
 
@@ -208,13 +209,13 @@ CREATE TABLE Questionary (
     OtherDiseases varchar(300)  NULL,
     Medications varchar(150)  NULL,
     SupplementsTaken varchar(300)  NULL,
-    AvgSleep decimal(4,1)  NOT NULL,
+    AvgSleep decimal(10,2)  NOT NULL,
     UsuallyWakeup varchar(20)  NOT NULL,
     UsuallyGoToSleep varchar(20)  NOT NULL,
     RegularWalk boolean  NOT NULL,
-    ExcercisingPerDay decimal(3,2)  NOT NULL,
+    ExcercisingPerDay decimal(10,2)  NOT NULL,
     SportTypes varchar(300)  NULL,
-    ExercisingPerWeek decimal(3,2)  NOT NULL,
+    ExercisingPerWeek decimal(10,2)  NOT NULL,
     WaterGlasses int  NOT NULL,
     CoffeeGlasses int  NOT NULL,
     TeaGlasses int  NOT NULL,

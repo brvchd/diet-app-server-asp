@@ -18,8 +18,9 @@ namespace diet_server_api.Models
         public int Idproduct { get; set; }
         public string Name { get; set; }
         public string Unit { get; set; }
-        public int Servingsizeingramms { get; set; }
-        public int Homemeasure { get; set; }
+        public decimal Size { get; set; }
+        public string Homemeasure { get; set; }
+        public decimal Homemeasuresize { get; set; }
 
         public virtual ICollection<Foodinput> Foodinputs { get; set; }
         public virtual ICollection<ProductParameter> ProductParameters { get; set; }

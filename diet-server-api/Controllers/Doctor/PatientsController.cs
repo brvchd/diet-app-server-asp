@@ -37,6 +37,7 @@ namespace diet_server_api.Controllers.Doctor
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> SearchPatients([FromQuery] string firstName, [FromQuery] string lastName)
         {
 
@@ -45,9 +46,9 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _patientRepo.GetPatientsByName(firstName, lastName);
                 return Ok(response);
             }
-            catch (UserNotFound ex)
+            catch (SearchNotFound ex)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
         }
     }

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using diet_server_api.DTO.Requests.Doctor;
+using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -34,7 +34,7 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _knowledgeRepo.AddDisease(request);
                 return CreatedAtAction(nameof(AddDisease), response);
             }
-            catch (DiseaseAlreadyExists ex)
+            catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -53,7 +53,7 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _knowledgeRepo.AddSupplement(request);
                 return CreatedAtAction(nameof(AddSupplement), response);
             }
-            catch (SupplementAlreadyExists ex)
+            catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -94,11 +94,11 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _knowledgeRepo.SearchDisease(diseaseName);
                 return Ok(response);
             }
-            catch (IncorrectParameter ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
             }
-            catch (SearchNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
@@ -119,22 +119,88 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _knowledgeRepo.SearchSupplement(supplementName);
                 return Ok(response);
             }
-            catch (IncorrectParameter ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
             }
-            catch (SearchNotFound ex)
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        [Route("product")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddProduct(AddProductRequest request)
+        {
+            try
+            {
+                var response = await _knowledgeRepo.AddProduct(request);
+                return Ok(response);
+            }
+            catch (AlreadyExists ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("products")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetProducts()
+        {
+            try
+            {
+                var response = await _knowledgeRepo.GetProducts();
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("parameters")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetParameters()
+        {
+            try
+            {
+                var response = await _knowledgeRepo.GetParameters();
+                return Ok(response);
+            }
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
         }
 
         [HttpPost]
-        [Route("product")]
-        public async Task<IActionResult> AddProduct (AddProductRequest request)
+        [Route("parameter")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> AddParameter(AddParameterRequest request)
         {
-            var response = await _knowledgeRepo.AddProduct(request);
-            return Ok(response);
+            try
+            {
+                var response = await _knowledgeRepo.AddParameter(request);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

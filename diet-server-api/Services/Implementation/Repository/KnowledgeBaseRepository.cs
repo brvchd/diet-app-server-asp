@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using diet_server_api.DTO.Requests.Doctor;
-using diet_server_api.DTO.Responses.Doctor;
+using diet_server_api.DTO.Requests.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase;
+using diet_server_api.DTO.Responses.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase.Get;
+using diet_server_api.DTO.Responses.KnowledgeBase.Search;
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -22,7 +25,7 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddDiseaseResponse> AddDisease(AddDiseaseRequest request)
         {
             var exists = await _dbContext.Diseases.AnyAsync(e => e.Name == request.Name);
-            if (exists) throw new DiseaseAlreadyExists();
+            if (exists) throw new AlreadyExists("Disease already exists");
             var disease = new Disease()
             {
                 Name = request.Name,
@@ -42,7 +45,7 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddSupplementResponse> AddSupplement(AddSupplementRequest request)
         {
             var exists = await _dbContext.Supplements.AnyAsync(e => e.Name == request.Name);
-            if (exists) throw new SupplementAlreadyExists();
+            if (exists) throw new AlreadyExists("Supplement already exists");
             var supplement = new Supplement()
             {
                 Name = request.Name,
@@ -104,16 +107,16 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             if (string.IsNullOrWhiteSpace(diseaseName))
             {
-                throw new IncorrectParameter();
+                throw new InvalidData("Incorrect parameter diseaseName");
             }
             var disease = await _dbContext.Diseases.Where(e => e.Name.ToLower() == diseaseName.ToLower().Trim()).Select(e => new SearchDiseaseResponse()
-                {
-                    IdDisease = e.Iddisease,
-                    Name = e.Name,
-                    Description = e.Description,
-                    Recommendation = e.Recomendation
-                }).ToListAsync();
-            if(disease.Count == 0) throw new SearchNotFound("Disease not found");
+            {
+                IdDisease = e.Iddisease,
+                Name = e.Name,
+                Description = e.Description,
+                Recommendation = e.Recomendation
+            }).ToListAsync();
+            if (disease.Count == 0) throw new NotFound("Disease not found");
             return disease;
         }
 
@@ -121,22 +124,22 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             if (string.IsNullOrWhiteSpace(supplementName))
             {
-                throw new IncorrectParameter();
+                throw new InvalidData("Incorrect supplementName");
             }
             var supplement = await _dbContext.Supplements.Where(e => e.Name.ToLower() == supplementName.ToLower().Trim()).Select(e => new SearchSupplementResponse()
-                {
-                    IdSupplement = e.Idsuppliment,
-                    SupplementName = e.Name,
-                    Description = e.Description
-                }).ToListAsync();
-            if(supplement.Count == 0) throw new SearchNotFound("Supplement not found");
+            {
+                IdSupplement = e.Idsuppliment,
+                SupplementName = e.Name,
+                Description = e.Description
+            }).ToListAsync();
+            if (supplement.Count == 0) throw new NotFound("Supplement not found");
             return supplement;
         }
 
         public async Task<AddProductResponse> AddProduct(AddProductRequest request)
         {
             var productExists = await _dbContext.Products.AnyAsync(e => e.Name.ToLower() == request.Name.ToLower().Trim());
-            if(productExists) throw new System.Exception();
+            if (productExists) throw new AlreadyExists("Product already exists");
             var newproduct = new Product()
             {
                 Name = request.Name,
@@ -148,7 +151,8 @@ namespace diet_server_api.Services.Implementation.Repository
             await _dbContext.Products.AddAsync(newproduct);
             foreach (var parameter in request.Parameters)
             {
-                var productParameter = new ProductParameter(){
+                var productParameter = new ProductParameter()
+                {
                     IdproductNavigation = newproduct,
                     Idparameter = parameter.IdParameter,
                     Amount = parameter.Amount
@@ -156,10 +160,56 @@ namespace diet_server_api.Services.Implementation.Repository
                 await _dbContext.ProductParameters.AddAsync(productParameter);
             }
             await _dbContext.SaveChangesAsync();
-            return new AddProductResponse() {
+            return new AddProductResponse()
+            {
                 IdProduct = newproduct.Idproduct,
                 Name = newproduct.Name
             };
+        }
+
+        public async Task<AddParameterResponse> AddParameter(AddParameterRequest request)
+        {
+            var exists = await _dbContext.Parameters.AnyAsync(e => e.Name.ToLower() == request.Name.ToLower());
+            if(exists) throw new AlreadyExists("Parameter already exists");
+            var parameter = new Parameter() {
+                Name = request.Name,
+                Measureunit = request.MeasureUnit
+            };
+            await _dbContext.Parameters.AddAsync(parameter);
+            await _dbContext.SaveChangesAsync();
+            return new AddParameterResponse {
+                idParam = parameter.Idparameter,
+                Name = parameter.Name
+            };
+        }
+
+        public async Task<List<GetParametersResponse>> GetParameters()
+        {
+            var parameters = await _dbContext.Parameters.Select(e => new GetParametersResponse() {
+                IdParameter = e.Idparameter,
+                Name = e.Name
+            }).ToListAsync();
+            if(parameters.Count == 0) throw new NotFound("No parameters found");
+            return parameters;
+        }
+
+        public async Task<List<GetProductsResponse>> GetProducts()
+        {
+            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).Select(e => new GetProductsResponse() {
+                IdProduct = e.Idproduct,
+                Name = e.Name,
+                Unit = e.Unit,
+                Size = e.Size,
+                HomeMeasure = e.Homemeasure,
+                HomeMeasureSize = e.Homemeasuresize,
+                Parameters = e.ProductParameters.Select(e => new GetProductsResponse.Parameter () {
+                    Name = e.IdparameterNavigation.Name,
+                    MeasureUnit = e.IdparameterNavigation.Measureunit,
+                    Amount = e.Amount
+                }).ToList()
+            }).ToListAsync();
+            if(products.Count == 0) throw new NotFound("No products found");
+            return products;
         }
     }
 }

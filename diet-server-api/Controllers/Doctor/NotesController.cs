@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using diet_server_api.DTO.Requests.Doctor;
+using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Services.Interfaces.Repository;
@@ -34,7 +34,7 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _notesRepo.AddNote(request);
                 return CreatedAtAction(nameof(AddNote), response);
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
@@ -52,7 +52,7 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _notesRepo.GetNotes(idPatient);
                 return Ok(response);
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }

@@ -29,9 +29,9 @@ namespace diet_server_api.Services.Implementation
         public async Task<LoginResponse> Login(LoginRequest request)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email == request.Email);
-            if (user == null) throw new UserNotFound();
+            if (user == null) throw new NotFound("User not found");
             var passwordToCompare = PasswordGenerator.GeneratePassword(request.Password, user.Salt);
-            if (passwordToCompare != user.Password) throw new IncorrectCredentials();
+            if (passwordToCompare != user.Password) throw new InvalidData("Incorrect credentials");
             if (user.Role == Roles.PATIENT)
             {
                 var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Ispending == true && e.Iduser == user.Iduser);

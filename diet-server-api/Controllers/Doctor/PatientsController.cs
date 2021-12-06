@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.Exceptions;
 using diet_server_api.Services.Interfaces.Repository;
@@ -28,7 +25,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetPatients(int page)
         {
-            var response = await _patientRepo.GetPatientsByPage(page);
+            var response = await _patientRepo.GetPatientPage(page);
             return Ok(response);
         }
 
@@ -46,7 +43,7 @@ namespace diet_server_api.Controllers.Doctor
                 var response = await _patientRepo.GetPatientsByName(firstName, lastName);
                 return Ok(response);
             }
-            catch (SearchNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }

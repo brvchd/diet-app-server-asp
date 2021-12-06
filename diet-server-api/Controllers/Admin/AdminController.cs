@@ -4,7 +4,6 @@ using diet_server_api.Exceptions;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Controllers.Admin
 {
@@ -35,7 +34,7 @@ namespace diet_server_api.Controllers.Admin
                 return CreatedAtAction(nameof(AddTempUser), response);
 
             }
-            catch (UserAlreadyExists ex)
+            catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -68,7 +67,7 @@ namespace diet_server_api.Controllers.Admin
                 var response = await _doctorRepoService.CreateDoctor(request);
                 return CreatedAtAction(nameof(CreateDoctor), response);
             }
-            catch (UserAlreadyExists ex)
+            catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
             }

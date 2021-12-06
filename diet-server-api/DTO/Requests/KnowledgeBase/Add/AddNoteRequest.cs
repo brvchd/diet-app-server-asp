@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace diet_server_api.DTO.Requests.Doctor
+namespace diet_server_api.DTO.Requests.KnowledgeBase.Add
 {
     public class AddNoteRequest
     {

@@ -26,7 +26,7 @@ namespace diet_server_api.Controllers.doctor
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetPatients()
         {
-            var response = await _doctorService.GetPatients();
+            var response = await _doctorService.GetPendingPatients();
             return Ok(response);
         }
 
@@ -40,26 +40,13 @@ namespace diet_server_api.Controllers.doctor
         {
             try
             {
-                var response = await _doctorService.GetPatientData(idpatient);
+                var response = await _doctorService.GetPendingPatientData(idpatient);
                 return Ok(response);
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
-            catch (MeasurmentsNotFound ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (QuestionaryNotFound ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (MealsBeforeDietNotFound ex)
-            {
-                return NotFound(ex.Message);
-            }
-
         }
 
         [HttpPatch]
@@ -72,10 +59,10 @@ namespace diet_server_api.Controllers.doctor
         {
             try
             {
-                await _doctorService.AcceptPatient(request);
+                await _doctorService.AcceptPendingPatient(request);
                 return Ok();
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
@@ -93,7 +80,7 @@ namespace diet_server_api.Controllers.doctor
                 await _doctorService.RejectPendingPatient(idPatient);
                 return Ok("Patient rejected successfully");
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }

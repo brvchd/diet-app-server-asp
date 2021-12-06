@@ -20,7 +20,7 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<TempUser> AddTempUser(TemporaryUserRequest user)
         {
             var exists = await _dbContext.TempUsers.AnyAsync(e => e.Email == user.Email);
-            if (exists) throw new UserAlreadyExists();
+            if (exists) throw new AlreadyExists("Temp user already exists");
             var tempUser = new TempUser()
             {
                 Email = user.Email,

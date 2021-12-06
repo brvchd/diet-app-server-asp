@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using diet_server_api.DTO.Requests.Doctor;
-using diet_server_api.DTO.Responses.Doctor;
+using diet_server_api.DTO.Requests.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase;
+using diet_server_api.DTO.Responses.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase.Get;
+using diet_server_api.DTO.Responses.KnowledgeBase.Search;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
@@ -14,6 +17,10 @@ namespace diet_server_api.Services.Interfaces.Repository
         Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName);
         Task<List<SearchSupplementResponse>> SearchSupplement(string supplementName);
         Task<AddProductResponse> AddProduct(AddProductRequest request);
+        Task<AddParameterResponse> AddParameter(AddParameterRequest request);
+        Task<List<GetParametersResponse>> GetParameters();
+        Task<List<GetProductsResponse>> GetProducts();
+
 
     }
 }

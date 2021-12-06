@@ -1,4 +1,4 @@
-namespace diet_server_api.DTO.Responses.Doctor
+namespace diet_server_api.DTO.Responses.KnowledgeBase.Search
 {
     public class SearchSupplementResponse
     {

@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests;
 using diet_server_api.DTO.Responses;
-using diet_server_api.DTO.Responses.Doctor;
+using diet_server_api.DTO.Responses.Doctor.Get;
+using diet_server_api.DTO.Responses.Doctor.Search;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Models;
@@ -27,16 +27,16 @@ namespace diet_server_api.Services.Implementation.Repository
         {
 
             var existingUser = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
-            if (existingUser) throw new UserAlreadyExists();
+            if (existingUser) throw new AlreadyExists("User already exists");
 
             var existingPesel = await _dbContext.Users.AnyAsync(e => e.Pesel == request.PESEL);
-            if (existingPesel) throw new UserAlreadyExists("PESEL already exists");
+            if (existingPesel) throw new AlreadyExists("PESEL already exists");
 
             var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
-            if (existingPhoneNumber) throw new UserAlreadyExists("Phone number already exists");
+            if (existingPhoneNumber) throw new AlreadyExists("Phone number already exists");
 
             var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.AccessEmail);
-            if (tempUser == null) throw new UserNotFound("No such user");
+            if (tempUser == null) throw new NotFound("User not found");
 
             _dbContext.TempUsers.Remove(tempUser);
 
@@ -151,9 +151,10 @@ namespace diet_server_api.Services.Implementation.Repository
                 {
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
-                    LastName = e.Lastname
+                    LastName = e.Lastname,
+                    DateOfBirth = e.Dateofbirth
                 }).ToListAsync();
-                if(patients.Count == 0) throw new SearchNotFound("No such patient found");
+                if (patients.Count == 0) throw new NotFound("No such patient found");
                 return patients;
             }
             else
@@ -164,15 +165,15 @@ namespace diet_server_api.Services.Implementation.Repository
                     FirstName = e.Firstname,
                     LastName = e.Lastname
                 }).ToListAsync();
-                if(patients.Count == 0) throw new SearchNotFound("Not found");
+                if (patients.Count == 0) throw new NotFound("Patients not found");
                 return patients;
             }
         }
 
-        public async Task<PatientsByPageResponse> GetPatientsByPage(int page = 1)
+        public async Task<PatientsByPageResponse> GetPatientPage(int page = 1)
         {
             if (page < 1) page = 1;
-            int pageSize = 7;
+            int pageSize = 9;
             var rows = await _dbContext.Patients.Where(e => e.Ispending == false).CountAsync();
             var patients = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == false).OrderBy(e => e.Firstname).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new PatientsByPageResponse.PatientByPage
             {

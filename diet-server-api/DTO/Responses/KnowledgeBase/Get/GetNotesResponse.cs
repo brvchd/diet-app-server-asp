@@ -1,6 +1,6 @@
 using System;
 
-namespace diet_server_api.DTO.Responses.Doctor
+namespace diet_server_api.DTO.Responses.KnowledgeBase.Get
 {
     public class GetNotesResponse
     {

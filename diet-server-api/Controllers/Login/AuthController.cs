@@ -29,11 +29,11 @@ namespace diet_server_api.Controllers.Login
                 return Ok(response);
 
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
-            catch (IncorrectCredentials ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
             }

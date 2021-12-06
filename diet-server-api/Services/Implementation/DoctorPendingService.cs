@@ -1,16 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Doctor;
-using diet_server_api.DTO.Responses.Doctor;
+using diet_server_api.DTO.Responses.Doctor.Get;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Helpers.Calculators;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using static diet_server_api.DTO.Requests.SurveySignUpRequest;
 
 namespace diet_server_api.Services.Implementation
@@ -24,7 +22,7 @@ namespace diet_server_api.Services.Implementation
             _dbContext = dbContext;
         }
 
-        public async Task<List<PendingPatientResponse>> GetPatients()
+        public async Task<List<PendingPatientResponse>> GetPendingPatients()
         {
             var users = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == true).Select(e => new PendingPatientResponse
             {
@@ -36,10 +34,10 @@ namespace diet_server_api.Services.Implementation
         }
 
 
-        public async Task<PendingPatientDataResponse> GetPatientData(int idpatient)
+        public async Task<PendingPatientDataResponse> GetPendingPatientData(int idpatient)
         {
             var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient && e.Role == Roles.PATIENT);
-            if (!userExists) throw new UserNotFound();
+            if (!userExists) throw new NotFound("User not found");
             var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new
             {
                 e.Iduser,
@@ -54,13 +52,13 @@ namespace diet_server_api.Services.Implementation
             }).FirstOrDefaultAsync(e => e.Iduser == idpatient);
 
             var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idpatient);
-            if (measurments == null) throw new MeasurmentsNotFound();
+            if (measurments == null) throw new NotFound("Measurments not found");
 
             var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idpatient);
-            if (questionary == null) throw new QuestionaryNotFound();
+            if (questionary == null) throw new NotFound("Questionary not found");
 
             var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);
-            if (!mealsExist) throw new MealsBeforeDietNotFound();
+            if (!mealsExist) throw new NotFound("Meal before diet not found");
             var meals = await _dbContext.Mealsbeforediets.Where(e => e.Idquestionary == questionary.Idquestionary).Select(e => new MealsBeforeDiet() { AtTime = e.Hour, MealNumber = e.Mealnumber, FoodToEat = e.Foodtoeat }).ToArrayAsync();
 
 
@@ -127,10 +125,10 @@ namespace diet_server_api.Services.Implementation
             return response;
         }
 
-        public async Task AcceptPatient(PendingPatientAccept request)
+        public async Task AcceptPendingPatient(PendingPatientAccept request)
         {
             var user = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == request.IdPatient);
-            if (user == null) throw new UserNotFound("Patient not found");
+            if (user == null) throw new NotFound("Patient not found");
             user.Correctedvalue = request.CorrectedValue;
             user.Cpm = request.CPM;
             user.Ispending = false;
@@ -140,7 +138,7 @@ namespace diet_server_api.Services.Implementation
         public async Task RejectPendingPatient(int idPatient)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT);
-            if (user == null) throw new UserNotFound();
+            if (user == null) throw new NotFound("User not found");
             var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == idPatient);
             var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
             var measurements = await _dbContext.Measurements.FirstOrDefaultAsync(e => e.Idpatient == idPatient);

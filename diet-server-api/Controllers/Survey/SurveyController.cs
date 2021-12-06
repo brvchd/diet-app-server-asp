@@ -31,7 +31,7 @@ namespace diet_server_api.Controllers
                 var response = await _surveyService.ValidateSurveyCredentials(request);
                 return Ok(response);
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
@@ -47,11 +47,11 @@ namespace diet_server_api.Controllers
                 var response = await _patientRepoService.CreatePatient(request);
                 return CreatedAtAction(nameof(SignUp), response);
             }
-            catch (UserAlreadyExists ex)
+            catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
             }
-            catch (UserNotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }

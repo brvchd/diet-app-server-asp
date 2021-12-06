@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using diet_server_api.DTO.Requests.Doctor;
-using diet_server_api.DTO.Responses.Doctor;
+using diet_server_api.DTO.Requests.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -23,9 +24,9 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddNoteResponse> AddNote(AddNoteRequest request)
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == request.IdPatient);
-            if (!patientExists) throw new UserNotFound("Patient not found!");
+            if (!patientExists) throw new NotFound("Patient not found!");
             var doctorExists = await _dbContext.Doctors.AnyAsync(e => e.Iduser == request.IdDoctor);
-            if (!doctorExists) throw new UserNotFound("Doctor not found!");
+            if (!doctorExists) throw new NotFound("Doctor not found!");
 
             var note = new Note()
             {
@@ -48,7 +49,7 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<List<GetNotesResponse>> GetNotes(int idPatient = 1)
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == idPatient && e.Ispending == false);
-            if (!patientExists) throw new UserNotFound("Patient not found!");
+            if (!patientExists) throw new NotFound("Patient not found!");
             var notes = await _dbContext.Notes.Where(e => e.Idpatient == idPatient).Select(e => new GetNotesResponse
             {
                 NoteText = e.Message,

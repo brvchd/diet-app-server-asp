@@ -1,7 +1,7 @@
 using System;
 using static diet_server_api.DTO.Requests.SurveySignUpRequest;
 
-namespace diet_server_api.DTO.Responses.Doctor
+namespace diet_server_api.DTO.Responses.Doctor.Get
 {
     public class PendingPatientDataResponse
     {

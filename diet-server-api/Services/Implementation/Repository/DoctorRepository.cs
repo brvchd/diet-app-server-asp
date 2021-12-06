@@ -19,9 +19,9 @@ namespace diet_server_api.Services.Implementation.Repository
         }
 
         public async Task<DoctorCreatorResponse> CreateDoctor(DoctorCreatorRequest request)
-        {
+        { 
             var exists = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
-            if (exists) throw new UserAlreadyExists("Doctor already exists!");
+            if (exists) throw new AlreadyExists("Doctor already exists!");
             var salt = SaltGenerator.GenerateSalt();
             var password = PasswordGenerator.GeneratePassword(request.Password, salt);
             var user = new User()

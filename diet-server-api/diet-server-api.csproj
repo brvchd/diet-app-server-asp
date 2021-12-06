@@ -15,4 +15,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DTO\Requests\KnowledgeBase\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTO\Requests\KnowledgeBase\" />
+  </ItemGroup>
 </Project>

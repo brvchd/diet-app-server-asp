@@ -153,7 +153,7 @@ namespace diet_server_api.Services.Implementation.Repository
                     FirstName = e.Firstname,
                     LastName = e.Lastname,
                     DateOfBirth = e.Dateofbirth
-                }).ToListAsync();
+                }).OrderBy(e => e.FirstName).ToListAsync();
                 if (patients.Count == 0) throw new NotFound("No such patient found");
                 return patients;
             }
@@ -164,7 +164,7 @@ namespace diet_server_api.Services.Implementation.Repository
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
                     LastName = e.Lastname
-                }).ToListAsync();
+                }).OrderBy(e => e.FirstName).ToListAsync();
                 if (patients.Count == 0) throw new NotFound("Patients not found");
                 return patients;
             }

@@ -36,7 +36,7 @@ namespace diet_server_api.Controllers.doctor
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetPatient(int idpatient)
+        public async Task<IActionResult> GetPatientData(int idpatient)
         {
             try
             {

@@ -170,14 +170,16 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddParameterResponse> AddParameter(AddParameterRequest request)
         {
             var exists = await _dbContext.Parameters.AnyAsync(e => e.Name.ToLower() == request.Name.ToLower());
-            if(exists) throw new AlreadyExists("Parameter already exists");
-            var parameter = new Parameter() {
+            if (exists) throw new AlreadyExists("Parameter already exists");
+            var parameter = new Parameter()
+            {
                 Name = request.Name,
                 Measureunit = request.MeasureUnit
             };
             await _dbContext.Parameters.AddAsync(parameter);
             await _dbContext.SaveChangesAsync();
-            return new AddParameterResponse {
+            return new AddParameterResponse
+            {
                 idParam = parameter.Idparameter,
                 Name = parameter.Name
             };
@@ -185,30 +187,33 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<List<GetParametersResponse>> GetParameters()
         {
-            var parameters = await _dbContext.Parameters.Select(e => new GetParametersResponse() {
+            var parameters = await _dbContext.Parameters.Select(e => new GetParametersResponse()
+            {
                 IdParameter = e.Idparameter,
                 Name = e.Name
             }).ToListAsync();
-            if(parameters.Count == 0) throw new NotFound("No parameters found");
+            if (parameters.Count == 0) throw new NotFound("No parameters found");
             return parameters;
         }
 
         public async Task<List<GetProductsResponse>> GetProducts()
         {
-            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).Select(e => new GetProductsResponse() {
+            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).Select(e => new GetProductsResponse()
+            {
                 IdProduct = e.Idproduct,
                 Name = e.Name,
                 Unit = e.Unit,
                 Size = e.Size,
                 HomeMeasure = e.Homemeasure,
                 HomeMeasureSize = e.Homemeasuresize,
-                Parameters = e.ProductParameters.Select(e => new GetProductsResponse.Parameter () {
+                Parameters = e.ProductParameters.Select(e => new GetProductsResponse.Parameter()
+                {
                     Name = e.IdparameterNavigation.Name,
                     MeasureUnit = e.IdparameterNavigation.Measureunit,
                     Amount = e.Amount
                 }).ToList()
             }).ToListAsync();
-            if(products.Count == 0) throw new NotFound("No products found");
+            if (products.Count == 0) throw new NotFound("No products found");
             return products;
         }
     }

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 
-#nullable disable
-
-namespace diet_server_api.Models
+namespace diet_server_api.DTO.Responses.Patient
 {
-    public partial class Measurement
+    public class GetMeasurementsByDateResponse
     {
-        public int Idmeasurement { get; set; }
-        public int Idpatient { get; set; }
         public decimal Height { get; set; }
         public decimal Weight { get; set; }
         public DateTime Date { get; set; }
@@ -20,7 +15,5 @@ namespace diet_server_api.Models
         public decimal? Calfcircumference { get; set; }
         public decimal? Waistlowercircumference { get; set; }
         public string Whomeasured { get; set; }
-
-        public virtual Patient IdpatientNavigation { get; set; }
     }
 }

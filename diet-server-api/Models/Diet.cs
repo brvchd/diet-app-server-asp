@@ -20,13 +20,9 @@ namespace diet_server_api.Models
         public string Description { get; set; }
         public DateTime Datefrom { get; set; }
         public DateTime Dateto { get; set; }
-        public DateTime? Datetoinformaboutchanges { get; set; }
-        public int Numberofmealsperday { get; set; }
-        public decimal Totalamountofcalories { get; set; }
-        public int Carbs { get; set; }
-        public int Fat { get; set; }
-        public int Fiber { get; set; }
-        public int Protein { get; set; }
+        public DateTime? Changesdate { get; set; }
+        public decimal Dailymeals { get; set; }
+        public decimal Protein { get; set; }
 
         public virtual Patient IdpatientNavigation { get; set; }
         public virtual ICollection<Day> Days { get; set; }

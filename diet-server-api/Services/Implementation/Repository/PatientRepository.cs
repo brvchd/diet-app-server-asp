@@ -8,9 +8,11 @@ using diet_server_api.DTO.Responses.Doctor.Get;
 using diet_server_api.DTO.Responses.Doctor.Search;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
+using diet_server_api.Helpers.Calculators;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
+using static diet_server_api.DTO.Requests.SurveySignUpRequest;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
@@ -76,7 +78,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 Date = DateTime.UtcNow,
                 Hipcircumference = request.HipCircumference,
                 Waistcircumference = request.WaistCircumference,
-                Whomeasured = request.FirstName + " " + request.LastName
+                Whomeasured = Roles.PATIENT
             };
 
             await _dbContext.Measurements.AddAsync(measurements);
@@ -189,6 +191,103 @@ namespace diet_server_api.Services.Implementation.Repository
                 PageSize = pageSize,
                 TotalRows = rows
             };
+        }
+
+        public async Task<GetPatientInfoResponse> GetPatientInfo(int idPatient)
+        {
+            var userExists = await _dbContext.Users.Include(e => e.Patient).AnyAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT && e.Patient.Ispending == false);
+            if (!userExists) throw new NotFound("User not found");
+            var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new
+            {
+                e.Iduser,
+                e.Firstname,
+                e.Lastname,
+                e.Email,
+                e.Pesel,
+                Address = $"{e.Patient.Street}, {e.Patient.Flatnumber}, {e.Patient.City}",
+                e.Phonenumber,
+                e.Patient.Gender,
+                Age = AgeCalculator.CalculateAge(e.Dateofbirth),
+                CPM = e.Patient.Cpm,
+                CorrectedValue = e.Patient.Correctedvalue,
+                PAL = e.Patient.Pal
+            }).FirstOrDefaultAsync(e => e.Iduser == idPatient);
+
+            var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idPatient);
+            if (measurments == null) throw new NotFound("Measurments not found");
+
+            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
+            if (questionary == null) throw new NotFound("Questionary not found");
+
+            var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);
+            if (!mealsExist) throw new NotFound("Meal before diet not found");
+            var meals = await _dbContext.Mealsbeforediets.Where(e => e.Idquestionary == questionary.Idquestionary).Select(e => new MealsBeforeDiet() { AtTime = e.Hour, MealNumber = e.Mealnumber, FoodToEat = e.Foodtoeat }).ToArrayAsync();
+
+
+            //Calculators
+            var idealBodyWeight = IdealBodyWeightCalculator.CalculateWeight(patient.Gender, measurments.Height);
+            var modifiedFormula = ModifiedFormulaCalculator.CalculateFormula(measurments.Height);
+            var basicMetabolism = BasicMetabolismCalculator.CalculateBasicMetabolism(patient.Gender, idealBodyWeight, measurments.Height, patient.Age);
+            var waistHipRatio = decimal.Round(measurments.Waistcircumference / measurments.Hipcircumference, 2);
+
+            var response = new GetPatientInfoResponse()
+            {
+                DateOfSurvey = questionary.Databadania,
+                FirstName = patient.Firstname,
+                LastName = patient.Lastname,
+                Email = patient.Email,
+                PESEL = patient.Pesel,
+                Address = patient.Address,
+                PhoneNumber = patient.Phonenumber,
+                Gender = patient.Gender,
+                Age = patient.Age,
+                Weight = measurments.Weight,
+                Height = measurments.Height,
+                IdealBodyWeight = idealBodyWeight,
+                ModifiedFormula = modifiedFormula,
+                BasicMetabolism = basicMetabolism,
+                WaistCircumference = measurments.Waistcircumference,
+                HipCircumference = measurments.Hipcircumference,
+                WaistHipRatio = waistHipRatio,
+                ConsultationGoal = questionary.Mainproblems,
+                Diabetes = questionary.Diabetes,
+                Hypertension = questionary.Hypertension,
+                InsulinResistance = questionary.Insulinresistance,
+                Hypothyroidism = questionary.Hypertension,
+                IntestinalDiseases = questionary.Intestinaldiseases,
+                OtherDiseases = questionary.Otherdiseases,
+                Medications = questionary.Medications,
+                DietSupplements = questionary.Supplementstaken,
+                GetUpInterval = questionary.Usuallywakeup,
+                GoToSleepInterval = questionary.Usuallygotosleep,
+                AvgSleep = questionary.Avgsleep,
+                SportsPerDay = questionary.Excercisingperday,
+                SportsPerWeek = questionary.Exercisingperweek,
+                RegularWalk = questionary.Regularwalk,
+                SportTypes = questionary.Sporttypes,
+                WaterGlasses = questionary.Waterglasses,
+                CoffeeGlasses = questionary.Waterglasses,
+                TeaGlasses = questionary.Teaglasses,
+                JuiceGlasses = questionary.Juiceglasses,
+                EnergyDrinkGlasses = questionary.Energydrinkglasses,
+                Alcohol = questionary.Alcoholinfo,
+                Cigs = questionary.Cigs,
+                Breakfast = questionary.Breakfast,
+                SecondBreakfast = questionary.Secondbreakfast,
+                Lunch = questionary.Lunch,
+                AfternoonMeal = questionary.Afternoonmeal,
+                Dinner = questionary.Dinner,
+                FavFood = questionary.Favfooditems,
+                NotFavFood = questionary.Notfavfooditems,
+                HypersensProds = questionary.Hypersensitivityproducts,
+                AlergieProds = questionary.Alergieproducts,
+                Meals = meals,
+                FoodBetweenMeals = questionary.Betweenmealsfood,
+                CPM = patient.CPM,
+                CorrectedValue = patient.CorrectedValue,
+                PAL = patient.PAL
+            };
+            return response;
         }
     }
 }

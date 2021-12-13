@@ -60,10 +60,12 @@ namespace diet_server_api
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<INotesRepository, NotesRepository>();
             services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
+            services.AddScoped<IMeasurementRepository, MeasurementsRepository>();
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt
                 .UseNpgsql(Configuration.GetConnectionString("elephantDb"))
                 .EnableSensitiveDataLogging());
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                    .AddJwtBearer(options =>
                    {
@@ -92,7 +94,6 @@ namespace diet_server_api
             //dev
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "diet_server_api v1"));
-
             app.UseCors(x => x
                             .AllowAnyMethod()
                             .AllowAnyHeader()

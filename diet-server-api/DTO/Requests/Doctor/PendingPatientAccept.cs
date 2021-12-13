@@ -11,7 +11,6 @@ namespace diet_server_api.DTO.Requests.Doctor
         [Required]
         public decimal PAL { get; set; }
         [Required]
-        [MaxLength(70)]
-        public string CorrectedValue { get; set; }
+        public decimal CorrectedValue { get; set; }
     }
 }

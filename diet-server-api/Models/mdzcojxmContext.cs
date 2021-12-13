@@ -106,7 +106,13 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Iddiet).HasColumnName("iddiet");
 
-                entity.Property(e => e.Carbs).HasColumnName("carbs");
+                entity.Property(e => e.Changesdate)
+                    .HasColumnType("date")
+                    .HasColumnName("changesdate");
+
+                entity.Property(e => e.Dailymeals)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("dailymeals");
 
                 entity.Property(e => e.Datefrom)
                     .HasColumnType("date")
@@ -116,18 +122,10 @@ namespace diet_server_api.Models
                     .HasColumnType("date")
                     .HasColumnName("dateto");
 
-                entity.Property(e => e.Datetoinformaboutchanges)
-                    .HasColumnType("date")
-                    .HasColumnName("datetoinformaboutchanges");
-
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(15000)
                     .HasColumnName("description");
-
-                entity.Property(e => e.Fat).HasColumnName("fat");
-
-                entity.Property(e => e.Fiber).HasColumnName("fiber");
 
                 entity.Property(e => e.Idpatient).HasColumnName("idpatient");
 
@@ -136,13 +134,9 @@ namespace diet_server_api.Models
                     .HasMaxLength(30)
                     .HasColumnName("name");
 
-                entity.Property(e => e.Numberofmealsperday).HasColumnName("numberofmealsperday");
-
-                entity.Property(e => e.Protein).HasColumnName("protein");
-
-                entity.Property(e => e.Totalamountofcalories)
+                entity.Property(e => e.Protein)
                     .HasPrecision(10, 2)
-                    .HasColumnName("totalamountofcalories");
+                    .HasColumnName("protein");
 
                 entity.HasOne(d => d.IdpatientNavigation)
                     .WithMany(p => p.Diets)
@@ -164,8 +158,6 @@ namespace diet_server_api.Models
                     .IsRequired()
                     .HasMaxLength(150)
                     .HasColumnName("description");
-
-                entity.Property(e => e.Dose).HasColumnName("dose");
 
                 entity.Property(e => e.Iddiet).HasColumnName("iddiet");
 
@@ -325,7 +317,9 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idrecipe).HasColumnName("idrecipe");
 
-                entity.Property(e => e.Proportion).HasColumnName("proportion");
+                entity.Property(e => e.Proportion)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("proportion");
 
                 entity.HasOne(d => d.IdmealtakeNavigation)
                     .WithMany(p => p.Individualrecipes)
@@ -406,6 +400,8 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idday).HasColumnName("idday");
 
+                entity.Property(e => e.Isfollowed).HasColumnName("isfollowed");
+
                 entity.Property(e => e.Time)
                     .HasColumnType("time without time zone")
                     .HasColumnName("time");
@@ -426,11 +422,17 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idmeasurement).HasColumnName("idmeasurement");
 
-                entity.Property(e => e.Bicepscircumference).HasColumnName("bicepscircumference");
+                entity.Property(e => e.Bicepscircumference)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("bicepscircumference");
 
-                entity.Property(e => e.Calfcircumference).HasColumnName("calfcircumference");
+                entity.Property(e => e.Calfcircumference)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("calfcircumference");
 
-                entity.Property(e => e.Chestcircumference).HasColumnName("chestcircumference");
+                entity.Property(e => e.Chestcircumference)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("chestcircumference");
 
                 entity.Property(e => e.Date)
                     .HasColumnType("date")
@@ -446,13 +448,17 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idpatient).HasColumnName("idpatient");
 
-                entity.Property(e => e.Thighcircumference).HasColumnName("thighcircumference");
+                entity.Property(e => e.Thighcircumference)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("thighcircumference");
 
                 entity.Property(e => e.Waistcircumference)
                     .HasPrecision(10, 2)
                     .HasColumnName("waistcircumference");
 
-                entity.Property(e => e.Waistlowercircumference).HasColumnName("waistlowercircumference");
+                entity.Property(e => e.Waistlowercircumference)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("waistlowercircumference");
 
                 entity.Property(e => e.Weight)
                     .HasPrecision(10, 2)
@@ -546,7 +552,7 @@ namespace diet_server_api.Models
                     .HasColumnName("city");
 
                 entity.Property(e => e.Correctedvalue)
-                    .HasMaxLength(70)
+                    .HasPrecision(10, 2)
                     .HasColumnName("correctedvalue");
 
                 entity.Property(e => e.Cpm)
@@ -714,8 +720,6 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.IdproductDiet).HasColumnName("idproduct_diet");
 
-                entity.Property(e => e.Allowed).HasColumnName("allowed");
-
                 entity.Property(e => e.Iddiet).HasColumnName("iddiet");
 
                 entity.Property(e => e.Idproduct).HasColumnName("idproduct");
@@ -880,7 +884,9 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Idrecipe).HasColumnName("idrecipe");
 
-                entity.Property(e => e.Amount).HasColumnName("amount");
+                entity.Property(e => e.Amount)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("amount");
 
                 entity.Property(e => e.Idmeal).HasColumnName("idmeal");
 

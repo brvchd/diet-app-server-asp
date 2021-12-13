@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-28 20:38:11.096
+-- Last modification date: 2021-12-11 12:37:28.491
 
 -- tables
 -- Table: Day
@@ -18,13 +18,9 @@ CREATE TABLE Diet (
     Description varchar(15000)  NOT NULL,
     DateFrom date  NOT NULL,
     DateTo date  NOT NULL,
-    DateToInformAboutChanges date  NULL,
-    numberOfMealsPerDay int  NOT NULL,
-    TotalAmountOfCalories decimal(10,2)  NOT NULL,
-    Carbs int  NOT NULL,
-    Fat int  NOT NULL,
-    Fiber int  NOT NULL,
-    Protein int  NOT NULL,
+    ChangesDate date  NULL,
+    DailyMeals decimal(10,2)  NOT NULL,
+    Protein decimal(10,2)  NOT NULL,
     CONSTRAINT Diet_pk PRIMARY KEY (idDiet)
 );
 
@@ -33,7 +29,6 @@ CREATE TABLE DietSuppliment (
     idDietSuppliment serial  NOT NULL,
     idDiet int  NOT NULL,
     idSuppliment int  NOT NULL,
-    Dose int  NOT NULL,
     Description varchar(150)  NOT NULL,
     CONSTRAINT DietSuppliment_pk PRIMARY KEY (idDietSuppliment)
 );
@@ -81,7 +76,7 @@ CREATE TABLE FoodInput (
 CREATE TABLE IndividualRecipe (
     idIndividualRecipe serial  NOT NULL,
     idRecipe int  NOT NULL,
-    proportion int  NOT NULL,
+    proportion decimal(10,2)  NOT NULL,
     idMealTake int  NOT NULL,
     CONSTRAINT IndividualRecipe_pk PRIMARY KEY (idIndividualRecipe)
 );
@@ -100,6 +95,7 @@ CREATE TABLE MealTake (
     idMealTake serial  NOT NULL,
     idDay int  NOT NULL,
     time time  NOT NULL,
+    IsFollowed boolean  NULL,
     CONSTRAINT MealTake_pk PRIMARY KEY (idMealTake)
 );
 
@@ -122,11 +118,11 @@ CREATE TABLE Measurements (
     Date date  NOT NULL,
     HipCircumference decimal(10,2)  NOT NULL,
     WaistCircumference decimal(10,2)  NOT NULL,
-    BicepsCircumference int  NULL,
-    ChestCircumference int  NULL,
-    ThighCircumference int  NULL,
-    CalfCircumference int  NULL,
-    WaistLowerCircumference int  NULL,
+    BicepsCircumference decimal(10,2)  NULL,
+    ChestCircumference decimal(10,2)  NULL,
+    ThighCircumference decimal(10,2)  NULL,
+    CalfCircumference decimal(10,2)  NULL,
+    WaistLowerCircumference decimal(10,2)  NULL,
     whoMeasured varchar(100)  NOT NULL,
     CONSTRAINT Measurements_pk PRIMARY KEY (idMeasurement)
 );
@@ -159,7 +155,7 @@ CREATE TABLE Patient (
     FlatNumber varchar(10)  NULL,
     PAL decimal(10,2)  NULL,
     StreetNumber varchar(10)  NOT NULL,
-    correctedValue varchar(70)  NULL,
+    correctedValue decimal(10,2)  NULL,
     CPM decimal(10,2)  NULL,
     CONSTRAINT Patient_pk PRIMARY KEY (idUser)
 );
@@ -180,7 +176,6 @@ CREATE TABLE ProductDiet (
     idProduct_Diet serial  NOT NULL,
     idProduct int  NOT NULL,
     idDiet int  NOT NULL,
-    allowed boolean  NOT NULL,
     CONSTRAINT ProductDiet_pk PRIMARY KEY (idProduct_Diet)
 );
 
@@ -241,7 +236,7 @@ CREATE TABLE Recipe (
     idRecipe serial  NOT NULL,
     idProduct int  NOT NULL,
     idMeal int  NOT NULL,
-    Amount int  NOT NULL,
+    Amount decimal(10,2)  NOT NULL,
     CONSTRAINT Recipe_pk PRIMARY KEY (idRecipe)
 );
 

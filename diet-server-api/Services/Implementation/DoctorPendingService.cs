@@ -132,12 +132,13 @@ namespace diet_server_api.Services.Implementation
             user.Correctedvalue = request.CorrectedValue;
             user.Cpm = request.CPM;
             user.Ispending = false;
+            user.Pal = request.PAL;
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task RejectPendingPatient(int idPatient)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT && e.Patient.Ispending == true);
             if (user == null) throw new NotFound("User not found");
             var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == idPatient);
             var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idPatient);

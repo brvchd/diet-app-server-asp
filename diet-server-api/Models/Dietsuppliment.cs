@@ -10,7 +10,6 @@ namespace diet_server_api.Models
         public int Iddietsuppliment { get; set; }
         public int Iddiet { get; set; }
         public int Idsuppliment { get; set; }
-        public int Dose { get; set; }
         public string Description { get; set; }
 
         public virtual Diet IddietNavigation { get; set; }

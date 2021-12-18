@@ -12,8 +12,6 @@ namespace diet_server_api.DTO.Requests.Patient
         [Required]
         public decimal Weight { get; set; }
         [Required]
-        public DateTime Date { get; set; }
-        [Required]
         public decimal Hipcircumference { get; set; }
         [Required]
         public decimal Waistcircumference { get; set; }

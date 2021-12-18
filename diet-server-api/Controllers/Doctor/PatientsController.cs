@@ -77,6 +77,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("patient/measurements")]
+        //[Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -84,20 +85,25 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _measurementRepo.AddMeasruments(request, Roles.DOCTOR);
+                var response = await _measurementRepo.AddMeasurements(request, Roles.DOCTOR);
                 return CreatedAtAction(nameof(AddMeasurement), response);
             }
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
+            catch (AlreadyExists ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpGet]
         [Route("patient/measurements")]
+        [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetMeasurements(int idPatient)
+        public async Task<IActionResult> GetMeasurements([FromQuery] int idPatient)
         {
             try
             {
@@ -110,24 +116,43 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
         [HttpGet]
+        [Authorize(Roles = "DOCTOR")]
         [Route("patient/measurementsbydate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetMeasurementsByDate(int idPatient, DateTime requestedDate)
+        public async Task<IActionResult> GetMeasurementsByDate([FromQuery] int idPatient, [FromQuery] DateTime requestedDate, [FromQuery] string whomeasured)
         {
             try
             {
-                var response = await _measurementRepo.GetMeasurements(idPatient, requestedDate);
+                var response = await _measurementRepo.GetMeasurements(idPatient, requestedDate, whomeasured);
                 return Ok(response);
             }
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
-            catch(InvalidData ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("patient/measurement")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetMeasurement([FromQuery] int idPatient)
+        {
+            try
+            {
+                var response = await _measurementRepo.GetMeasurement(idPatient);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
             }
         }
     }

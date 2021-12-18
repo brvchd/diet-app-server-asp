@@ -15,13 +15,20 @@ namespace diet_server_api.Controllers.Doctor
     [Route("api/knowledgebase")]
     public class KnowledgebaseController : ControllerBase
     {
-        private readonly IKnowledgeBaseRepository _knowledgeRepo;
+        private readonly IProductRepository _productRepo;
+        private readonly ISupplementRepository _supplementRepo;
+        private readonly IParameterRepository _paramRepo;
+        private readonly IMealRepository _mealRepo;
+        private readonly IDiseaseRepository _diseaseRepo;
 
-        public KnowledgebaseController(IKnowledgeBaseRepository knowledgeRepo)
+        public KnowledgebaseController(IProductRepository productRepo, ISupplementRepository supplementRepo, IParameterRepository paramRepo, IMealRepository mealRepo, IDiseaseRepository diseaseRepo)
         {
-            _knowledgeRepo = knowledgeRepo;
+            _productRepo = productRepo;
+            _supplementRepo = supplementRepo;
+            _paramRepo = paramRepo;
+            _mealRepo = mealRepo;
+            _diseaseRepo = diseaseRepo;
         }
-
 
         [HttpPost]
         [Route("disease")]
@@ -33,7 +40,7 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.AddDisease(request);
+                var response = await _diseaseRepo.AddDisease(request);
                 return CreatedAtAction(nameof(AddDisease), response);
             }
             catch (AlreadyExists ex)
@@ -52,7 +59,7 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.AddSupplement(request);
+                var response = await _supplementRepo.AddSupplement(request);
                 return CreatedAtAction(nameof(AddSupplement), response);
             }
             catch (AlreadyExists ex)
@@ -68,7 +75,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetSupplements(int page)
         {
-            var response = await _knowledgeRepo.GetSupplements(page);
+            var response = await _supplementRepo.GetSupplements(page);
             return Ok(response);
         }
         [HttpGet]
@@ -78,7 +85,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetDiseases(int page)
         {
-            var response = await _knowledgeRepo.GetDiseases(page);
+            var response = await _diseaseRepo.GetDiseases(page);
             return Ok(response);
         }
 
@@ -93,7 +100,7 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.SearchDisease(diseaseName);
+                var response = await _diseaseRepo.SearchDisease(diseaseName);
                 return Ok(response);
             }
             catch (InvalidData ex)
@@ -118,7 +125,7 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.SearchSupplement(supplementName);
+                var response = await _supplementRepo.SearchSupplement(supplementName);
                 return Ok(response);
             }
             catch (InvalidData ex)
@@ -142,8 +149,8 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.AddProduct(request);
-                return CreatedAtAction(nameof(AddProduct),response);
+                var response = await _productRepo.AddProduct(request);
+                return CreatedAtAction(nameof(AddProduct), response);
             }
             catch (AlreadyExists ex)
             {
@@ -156,11 +163,11 @@ namespace diet_server_api.Controllers.Doctor
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetProducts([FromQuery]int page)
+        public async Task<IActionResult> GetProducts([FromQuery] int page)
         {
             try
             {
-                var response = await _knowledgeRepo.GetProducts(page);
+                var response = await _productRepo.GetProducts(page);
                 return Ok(response);
             }
             catch (NotFound ex)
@@ -178,7 +185,7 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.GetParameters();
+                var response = await _paramRepo.GetParameters();
                 return Ok(response);
             }
             catch (NotFound ex)
@@ -196,8 +203,8 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _knowledgeRepo.AddParameter(request);
-                return CreatedAtAction(nameof(AddParameter),response);
+                var response = await _paramRepo.AddParameter(request);
+                return CreatedAtAction(nameof(AddParameter), response);
             }
             catch (AlreadyExists ex)
             {
@@ -215,8 +222,8 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                 var response = await _knowledgeRepo.UpdateSupplement(request);
-                 return Ok(response);
+                var response = await _supplementRepo.UpdateSupplement(request);
+                return Ok(response);
             }
             catch (NotFound ex)
             {
@@ -234,8 +241,8 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                 var response = await _knowledgeRepo.UpdateDisease(request);
-                 return Ok(response);
+                var response = await _diseaseRepo.UpdateDisease(request);
+                return Ok(response);
             }
             catch (NotFound ex)
             {
@@ -250,11 +257,11 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchPrpduct([FromQuery] string productName)
+        public async Task<IActionResult> SearchProduct([FromQuery] string productName)
         {
             try
             {
-                var response = await _knowledgeRepo.SearchProduct(productName);
+                var response = await _productRepo.SearchProduct(productName);
                 return Ok(response);
             }
             catch (InvalidData ex)
@@ -264,6 +271,52 @@ namespace diet_server_api.Controllers.Doctor
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+        [HttpPatch]
+        [Route("product")]
+        //[Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateProduct(UpdateProductRequest request)
+        {
+            try
+            {
+                var response = await _productRepo.UpdateProduct(request);
+                return Ok(response);
+            }
+            catch (AlreadyExists ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+        [HttpPost]
+        [Route("meal")]
+        //[Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddMeal(AddMealRequest request)
+        {
+            try
+            {
+                var response = await _mealRepo.AddMeal(request);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (AlreadyExists ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

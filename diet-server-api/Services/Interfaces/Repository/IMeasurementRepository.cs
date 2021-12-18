@@ -8,8 +8,9 @@ namespace diet_server_api.Services.Interfaces.Repository
 {
     public interface IMeasurementRepository
     {
-        Task<AddMeasrumentsResponse> AddMeasruments(AddMeasrumentsRequest request, string whomeasured);
+        Task<AddMeasrumentsResponse> AddMeasurements(AddMeasrumentsRequest request, string whomeasured);
         Task<List<GetMeasurementsResponse>> GetMeasurements(int idPatient);
-        Task<List<GetMeasurementsByDateResponse>> GetMeasurements(int idPatient, DateTime date);
+        Task<List<GetMeasurementsByDateResponse>> GetMeasurements(int idPatient, DateTime date, string whomeasured);
+        Task<List<GetMeasurementResponse>> GetMeasurement(int idPatient);
     }
 }

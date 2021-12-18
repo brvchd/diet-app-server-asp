@@ -20,6 +20,7 @@ namespace diet_server_api.DTO.Responses.KnowledgeBase.Get
         }
         public class Parameter
         {
+            public int IdParameter { get; set; }
             public string Name { get; set; }
             public string MeasureUnit { get; set; }
             public decimal Amount { get; set; }

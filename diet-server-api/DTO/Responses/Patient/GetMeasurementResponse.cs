@@ -2,7 +2,7 @@ using System;
 
 namespace diet_server_api.DTO.Responses.Patient
 {
-    public class GetMeasurementsByDateResponse
+    public class GetMeasurementResponse
     {
         public decimal Height { get; set; }
         public decimal Weight { get; set; }
@@ -15,7 +15,6 @@ namespace diet_server_api.DTO.Responses.Patient
         public decimal? Calfcircumference { get; set; }
         public decimal? Waistlowercircumference { get; set; }
         public string Whomeasured { get; set; }
-
         public int Age { get; set; }
         public string Gender { get; set; }
     }

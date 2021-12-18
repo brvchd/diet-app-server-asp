@@ -6,5 +6,6 @@ namespace diet_server_api.DTO.Responses.Patient
     {
         public int IdMeasurement { get; set; }
         public DateTime Date { get; set; }
+        public string WhoMeasured { get; set; }
     }
 }

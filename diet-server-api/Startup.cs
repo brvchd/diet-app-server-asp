@@ -59,8 +59,13 @@ namespace diet_server_api
             services.AddScoped<IPatientRepository, PatientRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<INotesRepository, NotesRepository>();
-            services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
             services.AddScoped<IMeasurementRepository, MeasurementsRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IParameterRepository, ParameterRepository>();
+            services.AddScoped<ISupplementRepository, SupplementRepository>();
+            services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+            services.AddScoped<IMealRepository, MealRepository>();
+
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt
                 .UseNpgsql(Configuration.GetConnectionString("elephantDb"))
@@ -98,9 +103,6 @@ namespace diet_server_api
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowAnyOrigin());
-            //.WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:7000", "https://localhost:7000")
-            //.AllowCredentials());
-
 
             app.UseRouting();
 

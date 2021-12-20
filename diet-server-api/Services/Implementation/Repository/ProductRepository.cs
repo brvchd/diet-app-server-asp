@@ -55,6 +55,31 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
+        public async Task<List<GetProductParametersResponse>> GetProductParams(int IdProduct)
+        {
+            var exists = await _dbContext.Products.AnyAsync(e => e.Idproduct == IdProduct);
+            if (!exists) throw new NotFound("Product not found");
+            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).Where(e => e.Idproduct == IdProduct).Select(e => new GetProductParametersResponse()
+            {
+                IdProduct = e.Idproduct,
+                Name = e.Name,
+                Unit = e.Unit,
+                Size = e.Size,
+                HomeMeasure = e.Homemeasure,
+                HomeMeasureSize = e.Homemeasuresize,
+                Parameters = e.ProductParameters.Select(e => new GetProductsResponse.Parameter()
+                {
+                    IdParameter = e.Idparameter,
+                    Name = e.IdparameterNavigation.Name,
+                    MeasureUnit = e.IdparameterNavigation.Measureunit,
+                    Amount = e.Amount
+                }).ToList()
+            }).ToListAsync();
+
+            return products;
+
+        }
+
         public async Task<GetProductsResponse> GetProducts(int page)
         {
             if (page < 1) page = 1;
@@ -109,7 +134,7 @@ namespace diet_server_api.Services.Implementation.Repository
                     MeasureUnit = e.IdparameterNavigation.Measureunit,
                     Amount = e.Amount
                 }).ToList()
-            }).OrderBy(e => e.Name).ToListAsync();
+            }).ToListAsync();
 
             if (products.Count == 0) throw new NotFound("No products found");
             return products;
@@ -119,10 +144,12 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var product = await _dbContext.Products.FirstOrDefaultAsync(e => e.Idproduct == request.ProductId);
             if (product == null) throw new NotFound("Product not found");
-            var prodNameExists = await _dbContext.Products.FirstOrDefaultAsync(e => e.Name.ToLower() == request.Name.ToLower().Trim());
-            if (prodNameExists != null && prodNameExists.Idproduct != product.Idproduct) throw new AlreadyExists("Product with such name already exists");
+            if (request.Name != null)
+            {
+                var prodNameExists = await _dbContext.Products.FirstOrDefaultAsync(e => e.Name.ToLower() == request.Name.ToLower().Trim());
+                if (prodNameExists != null && prodNameExists.Idproduct != product.Idproduct) throw new AlreadyExists("Product with such name already exists");
+            }
             var prodParams = await _dbContext.ProductParameters.Where(e => e.Idproduct == request.ProductId).ToListAsync();
-
             product.Name = string.IsNullOrWhiteSpace(request.Name) ? product.Name : request.Name;
             product.Unit = string.IsNullOrWhiteSpace(request.Unit) ? product.Unit : request.Unit;
             product.Size = request.Size <= 0 ? product.Size : request.Size;

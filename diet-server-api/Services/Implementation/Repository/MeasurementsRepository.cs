@@ -91,7 +91,7 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var patient = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Iduser == idPatient).FirstOrDefaultAsync();
             if (patient == null) throw new NotFound("Patient not found");
-            if (date == null || date > DateTime.UtcNow) throw new InvalidData("Incorrect date provided");
+            if (date > DateTime.UtcNow) throw new InvalidData("Incorrect date provided");
             var measurements = await _dbContext.Measurements.Where(e => e.Idpatient == idPatient && e.Date.Date == date.Date && e.Whomeasured.ToLower() == whomeasured.ToLower().Trim()).Select(e => new GetMeasurementsByDateResponse
             {
                 Height = e.Height,

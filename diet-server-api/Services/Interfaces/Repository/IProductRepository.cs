@@ -15,6 +15,7 @@ namespace diet_server_api.Services.Interfaces.Repository
         Task<GetProductsResponse> GetProducts(int page);
         Task<List<GetProductsResponse.Product>> SearchProduct(string product);
         Task<UpdateProductResponse> UpdateProduct(UpdateProductRequest request);
+        Task<List<GetProductParametersResponse>> GetProductParams(int IdProduct);
 
 
 

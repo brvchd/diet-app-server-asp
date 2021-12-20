@@ -212,7 +212,7 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
 
-        [HttpPatch]
+        [HttpPut]
         [Route("supplement")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -231,7 +231,7 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
 
-        [HttpPatch]
+        [HttpPut]
         [Route("disease")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -273,9 +273,9 @@ namespace diet_server_api.Controllers.Doctor
                 return NotFound(ex.Message);
             }
         }
-        [HttpPatch]
+        [HttpPut]
         [Route("product")]
-        //[Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -298,7 +298,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpPost]
         [Route("meal")]
-        //[Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -317,6 +317,69 @@ namespace diet_server_api.Controllers.Doctor
             catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("product/parameters")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProductParams([FromQuery] int IdProduct)
+        {
+            try
+            {
+                var response = await _productRepo.GetProductParams(IdProduct);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("meals")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetMeals([FromQuery] int page)
+        {
+            try
+            {
+                var response = await _mealRepo.GetMeals(page);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("meal/search")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> SearchMeal([FromQuery] string mealName)
+        {
+            try
+            {
+                var response = await _productRepo.SearchProduct(mealName);
+                return Ok(response);
+            }
+            catch (InvalidData ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
             }
         }
     }

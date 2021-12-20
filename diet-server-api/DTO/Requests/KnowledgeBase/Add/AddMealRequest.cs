@@ -22,7 +22,9 @@ namespace diet_server_api.DTO.Requests.KnowledgeBase.Add
         public List<Recipe> Recipes { get; set; }
         public class Recipe
         {
+            [Required]
             public int IdProduct { get; set; }
+            [Required]
             public decimal Amount { get; set; }
         }
     }

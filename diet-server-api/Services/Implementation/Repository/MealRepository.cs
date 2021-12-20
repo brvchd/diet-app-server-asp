@@ -1,12 +1,15 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Add;
+using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace diet_server_api.Services.Implementation.Repository
+namespace diet_server_api.Services.Implementation.Repository  
 {
     public class MealRepository : IMealRepository
     {
@@ -47,5 +50,66 @@ namespace diet_server_api.Services.Implementation.Repository
                 MealName = meal.Nameofmeal
             };
         }
+
+        public async Task<GetMealsResponse> GetMeals(int page = 1)
+        {
+            if (page < 1) page = 1;
+            int pageSize = 12;
+            var rows = await _dbContext.Products.CountAsync();
+
+            var meals = await _dbContext.Meals.Include(e => e.Recipes).ThenInclude(e => e.IdproductNavigation).OrderBy(e => e.Nameofmeal).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new GetMealsResponse.MealRecipe()
+            {
+                IdMeal = e.Idmeal,
+                NameOfMeal = e.Nameofmeal,
+                Description = e.Description,
+                CookingURL = e.CookingUrl,
+                Products = e.Recipes.Select(e => new GetMealsResponse.MealRecipe.RecipeProduct()
+                {
+                    IdProduct = e.Idproduct,
+                    IdMealRecipe = e.Idrecipe,
+                    Name = e.IdproductNavigation.Name,
+                    Unit = e.IdproductNavigation.Unit,
+                    Size = e.IdproductNavigation.Size,
+                    HomeMeasure = e.IdproductNavigation.Homemeasure,
+                    HomeMeasureSize = e.IdproductNavigation.Homemeasuresize,
+                    Amount = e.Amount,
+                }).ToList()
+            }).ToListAsync();
+            if (meals.Count == 0) throw new NotFound("No products found");
+            return new GetMealsResponse {
+                PageNumber = page,
+                TotalRows = rows,
+                PageSize = pageSize,
+                Meals = meals
+            };
+        }
+
+        public async Task<List<GetMealsResponse.MealRecipe>> SearchMeal(string mealName)
+        {
+            if (string.IsNullOrWhiteSpace(mealName))
+            {
+                throw new InvalidData("Incorrect product name");
+            } 
+            var meals = await _dbContext.Meals.Include(e => e.Recipes).ThenInclude(e => e.IdproductNavigation).Where(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim()).Select(e => new GetMealsResponse.MealRecipe()
+            {
+                IdMeal = e.Idmeal,
+                NameOfMeal = e.Nameofmeal,
+                Description = e.Description,
+                CookingURL = e.CookingUrl,
+                Products = e.Recipes.Select(e => new GetMealsResponse.MealRecipe.RecipeProduct()
+                {
+                    IdProduct = e.Idproduct,
+                    IdMealRecipe = e.Idrecipe,
+                    Name = e.IdproductNavigation.Name,
+                    Unit = e.IdproductNavigation.Unit,
+                    Size = e.IdproductNavigation.Size,
+                    HomeMeasure = e.IdproductNavigation.Homemeasure,
+                    HomeMeasureSize = e.IdproductNavigation.Homemeasuresize,
+                    Amount = e.Amount,
+                }).ToList()
+            }).OrderBy(e => e.NameOfMeal).ToListAsync();
+            if (meals.Count == 0) throw new NotFound("No products found");
+            return meals;
+        }        
     }
 }

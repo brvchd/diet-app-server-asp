@@ -108,7 +108,7 @@ namespace diet_server_api.Services.Implementation.Repository
                     Amount = e.Amount,
                 }).ToList()
             }).OrderBy(e => e.NameOfMeal).ToListAsync();
-            if (meals.Count == 0) throw new NotFound("No products found");
+            if (meals.Count == 0) throw new NotFound("No meals found");
             return meals;
         }        
     }

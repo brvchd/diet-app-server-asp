@@ -370,7 +370,7 @@ namespace diet_server_api.Controllers.Doctor
         {
             try
             {
-                var response = await _productRepo.SearchProduct(mealName);
+                var response = await _mealRepo.SearchMeal(mealName);
                 return Ok(response);
             }
             catch (InvalidData ex)

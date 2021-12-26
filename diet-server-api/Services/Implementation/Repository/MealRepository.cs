@@ -9,7 +9,7 @@ using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace diet_server_api.Services.Implementation.Repository  
+namespace diet_server_api.Services.Implementation.Repository
 {
     public class MealRepository : IMealRepository
     {
@@ -76,7 +76,8 @@ namespace diet_server_api.Services.Implementation.Repository
                 }).ToList()
             }).ToListAsync();
             if (meals.Count == 0) throw new NotFound("No products found");
-            return new GetMealsResponse {
+            return new GetMealsResponse
+            {
                 PageNumber = page,
                 TotalRows = rows,
                 PageSize = pageSize,
@@ -89,7 +90,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (string.IsNullOrWhiteSpace(mealName))
             {
                 throw new InvalidData("Incorrect product name");
-            } 
+            }
             var meals = await _dbContext.Meals.Include(e => e.Recipes).ThenInclude(e => e.IdproductNavigation).Where(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim()).Select(e => new GetMealsResponse.MealRecipe()
             {
                 IdMeal = e.Idmeal,
@@ -110,6 +111,6 @@ namespace diet_server_api.Services.Implementation.Repository
             }).OrderBy(e => e.NameOfMeal).ToListAsync();
             if (meals.Count == 0) throw new NotFound("No meals found");
             return meals;
-        }        
+        }
     }
 }

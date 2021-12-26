@@ -1,9 +1,7 @@
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.DTO.Requests.KnowledgeBase.Update;
-using diet_server_api.DTO.Responses.KnowledgeBase.Update;
 using diet_server_api.Exceptions;
-using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -65,6 +65,7 @@ namespace diet_server_api
             services.AddScoped<ISupplementRepository, SupplementRepository>();
             services.AddScoped<IDiseaseRepository, DiseaseRepository>();
             services.AddScoped<IMealRepository, MealRepository>();
+            services.AddScoped<IDietRepository,DietRepository>();
 
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt

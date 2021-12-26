@@ -7,5 +7,6 @@ namespace diet_server_api.Services.Interfaces.Repository
     public interface IDietRepository
     {
         Task<CreateDietResponse> CreateDiet(CreateDietRequest request);
+        Task AssignMeal(AssignMealsRequest request);
     }
 }

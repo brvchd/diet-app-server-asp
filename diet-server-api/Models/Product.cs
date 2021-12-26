@@ -9,9 +9,7 @@ namespace diet_server_api.Models
     {
         public Product()
         {
-            Foodinputs = new HashSet<Foodinput>();
             ProductParameters = new HashSet<ProductParameter>();
-            Productdiets = new HashSet<Productdiet>();
             Recipes = new HashSet<Recipe>();
         }
 
@@ -22,9 +20,7 @@ namespace diet_server_api.Models
         public string Homemeasure { get; set; }
         public decimal Homemeasuresize { get; set; }
 
-        public virtual ICollection<Foodinput> Foodinputs { get; set; }
         public virtual ICollection<ProductParameter> ProductParameters { get; set; }
-        public virtual ICollection<Productdiet> Productdiets { get; set; }
         public virtual ICollection<Recipe> Recipes { get; set; }
     }
 }

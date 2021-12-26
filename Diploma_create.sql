@@ -1,12 +1,13 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-12-11 12:37:28.491
+-- Last modification date: 2021-12-26 21:43:45.585
 
 -- tables
 -- Table: Day
 CREATE TABLE Day (
     idDay serial  NOT NULL,
-    dayNumber int  NOT NULL,
-    Diet_idDiet int  NOT NULL,
+    DayNumber int  NOT NULL,
+    DietIdDiet int  NOT NULL,
+    PatientReport varchar(1000)  NULL,
     CONSTRAINT Day_pk PRIMARY KEY (idDay)
 );
 
@@ -18,9 +19,9 @@ CREATE TABLE Diet (
     Description varchar(15000)  NOT NULL,
     DateFrom date  NOT NULL,
     DateTo date  NOT NULL,
-    ChangesDate date  NULL,
     DailyMeals decimal(10,2)  NOT NULL,
     Protein decimal(10,2)  NOT NULL,
+    ChangesDate date  NULL,
     CONSTRAINT Diet_pk PRIMARY KEY (idDiet)
 );
 
@@ -59,24 +60,10 @@ CREATE TABLE Doctor (
     CONSTRAINT Doctor_pk PRIMARY KEY (idUser)
 );
 
--- Table: FoodInput
-CREATE TABLE FoodInput (
-    idInput serial  NOT NULL,
-    idProduct int  NOT NULL,
-    idPatient int  NOT NULL,
-    Name varchar(50)  NOT NULL,
-    Amount int  NOT NULL,
-    Unit varchar(30)  NOT NULL,
-    Time time  NOT NULL,
-    Date date  NOT NULL,
-    CONSTRAINT FoodInput_pk PRIMARY KEY (idInput)
-);
-
 -- Table: IndividualRecipe
 CREATE TABLE IndividualRecipe (
     idIndividualRecipe serial  NOT NULL,
     idRecipe int  NOT NULL,
-    proportion decimal(10,2)  NOT NULL,
     idMealTake int  NOT NULL,
     CONSTRAINT IndividualRecipe_pk PRIMARY KEY (idIndividualRecipe)
 );
@@ -94,8 +81,9 @@ CREATE TABLE Meal (
 CREATE TABLE MealTake (
     idMealTake serial  NOT NULL,
     idDay int  NOT NULL,
-    time time  NOT NULL,
+    Time varchar(500)  NOT NULL,
     IsFollowed boolean  NULL,
+    Proportion decimal(10,2)  NOT NULL,
     CONSTRAINT MealTake_pk PRIMARY KEY (idMealTake)
 );
 
@@ -169,14 +157,6 @@ CREATE TABLE Product (
     HomeMeasure varchar(50)  NOT NULL,
     HomeMeasureSize decimal(10,2)  NOT NULL,
     CONSTRAINT Product_pk PRIMARY KEY (idProduct)
-);
-
--- Table: ProductDiet
-CREATE TABLE ProductDiet (
-    idProduct_Diet serial  NOT NULL,
-    idProduct int  NOT NULL,
-    idDiet int  NOT NULL,
-    CONSTRAINT ProductDiet_pk PRIMARY KEY (idProduct_Diet)
 );
 
 -- Table: Product_Parameter
@@ -279,14 +259,14 @@ CREATE TABLE Visit (
     idPatient serial  NOT NULL,
     Date date  NOT NULL,
     Time time  NOT NULL,
-    description varchar(300)  NOT NULL,
+    Description varchar(300)  NOT NULL,
     CONSTRAINT Visit_pk PRIMARY KEY (idVisit)
 );
 
 -- foreign keys
 -- Reference: Day_Diet (table: Day)
 ALTER TABLE Day ADD CONSTRAINT Day_Diet
-    FOREIGN KEY (Diet_idDiet)
+    FOREIGN KEY (DietIdDiet)
     REFERENCES Diet (idDiet)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
@@ -328,22 +308,6 @@ ALTER TABLE Disease_Patient ADD CONSTRAINT Disease_Patient_Diseases
 ALTER TABLE Disease_Patient ADD CONSTRAINT Disease_Patient_Patient
     FOREIGN KEY (idPatient)
     REFERENCES Patient (idUser)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: FoodInput_Patient (table: FoodInput)
-ALTER TABLE FoodInput ADD CONSTRAINT FoodInput_Patient
-    FOREIGN KEY (idPatient)
-    REFERENCES Patient (idUser)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: FoodInput_Products (table: FoodInput)
-ALTER TABLE FoodInput ADD CONSTRAINT FoodInput_Products
-    FOREIGN KEY (idProduct)
-    REFERENCES Product (idProduct)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -438,22 +402,6 @@ ALTER TABLE Recipe ADD CONSTRAINT Recipe_Meals
 
 -- Reference: Recipe_Products (table: Recipe)
 ALTER TABLE Recipe ADD CONSTRAINT Recipe_Products
-    FOREIGN KEY (idProduct)
-    REFERENCES Product (idProduct)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Table_16_Diet (table: ProductDiet)
-ALTER TABLE ProductDiet ADD CONSTRAINT Table_16_Diet
-    FOREIGN KEY (idDiet)
-    REFERENCES Diet (idDiet)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Table_16_Products (table: ProductDiet)
-ALTER TABLE ProductDiet ADD CONSTRAINT Table_16_Products
     FOREIGN KEY (idProduct)
     REFERENCES Product (idProduct)  
     NOT DEFERRABLE 

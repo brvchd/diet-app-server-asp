@@ -11,7 +11,6 @@ namespace diet_server_api.Models
         {
             Diets = new HashSet<Diet>();
             DiseasePatients = new HashSet<DiseasePatient>();
-            Foodinputs = new HashSet<Foodinput>();
             Measurements = new HashSet<Measurement>();
             Notes = new HashSet<Note>();
             Questionaries = new HashSet<Questionary>();
@@ -32,7 +31,6 @@ namespace diet_server_api.Models
         public virtual User IduserNavigation { get; set; }
         public virtual ICollection<Diet> Diets { get; set; }
         public virtual ICollection<DiseasePatient> DiseasePatients { get; set; }
-        public virtual ICollection<Foodinput> Foodinputs { get; set; }
         public virtual ICollection<Measurement> Measurements { get; set; }
         public virtual ICollection<Note> Notes { get; set; }
         public virtual ICollection<Questionary> Questionaries { get; set; }

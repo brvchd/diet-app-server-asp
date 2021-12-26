@@ -14,8 +14,9 @@ namespace diet_server_api.Models
 
         public int Idmealtake { get; set; }
         public int Idday { get; set; }
-        public TimeSpan Time { get; set; }
+        public string Time { get; set; }
         public bool? Isfollowed { get; set; }
+        public decimal Proportion { get; set; }
 
         public virtual Day IddayNavigation { get; set; }
         public virtual ICollection<Individualrecipe> Individualrecipes { get; set; }

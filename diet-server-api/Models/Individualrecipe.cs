@@ -9,7 +9,6 @@ namespace diet_server_api.Models
     {
         public int Idindividualrecipe { get; set; }
         public int Idrecipe { get; set; }
-        public decimal Proportion { get; set; }
         public int Idmealtake { get; set; }
 
         public virtual Mealtake IdmealtakeNavigation { get; set; }

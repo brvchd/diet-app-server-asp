@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Diet;
 using diet_server_api.DTO.Responses.Diet;
@@ -8,13 +9,53 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class DietRepository : IDietRepository       
+    public class DietRepository : IDietRepository        
     {   
         private readonly mdzcojxmContext _dbContext;
 
         public DietRepository(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+        public async Task AssignMeal(AssignMealsRequest request)
+        {
+            var dietExists = await _dbContext.Diets.AnyAsync(e => e.Iddiet == request.IdDiet);
+            if(!dietExists) throw new NotFound("Diet not found");
+            var dayExists = await _dbContext.Days.AnyAsync(e => e.Dietiddiet == request.IdDiet && e.Daynumber == request.DayNumber);
+
+            var day = new Day()
+            {
+                Daynumber = request.DayNumber,
+                Dietiddiet = request.IdDiet
+            };
+
+            await _dbContext.Days.AddAsync(day);
+
+            if(dayExists) throw new AlreadyExists("Day already exists");
+
+            foreach(var meal in request.Meals)
+            {
+                var mealRecipes = await _dbContext.Recipes.Where(e => e.Idmeal == meal.IdMeal).Select(e => new {RecipeId = e.Idrecipe}).ToListAsync();
+
+                var mealTake = new Mealtake() 
+                {
+                    IddayNavigation = day,
+                    Time =  meal.Time,
+                    Proportion = meal.Proportion
+                };
+                await _dbContext.Mealtakes.AddAsync(mealTake);
+                foreach(var recipe in mealRecipes)
+                {
+                    var individualRecipe = new Individualrecipe()          
+                    {
+                        Idrecipe = recipe.RecipeId,
+                        IdmealtakeNavigation = mealTake,
+                    };
+                    await _dbContext.Individualrecipes.AddAsync(individualRecipe);
+                }
+            }
+            await _dbContext.SaveChangesAsync(); 
         }
 
         public async Task<CreateDietResponse> CreateDiet(CreateDietRequest request)

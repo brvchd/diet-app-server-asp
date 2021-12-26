@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-11-03 01:54:54.613
+-- Last modification date: 2021-12-26 21:00:28.671
 
 -- foreign keys
 ALTER TABLE Day
@@ -19,12 +19,6 @@ ALTER TABLE Disease_Patient
 
 ALTER TABLE Disease_Patient
     DROP CONSTRAINT Disease_Patient_Patient;
-
-ALTER TABLE FoodInput
-    DROP CONSTRAINT FoodInput_Patient;
-
-ALTER TABLE FoodInput
-    DROP CONSTRAINT FoodInput_Products;
 
 ALTER TABLE IndividualRecipe
     DROP CONSTRAINT IndividualRecipe_MealTake;
@@ -62,12 +56,6 @@ ALTER TABLE Recipe
 ALTER TABLE Recipe
     DROP CONSTRAINT Recipe_Products;
 
-ALTER TABLE ProductDiet
-    DROP CONSTRAINT Table_16_Diet;
-
-ALTER TABLE ProductDiet
-    DROP CONSTRAINT Table_16_Products;
-
 ALTER TABLE Doctor
     DROP CONSTRAINT Table_8_User;
 
@@ -93,8 +81,6 @@ DROP TABLE Diseases;
 
 DROP TABLE Doctor;
 
-DROP TABLE FoodInput;
-
 DROP TABLE IndividualRecipe;
 
 DROP TABLE Meal;
@@ -112,8 +98,6 @@ DROP TABLE Parameter;
 DROP TABLE Patient;
 
 DROP TABLE Product;
-
-DROP TABLE ProductDiet;
 
 DROP TABLE Product_Parameter;
 

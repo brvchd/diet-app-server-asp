@@ -14,9 +14,10 @@ namespace diet_server_api.Models
 
         public int Idday { get; set; }
         public int Daynumber { get; set; }
-        public int DietIddiet { get; set; }
+        public int Dietiddiet { get; set; }
+        public string Patientreport { get; set; }
 
-        public virtual Diet DietIddietNavigation { get; set; }
+        public virtual Diet DietiddietNavigation { get; set; }
         public virtual ICollection<Mealtake> Mealtakes { get; set; }
     }
 }

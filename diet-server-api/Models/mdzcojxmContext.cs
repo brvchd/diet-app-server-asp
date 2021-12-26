@@ -23,7 +23,6 @@ namespace diet_server_api.Models
         public virtual DbSet<Disease> Diseases { get; set; }
         public virtual DbSet<DiseasePatient> DiseasePatients { get; set; }
         public virtual DbSet<Doctor> Doctors { get; set; }
-        public virtual DbSet<Foodinput> Foodinputs { get; set; }
         public virtual DbSet<Individualrecipe> Individualrecipes { get; set; }
         public virtual DbSet<Meal> Meals { get; set; }
         public virtual DbSet<Mealsbeforediet> Mealsbeforediets { get; set; }
@@ -35,7 +34,6 @@ namespace diet_server_api.Models
         public virtual DbSet<PgStatStatement> PgStatStatements { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductParameter> ProductParameters { get; set; }
-        public virtual DbSet<Productdiet> Productdiets { get; set; }
         public virtual DbSet<Questionary> Questionaries { get; set; }
         public virtual DbSet<Recipe> Recipes { get; set; }
         public virtual DbSet<Supplement> Supplements { get; set; }
@@ -88,11 +86,15 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Daynumber).HasColumnName("daynumber");
 
-                entity.Property(e => e.DietIddiet).HasColumnName("diet_iddiet");
+                entity.Property(e => e.Dietiddiet).HasColumnName("dietiddiet");
 
-                entity.HasOne(d => d.DietIddietNavigation)
+                entity.Property(e => e.Patientreport)
+                    .HasMaxLength(1000)
+                    .HasColumnName("patientreport");
+
+                entity.HasOne(d => d.DietiddietNavigation)
                     .WithMany(p => p.Days)
-                    .HasForeignKey(d => d.DietIddiet)
+                    .HasForeignKey(d => d.Dietiddiet)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("day_diet");
             });
@@ -258,52 +260,6 @@ namespace diet_server_api.Models
                     .HasConstraintName("table_8_user");
             });
 
-            modelBuilder.Entity<Foodinput>(entity =>
-            {
-                entity.HasKey(e => e.Idinput)
-                    .HasName("foodinput_pk");
-
-                entity.ToTable("foodinput");
-
-                entity.Property(e => e.Idinput).HasColumnName("idinput");
-
-                entity.Property(e => e.Amount).HasColumnName("amount");
-
-                entity.Property(e => e.Date)
-                    .HasColumnType("date")
-                    .HasColumnName("date");
-
-                entity.Property(e => e.Idpatient).HasColumnName("idpatient");
-
-                entity.Property(e => e.Idproduct).HasColumnName("idproduct");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.Time)
-                    .HasColumnType("time without time zone")
-                    .HasColumnName("time");
-
-                entity.Property(e => e.Unit)
-                    .IsRequired()
-                    .HasMaxLength(30)
-                    .HasColumnName("unit");
-
-                entity.HasOne(d => d.IdpatientNavigation)
-                    .WithMany(p => p.Foodinputs)
-                    .HasForeignKey(d => d.Idpatient)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foodinput_patient");
-
-                entity.HasOne(d => d.IdproductNavigation)
-                    .WithMany(p => p.Foodinputs)
-                    .HasForeignKey(d => d.Idproduct)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foodinput_products");
-            });
-
             modelBuilder.Entity<Individualrecipe>(entity =>
             {
                 entity.HasKey(e => e.Idindividualrecipe)
@@ -316,10 +272,6 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Idmealtake).HasColumnName("idmealtake");
 
                 entity.Property(e => e.Idrecipe).HasColumnName("idrecipe");
-
-                entity.Property(e => e.Proportion)
-                    .HasPrecision(10, 2)
-                    .HasColumnName("proportion");
 
                 entity.HasOne(d => d.IdmealtakeNavigation)
                     .WithMany(p => p.Individualrecipes)
@@ -402,8 +354,13 @@ namespace diet_server_api.Models
 
                 entity.Property(e => e.Isfollowed).HasColumnName("isfollowed");
 
+                entity.Property(e => e.Proportion)
+                    .HasPrecision(10, 2)
+                    .HasColumnName("proportion");
+
                 entity.Property(e => e.Time)
-                    .HasColumnType("time without time zone")
+                    .IsRequired()
+                    .HasMaxLength(500)
                     .HasColumnName("time");
 
                 entity.HasOne(d => d.IddayNavigation)
@@ -709,32 +666,6 @@ namespace diet_server_api.Models
                     .HasForeignKey(d => d.Idproduct)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("product_parameter_products");
-            });
-
-            modelBuilder.Entity<Productdiet>(entity =>
-            {
-                entity.HasKey(e => e.IdproductDiet)
-                    .HasName("productdiet_pk");
-
-                entity.ToTable("productdiet");
-
-                entity.Property(e => e.IdproductDiet).HasColumnName("idproduct_diet");
-
-                entity.Property(e => e.Iddiet).HasColumnName("iddiet");
-
-                entity.Property(e => e.Idproduct).HasColumnName("idproduct");
-
-                entity.HasOne(d => d.IddietNavigation)
-                    .WithMany(p => p.Productdiets)
-                    .HasForeignKey(d => d.Iddiet)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("table_16_diet");
-
-                entity.HasOne(d => d.IdproductNavigation)
-                    .WithMany(p => p.Productdiets)
-                    .HasForeignKey(d => d.Idproduct)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("table_16_products");
             });
 
             modelBuilder.Entity<Questionary>(entity =>

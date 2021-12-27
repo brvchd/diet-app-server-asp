@@ -15,5 +15,6 @@ namespace diet_server_api.Services.Interfaces.Repository
         Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName);
         Task<UpdateDiseaseResponse> UpdateDisease(UpdateDiseaseRequest request);
         Task<AddDiseaseResponse> AddDisease(AddDiseaseRequest request);
+        Task AssignDisease(AssignDiseaseRequest request);
     }
 }

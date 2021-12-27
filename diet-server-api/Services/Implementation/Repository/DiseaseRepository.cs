@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class DiseaseRepository : IDiseaseRepository
+    public class DiseaseRepository : IDiseaseRepository   
     {
         private readonly mdzcojxmContext _dbContext;
 
@@ -41,6 +41,24 @@ namespace diet_server_api.Services.Implementation.Repository
                 Name = disease.Name,
                 Description = disease.Description
             };
+        }
+
+        public async Task AssignDisease(AssignDiseaseRequest request)
+        {
+            var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == request.IdPatient && e.Ispending == false);
+            if(!patientExists) throw new InvalidData("Patient is either does not exist or is pending");
+            var diseaseExists = await _dbContext.Diseases.AnyAsync(e => e.Iddisease == request.IdDisease);
+            if(!diseaseExists) throw new NotFound("Disease not found");
+            var diseaseAdded = await _dbContext.DiseasePatients.AnyAsync(e => e.Iddisease == request.IdDisease && e.Idpatient == e.Idpatient && e.Dateofcure != null);
+            if(diseaseAdded) throw new AlreadyExists("Disease already added");
+            var diseasePatient = new DiseasePatient()
+            {
+                Iddisease = request.IdDisease,
+                Idpatient = request.IdPatient,
+                Dateofdiagnosis = request.DateOfDiagnosis
+            };
+            await _dbContext.DiseasePatients.AddAsync(diseasePatient);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<GetDiseasesResponse> GetDiseases(int page)

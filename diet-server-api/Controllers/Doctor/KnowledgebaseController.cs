@@ -380,5 +380,34 @@ namespace diet_server_api.Controllers.Doctor
                 return NotFound(ex.Message);
             }
         }
+
+        [HttpPost]
+        [Route("patient/disease")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AssignDisease(AssignDiseaseRequest request)
+        {
+            try
+            {
+                await _diseaseRepo.AssignDisease(request);
+                return Ok();
+            }
+            catch (AlreadyExists ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch(NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(InvalidData ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }

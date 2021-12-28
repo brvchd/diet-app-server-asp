@@ -6,7 +6,7 @@ using diet_server_api.DTO.Requests.KnowledgeBase.Update;
 using diet_server_api.DTO.Responses.KnowledgeBase;
 using diet_server_api.DTO.Responses.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Get;
-using diet_server_api.DTO.Responses.KnowledgeBase.Update;
+using diet_server_api.DTO.Responses.KnowledgeBase.Update;   
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -43,7 +43,7 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
-        public async Task AssignDisease(AssignDiseaseRequest request)
+        public async Task AssignDisease(AssignDiseaseRequest request)   
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == request.IdPatient && e.Ispending == false);
             if(!patientExists) throw new InvalidData("Patient is either does not exist or is pending");

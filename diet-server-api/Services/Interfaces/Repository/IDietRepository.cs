@@ -8,5 +8,6 @@ namespace diet_server_api.Services.Interfaces.Repository
     {
         Task<CreateDietResponse> CreateDiet(CreateDietRequest request);
         Task AssignMeal(AssignMealsRequest request);
+        Task<GetDietDaysResponse> GetDays(int idDiet);
     }
 }

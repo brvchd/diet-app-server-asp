@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class DietRepository : IDietRepository        
+    public class DietRepository : IDietRepository             
     {   
         private readonly mdzcojxmContext _dbContext;
 
@@ -94,5 +94,15 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
+        public async Task<GetDietDaysResponse> GetDays(int idDiet)
+        {
+            var diet = await _dbContext.Diets.FirstOrDefaultAsync(e => e.Iddiet == idDiet);
+            if(diet == null) throw new NotFound("Diet not found");
+            var dietDays = (int)diet.Dateto.Subtract(diet.Datefrom).TotalDays;
+            return new GetDietDaysResponse{
+                Days = dietDays,
+                TotalMeals = diet.Dailymeals
+            };
+        }
     }
 }

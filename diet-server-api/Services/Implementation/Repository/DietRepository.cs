@@ -23,6 +23,7 @@ namespace diet_server_api.Services.Implementation.Repository
             var dietExists = await _dbContext.Diets.AnyAsync(e => e.Iddiet == request.IdDiet);
             if(!dietExists) throw new NotFound("Diet not found");
             var dayExists = await _dbContext.Days.AnyAsync(e => e.Dietiddiet == request.IdDiet && e.Daynumber == request.DayNumber);
+            if(dayExists) throw new AlreadyExists("Day was already added");
 
             var day = new Day()
             {

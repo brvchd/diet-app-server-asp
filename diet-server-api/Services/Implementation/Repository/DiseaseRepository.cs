@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class DiseaseRepository : IDiseaseRepository     
+    public class DiseaseRepository : IDiseaseRepository        
     {
         private readonly mdzcojxmContext _dbContext;
 
@@ -83,6 +83,21 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
+        public async Task<List<GetPatientDiseasesResponse>> GetPatientDiseases(int patientId)
+        {
+            var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == patientId && e.Ispending == false);
+            if(!patientExists) throw new NotFound("Patient not found");
+            var diseases = await _dbContext.DiseasePatients.Include(e => e.IddiseaseNavigation).Where(e => e.Idpatient == patientId).Select(e => new GetPatientDiseasesResponse() {
+                IdDisease = e.Iddisease,
+                Name = e.IddiseaseNavigation.Name,
+                Description = e.IddiseaseNavigation.Description,
+                Recommendation = e.IddiseaseNavigation.Recomendation,
+                DateOfDiagnosis = e.Dateofdiagnosis,
+                DateCured = e.Dateofcure  
+            }).ToListAsync();
+
+            return diseases;
+        }
         public async Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName)
         {
             if (string.IsNullOrWhiteSpace(diseaseName))

@@ -69,7 +69,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDays([FromBody] int idDiet)
+        public async Task<IActionResult> GetDays([FromQuery] int idDiet)
         {
             try
             {

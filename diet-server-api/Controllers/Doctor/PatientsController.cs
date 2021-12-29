@@ -18,11 +18,13 @@ namespace diet_server_api.Controllers.Doctor
     {
         private readonly IPatientRepository _patientRepo;
         private readonly IMeasurementRepository _measurementRepo;
+        private readonly IDiseaseRepository _diseaseRepo;
 
-        public PatientsContoller(IPatientRepository patientRepo, IMeasurementRepository measurementRepo)
+        public PatientsContoller(IPatientRepository patientRepo, IMeasurementRepository measurementRepo, IDiseaseRepository diseaseRepo)
         {
             _patientRepo = patientRepo;
             _measurementRepo = measurementRepo;
+            _diseaseRepo = diseaseRepo;
         }
 
         [HttpGet]
@@ -77,7 +79,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("patient/measurements")]
-        //[Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -148,6 +150,25 @@ namespace diet_server_api.Controllers.Doctor
             try
             {
                 var response = await _measurementRepo.GetMeasurement(idPatient);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("patient/diseases")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetPatientDiseases([FromQuery] int idPatient)
+        {
+            try
+            {
+                var response = await _diseaseRepo.GetPatientDiseases(idPatient);
                 return Ok(response);
             }
             catch (NotFound ex)

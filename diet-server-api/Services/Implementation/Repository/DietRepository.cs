@@ -102,7 +102,8 @@ namespace diet_server_api.Services.Implementation.Repository
             var dietDays = (int)diet.Dateto.Subtract(diet.Datefrom).TotalDays;
             return new GetDietDaysResponse{
                 Days = dietDays,
-                TotalMeals = diet.Dailymeals
+                TotalMeals = diet.Dailymeals,
+                Proteins = diet.Protein
             };
         }
     }

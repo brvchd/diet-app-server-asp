@@ -99,7 +99,7 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var diet = await _dbContext.Diets.FirstOrDefaultAsync(e => e.Iddiet == idDiet);
             if(diet == null) throw new NotFound("Diet not found");
-            var dietDays = (int)diet.Dateto.Subtract(diet.Datefrom).TotalDays;
+            var dietDays = (int)diet.Dateto.Subtract(diet.Datefrom).TotalDays + 1;
             return new GetDietDaysResponse{
                 Days = dietDays,
                 TotalMeals = diet.Dailymeals,

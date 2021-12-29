@@ -383,7 +383,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("patient/disease")]
-        [Authorize(Roles = "DOCTOR")]
+        //[Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

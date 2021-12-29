@@ -49,7 +49,8 @@ namespace diet_server_api.Services.Implementation.Repository
             if(!patientExists) throw new InvalidData("Patient is either does not exist or is pending");
             var diseaseExists = await _dbContext.Diseases.AnyAsync(e => e.Iddisease == request.IdDisease);
             if(!diseaseExists) throw new NotFound("Disease not found");
-            var diseaseAdded = await _dbContext.DiseasePatients.AnyAsync(e => e.Iddisease == request.IdDisease && e.Idpatient == e.Idpatient && e.Dateofcure != null);
+            var diseasespatients = await _dbContext.DiseasePatients.ToListAsync();
+            var diseaseAdded = await _dbContext.DiseasePatients.AnyAsync(e => e.Idpatient == request.IdPatient && e.Iddisease == request.IdDisease && e.Dateofcure == null);
             if(diseaseAdded) throw new AlreadyExists("Disease already added");
             var diseasePatient = new DiseasePatient()
             {

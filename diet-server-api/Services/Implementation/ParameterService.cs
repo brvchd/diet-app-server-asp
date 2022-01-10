@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class ParameterRepository : IParameterRepository
+    public class ParameterService : IParameterService
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public ParameterRepository(mdzcojxmContext dbContext)
+        public ParameterService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }

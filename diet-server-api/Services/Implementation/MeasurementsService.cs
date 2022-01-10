@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class MeasurementsRepository : IMeasurementRepository
+    public class MeasurementsService : IMeasurementService
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public MeasurementsRepository(mdzcojxmContext dbContext)
+        public MeasurementsService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }

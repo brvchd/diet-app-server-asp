@@ -32,11 +32,11 @@ namespace diet_server_api.Controllers.doctor
 
         [HttpGet]
         [Authorize(Roles = "DOCTOR")]
-        [Route("patient")]
+        [Route("patient/{idPatient}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetPatientData(int idpatient)
+        public async Task<IActionResult> GetPatientData([FromRoute] int idpatient)
         {
             try
             {

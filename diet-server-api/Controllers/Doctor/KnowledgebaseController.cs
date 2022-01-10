@@ -13,13 +13,15 @@ namespace diet_server_api.Controllers.Doctor
     [Route("api/knowledgebase")]
     public class KnowledgebaseController : ControllerBase
     {
-        private readonly IProductRepository _productRepo;
-        private readonly ISupplementRepository _supplementRepo;
-        private readonly IParameterRepository _paramRepo;
-        private readonly IMealRepository _mealRepo;
-        private readonly IDiseaseRepository _diseaseRepo;
+        private readonly IProductService _productRepo;
+        private readonly ISupplementService _supplementRepo;
+        private readonly IParameterService _paramRepo;
+        private readonly IMealService _mealRepo;
+        private readonly IDiseaseService _diseaseRepo;
 
-        public KnowledgebaseController(IProductRepository productRepo, ISupplementRepository supplementRepo, IParameterRepository paramRepo, IMealRepository mealRepo, IDiseaseRepository diseaseRepo)
+        public KnowledgebaseController(IProductService productRepo, 
+        ISupplementService supplementRepo, IParameterService paramRepo, 
+        IMealService mealRepo, IDiseaseService diseaseRepo)
         {
             _productRepo = productRepo;
             _supplementRepo = supplementRepo;
@@ -88,13 +90,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("diseases/search")]
+        [Route("diseases/search/{diseaseName}")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchDisease([FromQuery] string diseaseName)
+        public async Task<IActionResult> SearchDisease([FromRoute] string diseaseName)
         {
             try
             {
@@ -112,14 +114,14 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("supplement/search")]
+        [Route("supplement/search/{supplementName}")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<IActionResult> SearchSupplement([FromQuery] string supplementName)
+        public async Task<IActionResult> SearchSupplement([FromRoute] string supplementName)
         {
             try
             {
@@ -249,13 +251,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("product/search")]
+        [Route("product/search/{productName}")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchProduct([FromQuery] string productName)
+        public async Task<IActionResult> SearchProduct([FromRoute] string productName)
         {
             try
             {
@@ -319,13 +321,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("product/parameters")]
+        [Route("product/parameters/{idProduct}")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetProductParams([FromQuery] int IdProduct)
+        public async Task<IActionResult> GetProductParams([FromRoute] int IdProduct)
         {
             try
             {
@@ -358,13 +360,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("meal/search")]
+        [Route("meal/search/{mealName}")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchMeal([FromQuery] string mealName)
+        public async Task<IActionResult> SearchMeal([FromRoute] string mealName)
         {
             try
             {
@@ -383,7 +385,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("patient/disease")]
-        //[Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -408,6 +410,44 @@ namespace diet_server_api.Controllers.Doctor
                 return BadRequest(ex.Message);
             }
 
+        }
+
+        [HttpPut]
+        [Route("patient/disease")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdatePatientDisease(UpdatePatientDiseaseRequest request)
+        {
+            try
+            {
+                await _diseaseRepo.UpdatePatientDisease(request);
+                return Ok();
+            }
+            catch(NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("patient/disease/{idDiseasePatient}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeletePatientDisease([FromRoute] int idDiseasePatient)
+        {
+            try
+            {
+                await _diseaseRepo.DeleteAssignedDisease(idDiseasePatient);
+                return Ok();
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

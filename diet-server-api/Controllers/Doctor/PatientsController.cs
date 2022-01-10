@@ -1,8 +1,8 @@
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Patient;
-using diet_server_api.DTO.Responses.Doctor.Get;
-using diet_server_api.DTO.Responses.Doctor.Search;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Services.Interfaces.Repository;
@@ -16,11 +16,11 @@ namespace diet_server_api.Controllers.Doctor
     [Route("api/doctor")]
     public class PatientsContoller : ControllerBase
     {
-        private readonly IPatientRepository _patientRepo;
-        private readonly IMeasurementRepository _measurementRepo;
-        private readonly IDiseaseRepository _diseaseRepo;
+        private readonly IPatientService _patientRepo;
+        private readonly IMeasurementService _measurementRepo;
+        private readonly IDiseaseService _diseaseRepo;
 
-        public PatientsContoller(IPatientRepository patientRepo, IMeasurementRepository measurementRepo, IDiseaseRepository diseaseRepo)
+        public PatientsContoller(IPatientService patientRepo, IMeasurementService measurementRepo, IDiseaseService diseaseRepo)
         {
             _patientRepo = patientRepo;
             _measurementRepo = measurementRepo;
@@ -60,11 +60,11 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Authorize(Roles = "DOCTOR")]
-        [Route("patient/info")]
+        [Route("patient/info/{idPatient}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetPatientData(int idpatient)
+        public async Task<IActionResult> GetPatientData([FromRoute] int idpatient)
         {
             try
             {
@@ -79,12 +79,19 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("patient/measurements")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddMeasurement(AddMeasrumentsRequest request)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (user.IsInRole("PATIENT") && nameIdentifier != request.Idpatient)
+            {
+                return Forbid();
+            }
+
             try
             {
                 var response = await _measurementRepo.AddMeasurements(request, Roles.DOCTOR);
@@ -100,13 +107,20 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
         [HttpGet]
-        [Route("patient/measurements")]
-        [Authorize(Roles = "DOCTOR")]
+        [Route("patient/measurements/{idPatient}")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetMeasurements([FromQuery] int idPatient)
+        public async Task<IActionResult> GetMeasurements([FromRoute] int idPatient)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            {
+                return Forbid();
+            }
+
             try
             {
                 var response = await _measurementRepo.GetMeasurements(idPatient);
@@ -119,11 +133,11 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpGet]
         [Authorize(Roles = "DOCTOR")]
-        [Route("patient/measurementsbydate")]
+        [Route("patient/measurementsbydate/{idPatient}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetMeasurementsByDate([FromQuery] int idPatient, [FromQuery] DateTime requestedDate, [FromQuery] string whomeasured)
+        public async Task<IActionResult> GetMeasurementsByDate([FromRoute] int idPatient, [FromQuery] DateTime requestedDate, [FromQuery] string whomeasured)
         {
             try
             {
@@ -140,13 +154,19 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
         [HttpGet]
-        [Route("patient/measurement")]
-        [Authorize(Roles = "DOCTOR")]
+        [Route("patient/measurement/{idPatient}")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetMeasurement([FromQuery] int idPatient)
+        public async Task<IActionResult> GetMeasurement([FromRoute] int idPatient)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            {
+                return Forbid();
+            }
             try
             {
                 var response = await _measurementRepo.GetMeasurement(idPatient);
@@ -159,12 +179,12 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("patient/diseases")]
+        [Route("patient/diseases/{idPatient}")]
         [Authorize(Roles = "DOCTOR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetPatientDiseases([FromQuery] int idPatient)
+        public async Task<IActionResult> GetPatientDiseases([FromRoute] int idPatient)
         {
             try
             {

@@ -9,7 +9,7 @@ using diet_server_api.DTO.Responses.KnowledgeBase.Update;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface ISupplementRepository
+    public interface ISupplementService
     {
         Task<AddSupplementResponse> AddSupplement(AddSupplementRequest request);
         Task<GetSupplementsResponse> GetSupplements(int page);

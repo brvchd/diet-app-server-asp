@@ -12,9 +12,9 @@ namespace diet_server_api.Controllers.Doctor
     [Route("api/doctor/diet")]
     public class DietController : ControllerBase
     {
-        private readonly IDietRepository _dietRepo;
+        private readonly IDietService _dietRepo;
 
-        public DietController(IDietRepository dietRepo)
+        public DietController(IDietService dietRepo)
         {
             _dietRepo = dietRepo;
         }
@@ -65,11 +65,11 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Authorize(Roles = "DOCTOR")]
-        [Route("days")]
+        [Route("days/{idDiet}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDays([FromQuery] int idDiet)
+        public async Task<IActionResult> GetDays([FromRoute] int idDiet)
         {
             try
             {
@@ -82,7 +82,23 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
 
-
-
+        [HttpGet]
+        [Authorize(Roles = "DOCTOR")]
+        [Route("diets/{idPatient}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetPatietDiet([FromRoute] int idPatient)
+        {
+            try
+            {
+                var response = await _dietRepo.GetPatientDiets(idPatient);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

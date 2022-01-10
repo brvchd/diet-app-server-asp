@@ -13,11 +13,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class ProductRepository : IProductRepository
+    public class ProductService : IProductService
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public ProductRepository(mdzcojxmContext dbContext)
+        public ProductService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }

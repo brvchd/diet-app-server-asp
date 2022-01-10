@@ -6,7 +6,7 @@ using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface IParameterRepository
+    public interface IParameterService
     {
         Task<AddParameterResponse> AddParameter(AddParameterRequest request);
         Task<List<GetParametersResponse>> GetParameters();

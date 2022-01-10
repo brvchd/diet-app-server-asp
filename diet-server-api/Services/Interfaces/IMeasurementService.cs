@@ -6,7 +6,7 @@ using diet_server_api.DTO.Responses.Patient;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface IMeasurementRepository
+    public interface IMeasurementService
     {
         Task<AddMeasrumentsResponse> AddMeasurements(AddMeasrumentsRequest request, string whomeasured);
         Task<List<GetMeasurementsResponse>> GetMeasurements(int idPatient);

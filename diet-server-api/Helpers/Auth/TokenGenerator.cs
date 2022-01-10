@@ -21,7 +21,7 @@ namespace diet_server_api.Helpers.Auth
                 issuer: "diet-app-server",
                 audience: "diet-app-client",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddMinutes(600),
                 signingCredentials: creds
                 );
 

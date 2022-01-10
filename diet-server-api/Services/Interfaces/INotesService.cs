@@ -6,10 +6,9 @@ using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface IMealRepository
+    public interface INotesService
     {
-        Task<AddMealResponse> AddMeal(AddMealRequest request);
-        Task<GetMealsResponse> GetMeals(int page);
-        Task<List<GetMealsResponse.MealRecipe>> SearchMeal(string mealName);
+        Task<AddNoteResponse> AddNote(AddNoteRequest request);
+        Task<List<GetNotesResponse>> GetNotes(int idPatient);
     }
 }

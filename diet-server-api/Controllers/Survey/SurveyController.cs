@@ -13,9 +13,9 @@ namespace diet_server_api.Controllers
     public class SurveyController : ControllerBase
     {
         private readonly ISurveyService _surveyService;
-        private readonly IPatientRepository _patientRepoService;
+        private readonly IPatientService _patientRepoService;
 
-        public SurveyController(ISurveyService surveyService, IPatientRepository patientRepoService)
+        public SurveyController(ISurveyService surveyService, IPatientService patientRepoService)
         {
             _surveyService = surveyService;
             _patientRepoService = patientRepoService;

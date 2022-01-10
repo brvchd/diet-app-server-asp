@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace diet_server_api.DTO.Responses.Diet
 {
     public class GetDietDaysResponse
@@ -6,5 +8,6 @@ namespace diet_server_api.DTO.Responses.Diet
         public decimal TotalMeals { get; set; }
         public decimal Proteins { get; set; }
         public int DaysFilled { get; set; }
+        public List<int> DaysNumberFilled {get; set;}
     }
 }

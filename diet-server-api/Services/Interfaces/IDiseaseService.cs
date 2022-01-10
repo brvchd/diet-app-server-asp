@@ -9,14 +9,15 @@ using diet_server_api.DTO.Responses.KnowledgeBase.Update;
 
 namespace diet_server_api.Services.Interfaces.Repository
 {
-    public interface IDiseaseRepository
+    public interface IDiseaseService
     {
-        Task<GetDiseasesResponse> GetDiseases(int page);
-        Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName);
-        Task<UpdateDiseaseResponse> UpdateDisease(UpdateDiseaseRequest request);
         Task<AddDiseaseResponse> AddDisease(AddDiseaseRequest request);
         Task AssignDisease(AssignDiseaseRequest request);
-        Task<List<GetPatientDiseasesResponse>>GetPatientDiseases(int patientId);
-        
+        Task DeleteAssignedDisease(int idDiseasePatient);
+        Task<GetDiseasesResponse> GetDiseases(int page);
+        Task<List<GetPatientDiseasesResponse>> GetPatientDiseases(int patientId);
+        Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName);
+        Task<UpdateDiseaseResponse> UpdateDisease(UpdateDiseaseRequest request);
+        Task UpdatePatientDisease(UpdatePatientDiseaseRequest request);  
     }
 }

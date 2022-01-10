@@ -1,23 +1,24 @@
+using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.Exceptions;
-using diet_server_api.Helpers;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Security.Claims;
+using System;
 
 namespace diet_server_api.Controllers.Doctor
 {
     [ApiController]
-    [Route("api/doctor/notes")]
+    [Route("api/notes")]
     public class NotesController : ControllerBase
     {
-        private readonly INotesRepository _notesRepo;
+        private readonly INotesService _notesRepo;
 
 
-        public NotesController(INotesRepository notesRepo)
+        public NotesController(INotesService notesRepo)
         {
             _notesRepo = notesRepo;
         }
@@ -40,13 +41,20 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "DOCTOR")]
+        [HttpGet("{idPatient}")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetNotes([FromQuery] int idPatient)
+        public async Task<IActionResult> GetNotes([FromRoute] int idPatient)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if(user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            {
+                return Forbid(); 
+            }
+            
             try
             {
                 var response = await _notesRepo.GetNotes(idPatient);

@@ -6,6 +6,7 @@ namespace diet_server_api.DTO.Responses.KnowledgeBase.Get
     {
         public int IdNote { get; set; }
         public DateTime NoteCreated { get; set; }
+        public string CreatedBy { get; set; }
         public string NoteText { get; set; }
     }
 }

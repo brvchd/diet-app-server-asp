@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +7,7 @@ using diet_server_api.DTO.Requests.KnowledgeBase.Update;
 using diet_server_api.DTO.Responses.KnowledgeBase;
 using diet_server_api.DTO.Responses.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Get;
-using diet_server_api.DTO.Responses.KnowledgeBase.Update;   
+using diet_server_api.DTO.Responses.KnowledgeBase.Update;
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -14,11 +15,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class DiseaseRepository : IDiseaseRepository        
+    public class DiseaseService : IDiseaseService
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public DiseaseRepository(mdzcojxmContext dbContext)
+        public DiseaseService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -43,22 +44,31 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
-        public async Task AssignDisease(AssignDiseaseRequest request)   
+        public async Task AssignDisease(AssignDiseaseRequest request)
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == request.IdPatient && e.Ispending == false);
-            if(!patientExists) throw new InvalidData("Patient is either does not exist or is pending");
+            if (!patientExists) throw new InvalidData("Patient is either does not exist or is pending");
             var diseaseExists = await _dbContext.Diseases.AnyAsync(e => e.Iddisease == request.IdDisease);
-            if(!diseaseExists) throw new NotFound("Disease not found");
+            if (!diseaseExists) throw new NotFound("Disease not found");
             var diseasespatients = await _dbContext.DiseasePatients.ToListAsync();
             var diseaseAdded = await _dbContext.DiseasePatients.AnyAsync(e => e.Idpatient == request.IdPatient && e.Iddisease == request.IdDisease && e.Dateofcure == null);
-            if(diseaseAdded) throw new AlreadyExists("Disease already added");
+            if (diseaseAdded) throw new AlreadyExists("Disease already added");
             var diseasePatient = new DiseasePatient()
             {
                 Iddisease = request.IdDisease,
                 Idpatient = request.IdPatient,
-                Dateofdiagnosis = request.DateOfDiagnosis
+                Dateofdiagnosis = request.DateOfDiagnosis,
+                Dateofcure = request.DateOfCure
             };
             await _dbContext.DiseasePatients.AddAsync(diseasePatient);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAssignedDisease(int idDiseasePatient)
+        {
+            var disease = await _dbContext.DiseasePatients.FirstOrDefaultAsync(e => e.IddiseasePatient == idDiseasePatient);
+            if (disease == null) throw new NotFound("Assigned disease not found");
+            _dbContext.DiseasePatients.Remove(disease);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -87,14 +97,16 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<List<GetPatientDiseasesResponse>> GetPatientDiseases(int patientId)
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == patientId && e.Ispending == false);
-            if(!patientExists) throw new NotFound("Patient not found");
-            var diseases = await _dbContext.DiseasePatients.Include(e => e.IddiseaseNavigation).Where(e => e.Idpatient == patientId).Select(e => new GetPatientDiseasesResponse() {
+            if (!patientExists) throw new NotFound("Patient not found");
+            var diseases = await _dbContext.DiseasePatients.Include(e => e.IddiseaseNavigation).Where(e => e.Idpatient == patientId).Select(e => new GetPatientDiseasesResponse()
+            {
                 IdDisease = e.Iddisease,
+                IdPatientDisease = e.IddiseasePatient,
                 Name = e.IddiseaseNavigation.Name,
                 Description = e.IddiseaseNavigation.Description,
                 Recommendation = e.IddiseaseNavigation.Recomendation,
                 DateOfDiagnosis = e.Dateofdiagnosis,
-                DateCured = e.Dateofcure  
+                DateOfCure = e.Dateofcure
             }).ToListAsync();
 
             return diseases;
@@ -134,6 +146,15 @@ namespace diet_server_api.Services.Implementation.Repository
                 Description = disease.Description,
                 Recomendation = disease.Recomendation
             };
+        }
+
+        public async Task UpdatePatientDisease(UpdatePatientDiseaseRequest request)
+        {
+            var diseaseAssign = await _dbContext.DiseasePatients.FirstOrDefaultAsync(e => e.IddiseasePatient == request.IdPatientDisease);
+            if (diseaseAssign == null) throw new NotFound("Assign not found");
+            diseaseAssign.Dateofcure = request.DateOfCure == null ? diseaseAssign.Dateofcure : request.DateOfCure;
+            diseaseAssign.Dateofdiagnosis = request.DateOfDiagnosis == null ? diseaseAssign.Dateofdiagnosis : request.DateOfDiagnosis;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

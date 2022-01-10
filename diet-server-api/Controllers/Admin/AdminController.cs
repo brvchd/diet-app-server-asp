@@ -11,11 +11,11 @@ namespace diet_server_api.Controllers.Admin
     [Route("api/admin")]
     public class AdminController : ControllerBase
     {
-        private readonly IDoctorRepository _doctorRepoService;
-        private readonly ITempUserRepository _tempUserRepoService;
-        private readonly IUserRepository _userRepo;
+        private readonly IDoctorService _doctorRepoService;
+        private readonly ITempUserService _tempUserRepoService;
+        private readonly IUserService _userRepo;
 
-        public AdminController(IDoctorRepository doctorRepoService, ITempUserRepository tempUserRepoService, IUserRepository userRepo)
+        public AdminController(IDoctorService doctorRepoService, ITempUserService tempUserRepoService, IUserService userRepo)
         {
             _doctorRepoService = doctorRepoService;
             _tempUserRepoService = tempUserRepoService;

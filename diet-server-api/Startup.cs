@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using diet_server_api.Models;
 using diet_server_api.Services.Implementation;
@@ -14,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -50,22 +53,44 @@ namespace diet_server_api
                         Url = new Uri("https://github.com/brvchd"),
                     }
                 });
+
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Description = "Jwt Authorization header using the bearer scheme",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    Reference = new OpenApiReference{
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                };
+
+                c.AddSecurityDefinition("Bearer", securityScheme);
+
+                var securityRequirement = new OpenApiSecurityRequirement{
+                    { securityScheme, new[] {"Bearer"}}
+                };
+
+                c.AddSecurityRequirement(securityRequirement);
+                
             });
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IDoctorPendingService, DoctorPendingService>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ITempUserRepository, TempUserRepository>();
-            services.AddScoped<IPatientRepository, PatientRepository>();
-            services.AddScoped<IDoctorRepository, DoctorRepository>();
-            services.AddScoped<INotesRepository, NotesRepository>();
-            services.AddScoped<IMeasurementRepository, MeasurementsRepository>();
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<IParameterRepository, ParameterRepository>();
-            services.AddScoped<ISupplementRepository, SupplementRepository>();
-            services.AddScoped<IDiseaseRepository, DiseaseRepository>();
-            services.AddScoped<IMealRepository, MealRepository>();
-            services.AddScoped<IDietRepository,DietRepository>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITempUserService, TempUserService>();
+            services.AddScoped<IPatientService, PatientService>();
+            services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<INotesService, NotesService>();
+            services.AddScoped<IMeasurementService, MeasurementsService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IParameterService, ParameterService>();
+            services.AddScoped<ISupplementService, SupplementService>();
+            services.AddScoped<IDiseaseService, DiseaseService>();
+            services.AddScoped<IMealService, MealService>();
+            services.AddScoped<IDietService, DietService>();
 
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt

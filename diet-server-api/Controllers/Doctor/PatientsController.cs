@@ -94,7 +94,8 @@ namespace diet_server_api.Controllers.Doctor
 
             try
             {
-                var response = await _measurementRepo.AddMeasurements(request, Roles.DOCTOR);
+                var role = user.IsInRole("DOCTOR") ? Roles.DOCTOR : Roles.PATIENT;
+                var response = await _measurementRepo.AddMeasurements(request, role);
                 return CreatedAtAction(nameof(AddMeasurement), response);
             }
             catch (NotFound ex)
@@ -132,13 +133,19 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
         [HttpGet]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [Route("patient/measurementsbydate/{idPatient}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetMeasurementsByDate([FromRoute] int idPatient, [FromQuery] DateTime requestedDate, [FromQuery] string whomeasured)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            {
+                return Forbid();
+            }
             try
             {
                 var response = await _measurementRepo.GetMeasurements(idPatient, requestedDate, whomeasured);

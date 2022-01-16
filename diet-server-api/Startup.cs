@@ -82,7 +82,7 @@ namespace diet_server_api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITempUserService, TempUserService>();
             services.AddScoped<IPatientService, PatientService>();
-            services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<INotesService, NotesService>();
             services.AddScoped<IMeasurementService, MeasurementsService>();
             services.AddScoped<IProductService, ProductService>();

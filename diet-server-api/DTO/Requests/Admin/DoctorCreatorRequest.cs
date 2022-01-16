@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace diet_server_api.DTO.Requests.Admin
 {
-    public class DoctorCreatorRequest
+    public class CreateUserRequest
     {
         [Required]
         public string FirstName { get; set; }
@@ -23,5 +23,7 @@ namespace diet_server_api.DTO.Requests.Admin
         public string Password { get; set; }
         [Required]
         public string Office { get; set; }
+        [Required]
+        public string Role { get; set; }
     }
 }

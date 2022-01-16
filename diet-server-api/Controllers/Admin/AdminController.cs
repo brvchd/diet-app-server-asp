@@ -11,15 +11,15 @@ namespace diet_server_api.Controllers.Admin
     [Route("api/admin")]
     public class AdminController : ControllerBase
     {
-        private readonly IDoctorService _doctorRepoService;
-        private readonly ITempUserService _tempUserRepoService;
-        private readonly IUserService _userRepo;
+        private readonly IAdminService _adminService;
+        private readonly ITempUserService _tempUserService;
+        private readonly IUserService _userService;
 
-        public AdminController(IDoctorService doctorRepoService, ITempUserService tempUserRepoService, IUserService userRepo)
+        public AdminController(IAdminService doctorRepoService, ITempUserService tempUserRepoService, IUserService userRepo)
         {
-            _doctorRepoService = doctorRepoService;
-            _tempUserRepoService = tempUserRepoService;
-            _userRepo = userRepo;
+            _adminService = doctorRepoService;
+            _tempUserService = tempUserRepoService;
+            _userService = userRepo;
         }
 
         [HttpPost]
@@ -30,7 +30,7 @@ namespace diet_server_api.Controllers.Admin
         {
             try
             {
-                var response = await _tempUserRepoService.AddTempUser(user);
+                var response = await _tempUserService.AddTempUser(user);
                 return CreatedAtAction(nameof(AddTempUser), response);
 
             }
@@ -44,7 +44,7 @@ namespace diet_server_api.Controllers.Admin
         [Route("tempusers")]
         public async Task<IActionResult> GetTempUsers()
         {
-            var response = await _tempUserRepoService.GetTempUsers();
+            var response = await _tempUserService.GetTempUsers();
             return Ok(response);
         }
         [HttpGet]
@@ -52,26 +52,31 @@ namespace diet_server_api.Controllers.Admin
         public async Task<IActionResult> GetUsers()
         {
 
-            var response = await _userRepo.GetUsers();
+            var response = await _userService.GetUsers();
             return Ok(response);
         }
 
         [HttpPost]
-        [Route("doctor")]
+        [Route("users")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateDoctor(DoctorCreatorRequest request)
+        public async Task<IActionResult> CreateUser(CreateUserRequest request)
         {
             try
             {
-                var response = await _doctorRepoService.CreateDoctor(request);
-                return CreatedAtAction(nameof(CreateDoctor), response);
+                var response = await _adminService.CreateUser(request);
+                return CreatedAtAction(nameof(CreateUser), response);
             }
             catch (AlreadyExists ex)
             {
                 return BadRequest(ex.Message);
             }
+            catch(InvalidData ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
 
     }
 

@@ -32,7 +32,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("disease")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -51,7 +51,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpPost]
         [Route("supplement")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -70,7 +70,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("supplements")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetSupplements(int page)
@@ -80,7 +80,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpGet]
         [Route("diseases")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetDiseases(int page)
@@ -91,7 +91,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("diseases/search/{diseaseName}")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -115,7 +115,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("supplement/search/{supplementName}")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -141,7 +141,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("product")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -160,7 +160,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("products")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetProducts([FromQuery] int page)
@@ -178,7 +178,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("parameters")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetParameters()
@@ -196,7 +196,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPost]
         [Route("parameter")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AddParameter(AddParameterRequest request)
@@ -214,7 +214,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPut]
         [Route("supplement")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -233,7 +233,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpPut]
         [Route("disease")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -252,7 +252,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("product/search/{productName}")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -275,7 +275,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpPut]
         [Route("product")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -298,7 +298,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpPost]
         [Route("meal")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -322,7 +322,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("product/parameters/{idProduct}")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -341,7 +341,7 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("meals")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -361,7 +361,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("meal/search/{mealName}")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

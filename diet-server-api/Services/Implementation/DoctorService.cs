@@ -9,19 +9,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class DoctorService : IDoctorService
+    public class AdminService : IAdminService
     {
         private readonly mdzcojxmContext _dbContext;
 
-        public DoctorService(mdzcojxmContext dbContext)
+        public AdminService(mdzcojxmContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<DoctorCreatorResponse> CreateDoctor(DoctorCreatorRequest request)
+        public async Task<CreateUserResponse> CreateUser(CreateUserRequest request)
         {
             var exists = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
-            if (exists) throw new AlreadyExists("Doctor already exists!");
+            if(request.Role != Roles.DOCTOR.ToString() && request.Role != Roles.SECRETARY.ToString() && request.Role != Roles.ADMIN.ToString())
+            {
+                throw new InvalidData("Incorrect role provided");
+            }
+            if (exists) throw new AlreadyExists("User already already exists!");
+            var userAge = Helpers.Calculators.AgeCalculator.CalculateAge(request.DateOfBirth);
+            if(userAge < 18) throw new InvalidData("User must be at least 18 years old");
             var salt = SaltGenerator.GenerateSalt();
             var password = PasswordGenerator.GeneratePassword(request.Password, salt);
             var user = new User()
@@ -33,20 +39,24 @@ namespace diet_server_api.Services.Implementation.Repository
                 Phonenumber = request.PhoneNumber,
                 Password = password,
                 Dateofbirth = request.DateOfBirth,
-                Role = Roles.DOCTOR,
+                Role = request.Role,
                 Salt = salt
             };
             await _dbContext.Users.AddAsync(user);
-            var doctor = new Doctor()
+            if (request.Role == "DOCTOR")
             {
-                IduserNavigation = user,
-                Office = request.Office
-            };
-            await _dbContext.Doctors.AddAsync(doctor);
+                var doctor = new Doctor()
+                {
+                    IduserNavigation = user,
+                    Office = request.Office
+                };
+                await _dbContext.Doctors.AddAsync(doctor);
+            }
             await _dbContext.SaveChangesAsync();
-            return new DoctorCreatorResponse()
+            return new CreateUserResponse()
             {
-                Email = user.Email
+                Email = user.Email,
+                Password = request.Password  
             };
         }
     }

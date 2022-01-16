@@ -187,12 +187,18 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("patient/diseases/{idPatient}")]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetPatientDiseases([FromRoute] int idPatient)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            {
+                return Forbid();
+            }
             try
             {
                 var response = await _diseaseRepo.GetPatientDiseases(idPatient);

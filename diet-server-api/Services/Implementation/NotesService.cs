@@ -50,6 +50,8 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == idPatient && e.Ispending == false);
             if (!patientExists) throw new NotFound("Patient not found!");
+            var accountIsNotActive = await _dbContext.Users.AnyAsync(e => e.Iduser == idPatient && e.Isactive == false);
+            if (accountIsNotActive) throw new NotActive("Account is not active");
             var notes = await _dbContext.Notes.Include(e => e.IddoctorNavigation).ThenInclude(e => e.IduserNavigation).Where(e => e.Idpatient == idPatient).Select(e => new GetNotesResponse
             {
                 CreatedBy = e.IddoctorNavigation.IduserNavigation.Firstname + " " + e.IddoctorNavigation.IduserNavigation.Lastname,

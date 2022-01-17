@@ -46,7 +46,7 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task AssignDisease(AssignDiseaseRequest request)
         {
-            var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == request.IdPatient && e.Ispending == false);
+            var patientExists = await _dbContext.Patients.Include(e => e.IduserNavigation).AnyAsync(e => e.Iduser == request.IdPatient && e.Ispending == false && e.IduserNavigation.Isactive == true);
             if (!patientExists) throw new InvalidData("Patient is either does not exist or is pending");
             var diseaseExists = await _dbContext.Diseases.AnyAsync(e => e.Iddisease == request.IdDisease);
             if (!diseaseExists) throw new NotFound("Disease not found");
@@ -96,7 +96,7 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<List<GetPatientDiseasesResponse>> GetPatientDiseases(int patientId)
         {
-            var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == patientId && e.Ispending == false);
+            var patientExists = await _dbContext.Patients.Include(e => e.IduserNavigation).AnyAsync(e => e.Iduser == patientId && e.Ispending == false && e.IduserNavigation.Isactive == true);
             if (!patientExists) throw new NotFound("Patient not found");
             var diseases = await _dbContext.DiseasePatients.Include(e => e.IddiseaseNavigation).Where(e => e.Idpatient == patientId).Select(e => new GetPatientDiseasesResponse()
             {

@@ -54,7 +54,7 @@ namespace diet_server_api.Services.Implementation
             var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idpatient);
             if (measurments == null) throw new NotFound("Measurments not found");
 
-            var questionary = await _dbContext.Questionnaires.FirstOrDefaultAsync(e => e.Idpatient == idpatient);  
+            var questionary = await _dbContext.Questionnaires.FirstOrDefaultAsync(e => e.Idpatient == idpatient);
             if (questionary == null) throw new NotFound("Questionary not found");
 
             var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);

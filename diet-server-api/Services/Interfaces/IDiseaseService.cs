@@ -18,6 +18,6 @@ namespace diet_server_api.Services.Interfaces.Repository
         Task<List<GetPatientDiseasesResponse>> GetPatientDiseases(int patientId);
         Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName);
         Task<UpdateDiseaseResponse> UpdateDisease(UpdateDiseaseRequest request);
-        Task UpdatePatientDisease(UpdatePatientDiseaseRequest request);  
+        Task UpdatePatientDisease(UpdatePatientDiseaseRequest request);
     }
 }

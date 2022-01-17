@@ -19,8 +19,8 @@ namespace diet_server_api.Controllers.Doctor
         private readonly IMealService _mealRepo;
         private readonly IDiseaseService _diseaseRepo;
 
-        public KnowledgebaseController(IProductService productRepo, 
-        ISupplementService supplementRepo, IParameterService paramRepo, 
+        public KnowledgebaseController(IProductService productRepo,
+        ISupplementService supplementRepo, IParameterService paramRepo,
         IMealService mealRepo, IDiseaseService diseaseRepo)
         {
             _productRepo = productRepo;
@@ -341,6 +341,7 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
+        [Route("meals")]
         [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -401,11 +402,11 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return BadRequest(ex.Message);
             }
-            catch(NotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
-            catch(InvalidData ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -426,7 +427,7 @@ namespace diet_server_api.Controllers.Doctor
                 await _diseaseRepo.UpdatePatientDisease(request);
                 return Ok();
             }
-            catch(NotFound ex)
+            catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }

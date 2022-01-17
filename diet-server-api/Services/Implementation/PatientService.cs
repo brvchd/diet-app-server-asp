@@ -37,7 +37,7 @@ namespace diet_server_api.Services.Implementation.Repository
             var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
             if (existingPhoneNumber) throw new AlreadyExists("Phone number already exists");
 
-            if(request.DateOfBirth >= DateTime.UtcNow) throw new InvalidData("Incorrect data of birth");
+            if (request.DateOfBirth >= DateTime.UtcNow) throw new InvalidData("Incorrect data of birth");
 
             var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.AccessEmail);
             if (tempUser == null) throw new NotFound("User not found");
@@ -152,7 +152,7 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                var patients = await _dbContext.Users.Where(e => e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false).Select(e => new PatientSearchResponse
+                var patients = await _dbContext.Users.Where(e => e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true).Select(e => new PatientSearchResponse
                 {
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
@@ -164,7 +164,7 @@ namespace diet_server_api.Services.Implementation.Repository
             }
             else
             {
-                var patients = await _dbContext.Users.Where(e => e.Firstname.ToLower() == firstName.ToLower() && e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false).Select(e => new PatientSearchResponse
+                var patients = await _dbContext.Users.Where(e => e.Firstname.ToLower() == firstName.ToLower() && e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true).Select(e => new PatientSearchResponse
                 {
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
@@ -180,7 +180,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (page < 1) page = 1;
             int pageSize = 9;
             var rows = await _dbContext.Patients.Where(e => e.Ispending == false).CountAsync();
-            var patients = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == false).OrderBy(e => e.Firstname).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new PatientsByPageResponse.PatientByPage
+            var patients = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == false && e.Isactive == true).OrderBy(e => e.Firstname).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new PatientsByPageResponse.PatientByPage
             {
                 IdPatient = e.Iduser,
                 FirstName = e.Firstname,
@@ -198,7 +198,7 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<GetPatientInfoResponse> GetPatientInfo(int idPatient)
         {
-            var userExists = await _dbContext.Users.Include(e => e.Patient).AnyAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT && e.Patient.Ispending == false);
+            var userExists = await _dbContext.Users.Include(e => e.Patient).AnyAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true);
             if (!userExists) throw new NotFound("User not found");
             var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new
             {

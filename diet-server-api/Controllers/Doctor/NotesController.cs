@@ -46,15 +46,16 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetNotes([FromRoute] int idPatient)
         {
             var user = HttpContext.User;
             var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            if(user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            if (user.IsInRole("PATIENT") && nameIdentifier != idPatient)
             {
-                return Forbid(); 
+                return Forbid();
             }
-            
+
             try
             {
                 var response = await _notesRepo.GetNotes(idPatient);
@@ -63,6 +64,10 @@ namespace diet_server_api.Controllers.Doctor
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (NotActive ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

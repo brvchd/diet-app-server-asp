@@ -61,10 +61,11 @@ namespace diet_server_api
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
                     Scheme = "Bearer",
-                    Reference = new OpenApiReference{
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
                 };
 
                 c.AddSecurityDefinition("Bearer", securityScheme);
@@ -74,7 +75,7 @@ namespace diet_server_api
                 };
 
                 c.AddSecurityRequirement(securityRequirement);
-                
+
             });
             services.AddScoped<ISurveyService, SurveyService>();
             services.AddScoped<IAuthService, AuthService>();

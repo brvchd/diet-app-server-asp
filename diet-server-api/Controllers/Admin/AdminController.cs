@@ -71,7 +71,7 @@ namespace diet_server_api.Controllers.Admin
             {
                 return BadRequest(ex.Message);
             }
-            catch(InvalidData ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
             }

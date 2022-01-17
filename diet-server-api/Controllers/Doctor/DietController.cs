@@ -42,6 +42,14 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return BadRequest(ex.Message);
             }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (NotActive ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
@@ -94,7 +102,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetPatietDiet([FromRoute] int idPatient)
+        public async Task<IActionResult> GetPatietDiets([FromRoute] int idPatient)
         {
             try
             {
@@ -104,6 +112,10 @@ namespace diet_server_api.Controllers.Doctor
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (NotActive ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
         [HttpGet]

@@ -22,7 +22,7 @@ namespace diet_server_api.Services.Implementation.Repository
         }
         public async Task<AddMeasrumentsResponse> AddMeasurements(AddMeasrumentsRequest request, string whoMeasured)
         {
-            var exists = await _dbContext.Users.Include(e => e.Patient).AnyAsync(e => e.Iduser == request.Idpatient && e.Patient.Ispending == false);
+            var exists = await _dbContext.Users.Include(e => e.Patient).AnyAsync(e => e.Iduser == request.Idpatient && e.Patient.Ispending == false && e.Isactive == true);
             if (!exists) throw new NotFound("Patient not found");
             var measurementExists = await _dbContext.Measurements.AnyAsync(e => e.Idpatient == request.Idpatient && e.Date.Date == DateTime.UtcNow.Date && e.Whomeasured == whoMeasured);
             if (measurementExists) throw new AlreadyExists("Measurement has been already created today by you");

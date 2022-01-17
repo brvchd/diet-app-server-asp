@@ -21,13 +21,13 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<CreateUserResponse> CreateUser(CreateUserRequest request)
         {
             var exists = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
-            if(request.Role != Roles.DOCTOR.ToString() && request.Role != Roles.SECRETARY.ToString() && request.Role != Roles.ADMIN.ToString())
+            if (request.Role != Roles.DOCTOR.ToString() && request.Role != Roles.SECRETARY.ToString() && request.Role != Roles.ADMIN.ToString())
             {
                 throw new InvalidData("Incorrect role provided");
             }
             if (exists) throw new AlreadyExists("User already already exists!");
             var userAge = Helpers.Calculators.AgeCalculator.CalculateAge(request.DateOfBirth);
-            if(userAge < 18) throw new InvalidData("User must be at least 18 years old");
+            if (userAge < 18) throw new InvalidData("User must be at least 18 years old");
             var salt = SaltGenerator.GenerateSalt();
             var password = PasswordGenerator.GeneratePassword(request.Password, salt);
             var user = new User()
@@ -46,7 +46,7 @@ namespace diet_server_api.Services.Implementation.Repository
             await _dbContext.Users.AddAsync(user);
             if (request.Role == "DOCTOR")
             {
-                if(request.Office == null) throw new InvalidData("Office number must be provided");
+                if (request.Office == null) throw new InvalidData("Office number must be provided");
                 var doctor = new Doctor()
                 {
                     IduserNavigation = user,
@@ -58,7 +58,7 @@ namespace diet_server_api.Services.Implementation.Repository
             return new CreateUserResponse()
             {
                 Email = user.Email,
-                Password = request.Password  
+                Password = request.Password
             };
         }
     }

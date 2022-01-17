@@ -91,6 +91,7 @@ namespace diet_server_api
             services.AddScoped<IDiseaseService, DiseaseService>();
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IDietService, DietService>();
+            services.AddScoped<ISecretaryService, SecretaryService>();
 
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt

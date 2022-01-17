@@ -34,7 +34,7 @@ namespace diet_server_api.Models
         public virtual DbSet<PgStatStatement> PgStatStatements { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductParameter> ProductParameters { get; set; }
-        public virtual DbSet<Questionary> Questionaries { get; set; }
+        public virtual DbSet<Questionnaire> Questionnaires { get; set; }
         public virtual DbSet<Recipe> Recipes { get; set; }
         public virtual DbSet<Supplement> Supplements { get; set; }
         public virtual DbSet<TempUser> TempUsers { get; set; }
@@ -668,12 +668,12 @@ namespace diet_server_api.Models
                     .HasConstraintName("product_parameter_products");
             });
 
-            modelBuilder.Entity<Questionary>(entity =>
+            modelBuilder.Entity<Questionnaire>(entity =>
             {
                 entity.HasKey(e => e.Idquestionary)
-                    .HasName("questionary_pk");
+                    .HasName("questionnaire_pk");
 
-                entity.ToTable("questionary");
+                entity.ToTable("questionnaire");
 
                 entity.Property(e => e.Idquestionary).HasColumnName("idquestionary");
 
@@ -800,7 +800,7 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Waterglasses).HasColumnName("waterglasses");
 
                 entity.HasOne(d => d.IdpatientNavigation)
-                    .WithMany(p => p.Questionaries)
+                    .WithMany(p => p.Questionnaires)
                     .HasForeignKey(d => d.Idpatient)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("questionary_patient");
@@ -895,6 +895,8 @@ namespace diet_server_api.Models
                     .IsRequired()
                     .HasMaxLength(30)
                     .HasColumnName("firstname");
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
 
                 entity.Property(e => e.Lastname)
                     .IsRequired()

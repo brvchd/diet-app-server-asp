@@ -56,7 +56,8 @@ namespace diet_server_api.Services.Implementation.Repository
                 Pesel = request.PESEL,
                 Role = Roles.PATIENT,
                 Phonenumber = request.PhoneNumber,
-                Salt = salt
+                Salt = salt,
+                Isactive = true
             };
             await _dbContext.Users.AddAsync(user);
 
@@ -85,7 +86,7 @@ namespace diet_server_api.Services.Implementation.Repository
 
             await _dbContext.Measurements.AddAsync(measurements);
 
-            var questionary = new Questionary()
+            var questionary = new Questionnaire()
             {
                 IdpatientNavigation = patient,
                 Databadania = DateTime.UtcNow,
@@ -125,7 +126,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 Alergieproducts = request.AlergieProducts,
                 Betweenmealsfood = request.FoodBetweenMeals
             };
-            await _dbContext.Questionaries.AddAsync(questionary);
+            await _dbContext.Questionnaires.AddAsync(questionary);
 
             foreach (var mealTake in request.Meals)
             {
@@ -218,7 +219,7 @@ namespace diet_server_api.Services.Implementation.Repository
             var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idPatient);
             if (measurments == null) throw new NotFound("Measurments not found");
 
-            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
+            var questionary = await _dbContext.Questionnaires.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
             if (questionary == null) throw new NotFound("Questionary not found");
 
             var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);

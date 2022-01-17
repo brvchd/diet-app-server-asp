@@ -13,6 +13,6 @@ namespace diet_server_api.Models
         public string Hour { get; set; }
         public string Foodtoeat { get; set; }
 
-        public virtual Questionary IdquestionaryNavigation { get; set; }
+        public virtual Questionnaire IdquestionaryNavigation { get; set; }
     }
 }

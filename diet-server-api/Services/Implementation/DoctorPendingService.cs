@@ -54,7 +54,7 @@ namespace diet_server_api.Services.Implementation
             var measurments = await _dbContext.Measurements.OrderBy(e => e.Date).FirstOrDefaultAsync(e => e.Idpatient == idpatient);
             if (measurments == null) throw new NotFound("Measurments not found");
 
-            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idpatient);
+            var questionary = await _dbContext.Questionnaires.FirstOrDefaultAsync(e => e.Idpatient == idpatient);  
             if (questionary == null) throw new NotFound("Questionary not found");
 
             var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);
@@ -141,14 +141,14 @@ namespace diet_server_api.Services.Implementation
             var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Iduser == idPatient && e.Role == Roles.PATIENT && e.Patient.Ispending == true);
             if (user == null) throw new NotFound("User not found");
             var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == idPatient);
-            var questionary = await _dbContext.Questionaries.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
+            var questionary = await _dbContext.Questionnaires.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
             var measurements = await _dbContext.Measurements.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
             var mealsList = await _dbContext.Mealsbeforediets.Where(e => e.Idquestionary == questionary.Idquestionary).ToListAsync();
             foreach (var meal in mealsList)
             {
                 _dbContext.Mealsbeforediets.Remove(meal);
             }
-            _dbContext.Questionaries.Remove(questionary);
+            _dbContext.Questionnaires.Remove(questionary);
             _dbContext.Measurements.Remove(measurements);
             _dbContext.Patients.Remove(patient);
             _dbContext.Users.Remove(user);

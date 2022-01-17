@@ -40,11 +40,13 @@ namespace diet_server_api.Services.Implementation.Repository
                 Password = password,
                 Dateofbirth = request.DateOfBirth,
                 Role = request.Role,
-                Salt = salt
+                Salt = salt,
+                Isactive = true
             };
             await _dbContext.Users.AddAsync(user);
             if (request.Role == "DOCTOR")
             {
+                if(request.Office == null) throw new InvalidData("Office number must be provided");
                 var doctor = new Doctor()
                 {
                     IduserNavigation = user,

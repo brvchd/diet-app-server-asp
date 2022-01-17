@@ -11,5 +11,6 @@ namespace diet_server_api.Services.Interfaces.Repository
         Task AssignMeal(AssignMealsRequest request);
         Task<GetDietDaysResponse> GetDays(int idDiet);
         Task<List<GetPatientDietResponse>> GetPatientDiets(int idPatient);
+        Task<List<GetDietMealsResponse>> GetDietMeals(int idDiet);
     }
 }

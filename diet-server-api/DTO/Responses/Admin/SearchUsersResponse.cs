@@ -12,6 +12,7 @@ namespace diet_server_api.DTO.Responses.Admin
         public string PESEL { get; set; }
         public string Role { get; set; }
         public string Office { get; set; }
+        public string PhoneNumber { get; set; }
         public bool IsActive { get; set; }
     }
 }

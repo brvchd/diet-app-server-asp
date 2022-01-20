@@ -21,6 +21,7 @@ namespace diet_server_api.DTO.Responses.Admin
             public string Role { get; set; }
             public string Office { get; set; }
             public bool IsActive { get; set; }
+            public string PhoneNumber { get; set; }
 
         }
     }

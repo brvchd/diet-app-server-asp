@@ -105,7 +105,8 @@ namespace diet_server_api.Services.Implementation.Repository
                 PESEL = e.Pesel,
                 Email = e.Email,
                 Office = e.Role == "DOCTOR" ? e.Doctor.Office : null,
-                IsActive = e.Isactive
+                IsActive = e.Isactive,
+                PhoneNumber = e.Phonenumber
             })
             .OrderBy(e => e.FirstName)
             .Skip((page - 1) * pageSize)
@@ -138,7 +139,8 @@ namespace diet_server_api.Services.Implementation.Repository
                     PESEL = e.Pesel,
                     Email = e.Email,
                     Office = e.Role == "DOCTOR" ? e.Doctor.Office : null,
-                    IsActive = e.Isactive
+                    IsActive = e.Isactive,
+                    PhoneNumber = e.Phonenumber
 
                 }).OrderBy(e => e.FirstName).ToListAsync();
                 if (users.Count == 0) throw new NotFound("No matched results");
@@ -159,7 +161,8 @@ namespace diet_server_api.Services.Implementation.Repository
                     PESEL = e.Pesel,
                     Email = e.Email,
                     Office = e.Role == "DOCTOR" ? e.Doctor.Office : null,
-                    IsActive = e.Isactive
+                    IsActive = e.Isactive,
+                    PhoneNumber = e.Phonenumber
                 }).OrderBy(e => e.FirstName).ToListAsync();
                 if (users.Count == 0) throw new NotFound("Patients not found");
                 return users;

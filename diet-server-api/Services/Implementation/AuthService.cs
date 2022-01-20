@@ -28,8 +28,8 @@ namespace diet_server_api.Services.Implementation
 
         public async Task<LoginResponse> Login(LoginRequest request)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email == request.Email && e.Isactive == true);
-            if (user == null) throw new NotFound("User not found");
+            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email == request.Email.ToLower().Trim() && e.Isactive == true);
+            if (user == null) throw new NotFound("User not found or account is deactivated");
             var passwordToCompare = PasswordGenerator.GeneratePassword(request.Password, user.Salt);
             if (passwordToCompare != user.Password) throw new InvalidData("Incorrect credentials");
             if (user.Role == Roles.PATIENT)
@@ -53,6 +53,15 @@ namespace diet_server_api.Services.Implementation
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(accessToken),
                 RefreshToken = refreshToken
             };
+        }
+
+        public async Task Logout(int IdUser)
+        {
+            var account = await _dbContext.Users.FirstOrDefaultAsync(e => e.Iduser == IdUser && e.Isactive == true);
+            if (account == null) throw new NotFound("Account was not found or already deactivated");
+            account.Refreshtoken = null;
+            account.Refreshtokenexp = null;
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request)

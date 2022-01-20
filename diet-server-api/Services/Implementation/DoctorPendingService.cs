@@ -24,7 +24,10 @@ namespace diet_server_api.Services.Implementation
 
         public async Task<List<PendingPatientResponse>> GetPendingPatients()
         {
-            var users = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == true).Select(e => new PendingPatientResponse
+            var users = await _dbContext.Users
+            .Include(e => e.Patient)
+            .Where(e => e.Patient.Ispending == true)
+            .Select(e => new PendingPatientResponse
             {
                 IdUser = e.Iduser,
                 FirstName = e.Firstname,
@@ -38,7 +41,9 @@ namespace diet_server_api.Services.Implementation
         {
             var userExists = await _dbContext.Users.AnyAsync(e => e.Iduser == idpatient && e.Role == Roles.PATIENT);
             if (!userExists) throw new NotFound("User not found");
-            var patient = await _dbContext.Users.Include(e => e.Patient).Select(e => new
+            var patient = await _dbContext.Users
+            .Include(e => e.Patient)
+            .Select(e => new
             {
                 e.Iduser,
                 e.Firstname,
@@ -59,7 +64,9 @@ namespace diet_server_api.Services.Implementation
 
             var mealsExist = await _dbContext.Mealsbeforediets.AnyAsync(e => e.Idquestionary == questionary.Idquestionary);
             if (!mealsExist) throw new NotFound("Meal before diet not found");
-            var meals = await _dbContext.Mealsbeforediets.Where(e => e.Idquestionary == questionary.Idquestionary).Select(e => new MealsBeforeDiet() { AtTime = e.Hour, MealNumber = e.Mealnumber, FoodToEat = e.Foodtoeat }).ToArrayAsync();
+            var meals = await _dbContext.Mealsbeforediets
+            .Where(e => e.Idquestionary == questionary.Idquestionary)
+            .Select(e => new MealsBeforeDiet() { AtTime = e.Hour, MealNumber = e.Mealnumber, FoodToEat = e.Foodtoeat }).ToArrayAsync();
 
 
             //Calculators
@@ -143,7 +150,9 @@ namespace diet_server_api.Services.Implementation
             var patient = await _dbContext.Patients.FirstOrDefaultAsync(e => e.Iduser == idPatient);
             var questionary = await _dbContext.Questionnaires.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
             var measurements = await _dbContext.Measurements.FirstOrDefaultAsync(e => e.Idpatient == idPatient);
-            var mealsList = await _dbContext.Mealsbeforediets.Where(e => e.Idquestionary == questionary.Idquestionary).ToListAsync();
+            var mealsList = await _dbContext.Mealsbeforediets
+            .Where(e => e.Idquestionary == questionary.Idquestionary).ToListAsync();
+
             foreach (var meal in mealsList)
             {
                 _dbContext.Mealsbeforediets.Remove(meal);

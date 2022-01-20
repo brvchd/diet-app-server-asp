@@ -1,7 +1,10 @@
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Auth;
 using diet_server_api.Exceptions;
 using diet_server_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +43,30 @@ namespace diet_server_api.Controllers.Login
             catch (UserIsPending ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpPut("logout")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Logout(AccountManage request)
+        {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (nameIdentifier != request.IdUser)
+            {
+                return Forbid();
+            }
+            try
+            {
+                await _authService.Logout(request.IdUser);
+                return Ok();
+
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
             }
         }
 

@@ -8,5 +8,6 @@ namespace diet_server_api.Services.Interfaces
     {
         Task<LoginResponse> Login(LoginRequest request);
         Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request);
+        Task Logout(int IdUser);
     }
 }

@@ -106,7 +106,9 @@ namespace diet_server_api.Services.Implementation.Repository
             if (diet == null) throw new NotFound("Diet not found");
             var dietDays = (int)diet.Dateto.Subtract(diet.Datefrom).TotalDays + 1;
             var daysFilled = await _dbContext.Days.Where(e => e.Dietiddiet == idDiet).CountAsync();
-            var daysFilledNumbers = await _dbContext.Days.Where(e => e.Dietiddiet == idDiet).Select(e => e.Daynumber).ToListAsync();
+            var daysFilledNumbers = await _dbContext.Days
+            .Where(e => e.Dietiddiet == idDiet)
+            .Select(e => e.Daynumber).ToListAsync();
             return new GetDietDaysResponse
             {
                 Days = dietDays,
@@ -128,6 +130,11 @@ namespace diet_server_api.Services.Implementation.Repository
             .ThenInclude(e => e.Individualrecipes)
             .ThenInclude(e => e.IdrecipeNavigation)
             .ThenInclude(e => e.IdmealNavigation)
+            .Include(e => e.Mealtakes)
+            .ThenInclude(e => e.Individualrecipes)
+            .ThenInclude(e => e.IdrecipeNavigation)
+            .ThenInclude(e => e.IdproductNavigation)
+            .Where(e => e.Dietiddiet == idDiet)
             .Select(e => new GetDietMealsResponse
             {
                 IdDay = e.Idday,
@@ -145,6 +152,11 @@ namespace diet_server_api.Services.Implementation.Repository
                     {
                         IdProduct = e.Idrecipe,
                         Amount = e.IdrecipeNavigation.Amount,
+                        Size = e.IdrecipeNavigation.IdproductNavigation.Size,
+                        HomeMeasure = e.IdrecipeNavigation.IdproductNavigation.Homemeasure,
+                        HomeMeasureSize = e.IdrecipeNavigation.IdproductNavigation.Homemeasuresize,
+                        Unit = e.IdrecipeNavigation.IdproductNavigation.Unit,
+                        Name = e.IdrecipeNavigation.IdproductNavigation.Name
                     })
                 })
             }).ToListAsync();
@@ -159,7 +171,9 @@ namespace diet_server_api.Services.Implementation.Repository
             if (!exists) throw new NotFound("Patient not found");
             var accountIsActive = await _dbContext.Users.AnyAsync(e => e.Iduser == idPatient && e.Isactive == true);
             if (!accountIsActive) throw new NotActive("Account is not active");
-            var diets = await _dbContext.Diets.Where(e => e.Idpatient == idPatient).Select(e => new GetPatientDietResponse()
+            var diets = await _dbContext.Diets
+            .Where(e => e.Idpatient == idPatient)
+            .Select(e => new GetPatientDietResponse()
             {
                 IdDiet = e.Iddiet,
                 Name = e.Name,

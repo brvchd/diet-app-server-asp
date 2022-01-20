@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Secretary;
 using diet_server_api.Exceptions;
@@ -19,13 +20,13 @@ namespace diet_server_api.Controllers.Secretary
         }
 
         [HttpGet]
-        [Route("patients/{firstname}/{lastname}")]
+        [Route("patients/search")]
         [Authorize(Roles = "SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> SearchPatient([FromRoute] string firstname, [FromRoute] string lastname)
+        public async Task<IActionResult> SearchPatient([FromQuery] string firstname, [FromQuery] string lastname)
         {
             try
             {
@@ -35,6 +36,58 @@ namespace diet_server_api.Controllers.Secretary
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("doctors/search")]
+        [Authorize(Roles = "SECRETARY")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> SearchDoctor([FromQuery] string firstname, [FromQuery] string lastname)
+        {
+            try
+            {
+                var results = await _secService.SearchDoctor(firstname, lastname);
+                return Ok(results);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("appointments")]
+        [Authorize(Roles = "SECRETARY")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetAppointments()
+        {
+            try
+            {
+                var results = await _secService.GetAppointmentDates();
+                return Ok(results);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+        [HttpDelete]
+        [Route("appointments")]
+        [Authorize(Roles = "SECRETARY")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> CancelAppointment(int idVisit)
+        {
+            try
+            {
+                await _secService.CancelAppointment(idVisit);
+                return Ok();
             }
             catch (InvalidData ex)
             {
@@ -43,41 +96,58 @@ namespace diet_server_api.Controllers.Secretary
         }
 
         [HttpGet]
-        [Route("doctors/{firstname}/{lastname}")]
+        [Route("appointments/dates")]
         [Authorize(Roles = "SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> SearchDoctor([FromRoute] string firstname, [FromRoute] string lastname)
+        public async Task<IActionResult> GetAppointmentsByDate(DateTime request)
         {
             try
             {
-                var results = await _secService.SearchPatient(firstname, lastname);
+                var results = await _secService.GetAppointmentsByDates(request);
                 return Ok(results);
             }
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
             }
-            catch (InvalidData ex)
+
+        }
+        [HttpGet]
+        [Route("appointments/details/{idVisit}")]
+        [Authorize(Roles = "SECRETARY")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetAppointmentsDetails([FromRoute] int idVisit)
+        {
+            try
             {
-                return BadRequest(ex.Message);
+                var results = await _secService.GetAppointmentDetails(idVisit);
+                return Ok(results);
             }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+
         }
 
+
         [HttpPost]
-        //[Authorize(Roles = "SECRETARY")]
+        [Authorize(Roles = "SECRETARY")]
         [Route("emails")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> SendEmail(SendEmailRequest request)
         {
             await _secService.SendEmail(request);
-            return Ok("Email sent");
+            return Ok();
         }
         [HttpPost]
         [Route("visits")]
-        //[Authorize(Roles = "SECRETARY")]
+        [Authorize(Roles = "SECRETARY")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -87,7 +157,7 @@ namespace diet_server_api.Controllers.Secretary
             try
             {
                 await _secService.AssignAppointment(request);
-                return CreatedAtAction(nameof(BookVisit), "Appointment booked");
+                return CreatedAtAction(nameof(BookVisit), request);
             }
             catch (NotActive ex)
             {

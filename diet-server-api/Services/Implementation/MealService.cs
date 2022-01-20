@@ -57,7 +57,13 @@ namespace diet_server_api.Services.Implementation.Repository
             int pageSize = 12;
             var rows = await _dbContext.Products.CountAsync();
 
-            var meals = await _dbContext.Meals.Include(e => e.Recipes).ThenInclude(e => e.IdproductNavigation).OrderBy(e => e.Nameofmeal).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new GetMealsResponse.MealRecipe()
+            var meals = await _dbContext.Meals
+            .Include(e => e.Recipes)
+            .ThenInclude(e => e.IdproductNavigation)
+            .OrderBy(e => e.Nameofmeal)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(e => new GetMealsResponse.MealRecipe()
             {
                 IdMeal = e.Idmeal,
                 NameOfMeal = e.Nameofmeal,
@@ -91,7 +97,11 @@ namespace diet_server_api.Services.Implementation.Repository
             {
                 throw new InvalidData("Incorrect product name");
             }
-            var meals = await _dbContext.Meals.Include(e => e.Recipes).ThenInclude(e => e.IdproductNavigation).Where(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim()).Select(e => new GetMealsResponse.MealRecipe()
+            var meals = await _dbContext.Meals
+            .Include(e => e.Recipes)
+            .ThenInclude(e => e.IdproductNavigation)
+            .Where(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim())
+            .Select(e => new GetMealsResponse.MealRecipe()
             {
                 IdMeal = e.Idmeal,
                 NameOfMeal = e.Nameofmeal,

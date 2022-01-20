@@ -25,11 +25,11 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<AddSupplementResponse> AddSupplement(AddSupplementRequest request)
         {
-            var exists = await _dbContext.Supplements.AnyAsync(e => e.Name == request.Name);
+            var exists = await _dbContext.Supplements.AnyAsync(e => e.Name.ToLower().Trim() == request.Name.ToLower().Trim());
             if (exists) throw new AlreadyExists("Supplement already exists");
             var supplement = new Supplement()
             {
-                Name = request.Name,
+                Name = request.Name.Trim(),
                 Description = request.Description
             };
             await _dbContext.Supplements.AddAsync(supplement);

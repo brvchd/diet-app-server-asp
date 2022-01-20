@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Secretary;
 using diet_server_api.DTO.Responses.Secretary;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces;
 using MailKit.Net.Smtp;
@@ -53,52 +54,153 @@ namespace diet_server_api.Services.Implementation
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task CancelAppointment(int idVisit)
+        {
+            var visit = await _dbContext.Visits
+            .FirstOrDefaultAsync(e => e.Idvisit == idVisit);
+            if (visit.Time <= DateTime.UtcNow.TimeOfDay && visit.Date <= DateTime.Now) throw new InvalidData("Not possible to cancel visit");
+            _dbContext.Visits.Remove(visit);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<DateTime>> GetAppointmentDates()
+        {
+            var results = await _dbContext.Visits.Select(e => e.Date).Distinct().OrderBy(e => e.Date).ToListAsync();
+            if (results.Count == 0) throw new NotFound("No results");
+            return results;
+        }
+
+        public async Task<GetAppointmentDetails> GetAppointmentDetails(int idVisit)
+        {
+            var visitExists = await _dbContext.Visits.AnyAsync(e => e.Idvisit == idVisit);
+            if (!visitExists) throw new NotFound("Visit not found");
+            var visit = await _dbContext.Visits
+            .Include(e => e.IddoctorNavigation).ThenInclude(e => e.IduserNavigation)
+            .Include(e => e.IdpatientNavigation).ThenInclude(e => e.IduserNavigation)
+            .Where(e => e.Idvisit == idVisit)
+            .Select(e => new GetAppointmentDetails
+            {
+                DoctorFullName = $"{e.IddoctorNavigation.IduserNavigation.Firstname} {e.IddoctorNavigation.IduserNavigation.Lastname}",
+                PatientFullName = $"{e.IdpatientNavigation.IduserNavigation.Firstname} {e.IdpatientNavigation.IduserNavigation.Lastname}",
+                PatientEmail = e.IdpatientNavigation.IduserNavigation.Email,
+                PatientDateOfBirth = e.IddoctorNavigation.IduserNavigation.Dateofbirth.ToString(),
+                AppointmentDate = e.Date.ToString(),
+                AppointmentTime = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5),
+                Description = e.Description
+            }).FirstOrDefaultAsync();
+            return visit;
+        }
+
+        public async Task<List<GetAppointmentsByDateResponse>> GetAppointmentsByDates(DateTime date)
+        {
+            var visits = await _dbContext.Visits
+            .Include(e => e.IddoctorNavigation).ThenInclude(e => e.IduserNavigation)
+            .Include(e => e.IdpatientNavigation).ThenInclude(e => e.IduserNavigation)
+            .Where(e => e.Date.Date == date.Date)
+            .OrderBy(e => e.Time)
+            .Select(e => new GetAppointmentsByDateResponse
+            {
+                IdVisit = e.Idvisit,
+                DoctorFullName = $"{e.IddoctorNavigation.IduserNavigation.Firstname} {e.IddoctorNavigation.IduserNavigation.Lastname}",
+                PatientFullName = $"{e.IdpatientNavigation.IduserNavigation.Firstname} {e.IdpatientNavigation.IduserNavigation.Lastname}",
+                TimeToDisplay = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5)
+            }).ToListAsync();
+
+            if (visits.Count == 0 && date.Date == DateTime.UtcNow.Date)
+            {
+                var closestDate = await _dbContext.Visits
+                .Where(e => e.Date > date)
+                .Select(e => e.Date)
+                .FirstOrDefaultAsync();
+
+                visits = await _dbContext.Visits
+                .Include(e => e.IddoctorNavigation).ThenInclude(e => e.IduserNavigation)
+                .Include(e => e.IdpatientNavigation).ThenInclude(e => e.IduserNavigation)
+                .Where(e => e.Date.Date == closestDate.Date)
+                .OrderBy(e => e.Time)
+                .Select(e => new GetAppointmentsByDateResponse
+                {
+                    IdVisit = e.Idvisit,
+                    DoctorFullName = $"{e.IddoctorNavigation.IduserNavigation.Firstname} {e.IddoctorNavigation.IduserNavigation.Lastname}",
+                    PatientFullName = $"{e.IdpatientNavigation.IduserNavigation.Firstname} {e.IdpatientNavigation.IduserNavigation.Lastname}",
+                    TimeToDisplay = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5)
+                }).ToListAsync();
+            }
+            if (visits.Count == 0) throw new NotFound("No results found");
+            return visits;
+        }
+
         public async Task<List<SearchUserResponse>> SearchDoctor(string firstname, string lastname)
         {
-            if (string.IsNullOrWhiteSpace(firstname) || string.IsNullOrWhiteSpace(lastname)) throw new InvalidData("Incorrect parameters");
-            var results = await _dbContext.Users
-            .Include(e => e.Patient)
-            .Where(e => e.Firstname.ToLower() == firstname.Trim().ToLower()
-            && e.Lastname.ToLower() == lastname.Trim().ToLower()
-            && e.Role == "DOCTOR"
-            && e.Isactive == true)
-            .Select(e => new SearchUserResponse
+            if (string.IsNullOrWhiteSpace(firstname))
             {
-                IdUser = e.Iduser,
-                FirstName = e.Firstname,
-                LastName = e.Lastname,
-                Email = e.Email
-            }).ToListAsync();
-            if (results.Count == 0) throw new NotFound("No results found");
-
-            return results;
+                var users = await _dbContext.Users
+                    .Include(e => e.Patient)
+                    .Where(e => e.Lastname.ToLower() == lastname.ToLower() && e.Role == Roles.DOCTOR)
+                    .Select(e => new SearchUserResponse
+                    {
+                        IdUser = e.Iduser,
+                        FirstName = e.Firstname,
+                        LastName = e.Lastname,
+                        Email = e.Email
+                    }).OrderBy(e => e.FirstName).ToListAsync();
+                if (users.Count == 0) throw new NotFound("No matched results");
+                return users;
+            }
+            else
+            {
+                var users = await _dbContext.Users
+                .Where(e => e.Firstname.ToLower() == firstname.ToLower() && e.Lastname.ToLower() == lastname.ToLower() && e.Role == Roles.DOCTOR)
+                .Include(e => e.Doctor)
+                .Select(e => new SearchUserResponse
+                {
+                    IdUser = e.Iduser,
+                    FirstName = e.Firstname,
+                    LastName = e.Lastname,
+                    Email = e.Email
+                }).OrderBy(e => e.FirstName).ToListAsync();
+                if (users.Count == 0) throw new NotFound("Doctors not found");
+                return users;
+            }
         }
 
         public async Task<List<SearchUserResponse>> SearchPatient(string firstname, string lastname)
         {
-            if (string.IsNullOrWhiteSpace(firstname) || string.IsNullOrWhiteSpace(lastname)) throw new InvalidData("Incorrect parameters");
-            var results = await _dbContext.Users
-            .Include(e => e.Patient)
-            .Where(e => e.Firstname.ToLower() == firstname.Trim().ToLower()
-            && e.Lastname.ToLower() == lastname.Trim().ToLower()
-            && e.Role == "PATIENT"
-            && e.Isactive == true
-            && e.Patient.Ispending == false)
-            .Select(e => new SearchUserResponse
+            if (string.IsNullOrWhiteSpace(firstname))
             {
-                IdUser = e.Iduser,
-                FirstName = e.Firstname,
-                LastName = e.Lastname,
-                Email = e.Email
-            }).ToListAsync();
-            if (results.Count == 0) throw new NotFound("No results found");
-
-            return results;
+                var users = await _dbContext.Users
+                    .Include(e => e.Patient)
+                    .Where(e => e.Lastname.ToLower() == lastname.ToLower() && e.Role == Roles.PATIENT)
+                    .Select(e => new SearchUserResponse
+                    {
+                        IdUser = e.Iduser,
+                        FirstName = e.Firstname,
+                        LastName = e.Lastname,
+                        Email = e.Email
+                    }).OrderBy(e => e.FirstName).ToListAsync();
+                if (users.Count == 0) throw new NotFound("No matched results");
+                return users;
+            }
+            else
+            {
+                var users = await _dbContext.Users
+                .Where(e => e.Firstname.ToLower() == firstname.ToLower() && e.Lastname.ToLower() == lastname.ToLower() && e.Role == Roles.PATIENT)
+                .Include(e => e.Doctor)
+                .Select(e => new SearchUserResponse
+                {
+                    IdUser = e.Iduser,
+                    FirstName = e.Firstname,
+                    LastName = e.Lastname,
+                    Email = e.Email
+                }).OrderBy(e => e.FirstName).ToListAsync();
+                if (users.Count == 0) throw new NotFound("Patients not found");
+                return users;
+            }
         }
 
         public async Task SendEmail(SendEmailRequest request)
         {
-            var emailExists = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.Email);
+            var emailExists = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email.ToLower() == request.Email.ToLower().Trim());
             if (emailExists != null)
             {
                 _dbContext.TempUsers.Remove(emailExists);
@@ -112,7 +214,7 @@ namespace diet_server_api.Services.Implementation
             await _dbContext.SaveChangesAsync();
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress("Diet Site", "dietappeu@gmail.com"));
-            emailMessage.To.Add(new MailboxAddress(request.FullName, request.Email));
+            emailMessage.To.Add(new MailboxAddress(request.FullName.Trim(), request.Email.ToLower().Trim()));
             emailMessage.Subject = "Temporary credentials";
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {

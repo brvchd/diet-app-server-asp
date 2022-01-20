@@ -52,7 +52,9 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<List<GetMeasurementResponse>> GetMeasurement(int idPatient)
         {
             var patient = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Iduser == idPatient).FirstOrDefaultAsync();
-            var measurements = await _dbContext.Measurements.Where(e => e.Idpatient == idPatient).Select(e => new GetMeasurementResponse
+            var measurements = await _dbContext.Measurements
+            .Where(e => e.Idpatient == idPatient)
+            .Select(e => new GetMeasurementResponse
             {
                 Height = e.Height,
                 Weight = e.Weight,
@@ -76,7 +78,9 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var exists = await _dbContext.Patients.AnyAsync(e => e.Iduser == idPatient);
             if (!exists) throw new NotFound("Patient not found");
-            var measurements = await _dbContext.Measurements.Where(e => e.Idpatient == idPatient).Select(e => new GetMeasurementsResponse
+            var measurements = await _dbContext.Measurements
+            .Where(e => e.Idpatient == idPatient)
+            .Select(e => new GetMeasurementsResponse
             {
                 IdMeasurement = e.Idmeasurement,
                 Date = e.Date,
@@ -92,7 +96,9 @@ namespace diet_server_api.Services.Implementation.Repository
             var patient = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Iduser == idPatient).FirstOrDefaultAsync();
             if (patient == null) throw new NotFound("Patient not found");
             if (date > DateTime.UtcNow) throw new InvalidData("Incorrect date provided");
-            var measurements = await _dbContext.Measurements.Where(e => e.Idpatient == idPatient && e.Date.Date == date.Date && e.Whomeasured.ToLower() == whomeasured.ToLower().Trim()).Select(e => new GetMeasurementsByDateResponse
+            var measurements = await _dbContext.Measurements
+            .Where(e => e.Idpatient == idPatient && e.Date.Date == date.Date && e.Whomeasured.ToLower() == whomeasured.ToLower().Trim())
+            .Select(e => new GetMeasurementsByDateResponse
             {
                 Height = e.Height,
                 Weight = e.Weight,
@@ -107,7 +113,10 @@ namespace diet_server_api.Services.Implementation.Repository
                 Whomeasured = e.Whomeasured,
                 Age = AgeCalculator.CalculateAge(patient.Dateofbirth),
                 Gender = patient.Patient.Gender
-            }).OrderByDescending(e => e.Date).Take(1).ToListAsync();
+            })
+            .OrderByDescending(e => e.Date)
+            .Take(1)
+            .ToListAsync();
             if (measurements.Count == 0) throw new NotFound("No measurments found");
             return measurements;
         }

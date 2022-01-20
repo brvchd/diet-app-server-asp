@@ -26,7 +26,7 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<AddDiseaseResponse> AddDisease(AddDiseaseRequest request)
         {
-            var exists = await _dbContext.Diseases.AnyAsync(e => e.Name == request.Name);
+            var exists = await _dbContext.Diseases.AnyAsync(e => e.Name.ToLower().Trim() == request.Name.ToLower().Trim());
             if (exists) throw new AlreadyExists("Disease already exists");
             var disease = new Disease()
             {
@@ -77,7 +77,11 @@ namespace diet_server_api.Services.Implementation.Repository
             if (page < 1) page = 1;
             int pageSize = 8;
             var rows = await _dbContext.Diseases.CountAsync();
-            var diseases = await _dbContext.Diseases.OrderBy(e => e.Name).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new GetDiseasesResponse.Disease
+            var diseases = await _dbContext.Diseases
+            .OrderBy(e => e.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(e => new GetDiseasesResponse.Disease
             {
                 IdDisease = e.Iddisease,
                 Name = e.Name,
@@ -96,9 +100,14 @@ namespace diet_server_api.Services.Implementation.Repository
 
         public async Task<List<GetPatientDiseasesResponse>> GetPatientDiseases(int patientId)
         {
-            var patientExists = await _dbContext.Patients.Include(e => e.IduserNavigation).AnyAsync(e => e.Iduser == patientId && e.Ispending == false && e.IduserNavigation.Isactive == true);
+            var patientExists = await _dbContext.Patients
+            .Include(e => e.IduserNavigation)
+            .AnyAsync(e => e.Iduser == patientId && e.Ispending == false && e.IduserNavigation.Isactive == true);
             if (!patientExists) throw new NotFound("Patient not found");
-            var diseases = await _dbContext.DiseasePatients.Include(e => e.IddiseaseNavigation).Where(e => e.Idpatient == patientId).Select(e => new GetPatientDiseasesResponse()
+            var diseases = await _dbContext.DiseasePatients
+            .Include(e => e.IddiseaseNavigation)
+            .Where(e => e.Idpatient == patientId)
+            .Select(e => new GetPatientDiseasesResponse()
             {
                 IdDisease = e.Iddisease,
                 IdPatientDisease = e.IddiseasePatient,
@@ -113,11 +122,9 @@ namespace diet_server_api.Services.Implementation.Repository
         }
         public async Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName)
         {
-            if (string.IsNullOrWhiteSpace(diseaseName))
-            {
-                throw new InvalidData("Incorrect parameter diseaseName");
-            }
-            var disease = await _dbContext.Diseases.Where(e => e.Name.ToLower() == diseaseName.ToLower().Trim()).Select(e => new SearchDiseaseResponse()
+            var disease = await _dbContext.Diseases
+            .Where(e => e.Name.ToLower() == diseaseName.ToLower().Trim())
+            .Select(e => new SearchDiseaseResponse()
             {
                 IdDisease = e.Iddisease,
                 Name = e.Name,
@@ -133,10 +140,8 @@ namespace diet_server_api.Services.Implementation.Repository
             var disease = await _dbContext.Diseases.FirstOrDefaultAsync(e => e.Iddisease == request.IdDisease);
             if (disease == null) throw new NotFound("Disease not found");
 
-            disease.Name = string.IsNullOrWhiteSpace(request.Name) ? disease.Name : request.Name;
-
+            disease.Name = string.IsNullOrWhiteSpace(request.Name) ? disease.Name : request.Name.ToLower().Trim();
             disease.Recomendation = string.IsNullOrWhiteSpace(request.Recomendation) ? disease.Recomendation : request.Recomendation;
-
             disease.Description = string.IsNullOrWhiteSpace(request.Description) ? disease.Description : request.Description;
 
             await _dbContext.SaveChangesAsync();

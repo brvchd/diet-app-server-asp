@@ -28,18 +28,18 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<SurveyUserCreationResponse> CreatePatient(SurveySignUpRequest request)
         {
 
-            var existingUser = await _dbContext.Users.AnyAsync(e => e.Email == request.Email);
-            if (existingUser) throw new AlreadyExists("User already exists");
+            var existingUser = await _dbContext.Users.AnyAsync(e => e.Email.ToLower() == request.Email.ToLower().Trim());
+            if (existingUser) throw new AlreadyExists("Email already used");
 
             var existingPesel = await _dbContext.Users.AnyAsync(e => e.Pesel == request.PESEL);
-            if (existingPesel) throw new AlreadyExists("PESEL already exists");
+            if (existingPesel) throw new AlreadyExists("PESEL already used");
 
             var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
-            if (existingPhoneNumber) throw new AlreadyExists("Phone number already exists");
+            if (existingPhoneNumber) throw new AlreadyExists("Phone number already used");
 
             if (request.DateOfBirth >= DateTime.UtcNow) throw new InvalidData("Incorrect data of birth");
 
-            var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email == request.AccessEmail);
+            var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email.ToLower() == request.AccessEmail.ToLower().Trim());
             if (tempUser == null) throw new NotFound("User not found");
 
             _dbContext.TempUsers.Remove(tempUser);

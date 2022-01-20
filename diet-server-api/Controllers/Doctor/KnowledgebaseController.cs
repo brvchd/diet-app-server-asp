@@ -90,13 +90,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("diseases/search/{diseaseName}")]
+        [Route("diseases/search")]
         [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchDisease([FromRoute] string diseaseName)
+        public async Task<IActionResult> SearchDisease([FromQuery] string diseaseName)
         {
             try
             {
@@ -251,13 +251,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("product/search/{productName}")]
+        [Route("product/search")]
         [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchProduct([FromRoute] string productName)
+        public async Task<IActionResult> SearchProduct([FromQuery] string productName)
         {
             try
             {
@@ -361,13 +361,13 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Route("meal/search/{mealName}")]
+        [Route("meal/search")]
         [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> SearchMeal([FromRoute] string mealName)
+        public async Task<IActionResult> SearchMeal([FromQuery] string mealName)
         {
             try
             {

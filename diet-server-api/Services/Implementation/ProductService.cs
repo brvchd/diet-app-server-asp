@@ -59,7 +59,11 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var exists = await _dbContext.Products.AnyAsync(e => e.Idproduct == IdProduct);
             if (!exists) throw new NotFound("Product not found");
-            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).Where(e => e.Idproduct == IdProduct).Select(e => new GetProductParametersResponse()
+            var products = await _dbContext.Products
+            .Include(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
+            .Where(e => e.Idproduct == IdProduct)
+            .Select(e => new GetProductParametersResponse()
             {
                 IdProduct = e.Idproduct,
                 Name = e.Name,
@@ -86,7 +90,13 @@ namespace diet_server_api.Services.Implementation.Repository
             int pageSize = 12;
             var rows = await _dbContext.Products.CountAsync();
 
-            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).OrderBy(e => e.Name).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new GetProductsResponse.Product()
+            var products = await _dbContext.Products
+            .Include(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
+            .OrderBy(e => e.Name)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(e => new GetProductsResponse.Product()
             {
                 IdProduct = e.Idproduct,
                 Name = e.Name,
@@ -119,7 +129,11 @@ namespace diet_server_api.Services.Implementation.Repository
                 throw new InvalidData("Incorrect product name");
             }
 
-            var products = await _dbContext.Products.Include(e => e.ProductParameters).ThenInclude(e => e.IdparameterNavigation).Where(e => e.Name.ToLower() == product.ToLower().Trim()).Select(e => new GetProductsResponse.Product()
+            var products = await _dbContext.Products
+            .Include(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
+            .Where(e => e.Name.ToLower() == product.ToLower().Trim())
+            .Select(e => new GetProductsResponse.Product()
             {
                 IdProduct = e.Idproduct,
                 Name = e.Name,
@@ -173,7 +187,9 @@ namespace diet_server_api.Services.Implementation.Repository
                 await _dbContext.ProductParameters.AddAsync(productParameter);
             }
             await _dbContext.SaveChangesAsync();
-            var newparameters = await _dbContext.ProductParameters.Where(e => e.Idproduct == request.ProductId).Select(e => new UpdateProductResponse.Parameter()
+            var newparameters = await _dbContext.ProductParameters
+            .Where(e => e.Idproduct == request.ProductId)
+            .Select(e => new UpdateProductResponse.Parameter()
             {
                 IdParameter = e.Idparameter,
                 Name = e.IdparameterNavigation.Name,

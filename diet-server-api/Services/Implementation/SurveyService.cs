@@ -18,7 +18,7 @@ namespace diet_server_api.Services.Implementation
 
         public async Task<SurveyAccessResponse> ValidateSurveyCredentials(SurveyCheckCredentialsRequest request)
         {
-            var existingUser = await _dbContext.TempUsers.AnyAsync(e => e.Email == request.Email && e.Uniquekey == request.UniqueKey);
+            var existingUser = await _dbContext.TempUsers.AnyAsync(e => e.Email.ToLower().Trim() == request.Email.ToLower().Trim() && e.Uniquekey == request.UniqueKey);
             if (!existingUser) throw new NotFound("User not found");
             return new SurveyAccessResponse() { Email = request.Email };
         }

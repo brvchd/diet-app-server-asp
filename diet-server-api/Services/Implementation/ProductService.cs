@@ -164,10 +164,10 @@ namespace diet_server_api.Services.Implementation.Repository
                 if (prodNameExists != null && prodNameExists.Idproduct != product.Idproduct) throw new AlreadyExists("Product with such name already exists");
             }
             var prodParams = await _dbContext.ProductParameters.Where(e => e.Idproduct == request.ProductId).ToListAsync();
-            product.Name = string.IsNullOrWhiteSpace(request.Name) ? product.Name : request.Name;
-            product.Unit = string.IsNullOrWhiteSpace(request.Unit) ? product.Unit : request.Unit;
+            product.Name = string.IsNullOrWhiteSpace(request.Name) ? product.Name : request.Name.Trim();
+            product.Unit = string.IsNullOrWhiteSpace(request.Unit) ? product.Unit : request.Unit.Trim();
             product.Size = request.Size <= 0 ? product.Size : request.Size;
-            product.Homemeasure = string.IsNullOrWhiteSpace(request.HomeMeasure) ? product.Homemeasure : request.HomeMeasure;
+            product.Homemeasure = string.IsNullOrWhiteSpace(request.HomeMeasure) ? product.Homemeasure : request.HomeMeasure.Trim();
             product.Homemeasuresize = request.Size <= 0 ? product.Homemeasuresize : request.HomeMeasureSize;
 
             foreach (var param in prodParams)

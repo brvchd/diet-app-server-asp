@@ -128,7 +128,7 @@ namespace diet_server_api.Services.Implementation.Repository
             {
                 var users = await _dbContext.Users
                 .Include(e => e.Doctor)
-                .Where(e => e.Lastname.ToLower() == lastName.ToLower() && e.Role != Roles.PATIENT)
+                .Where(e => e.Lastname.ToLower() == lastName.ToLower().Trim() && e.Role != Roles.PATIENT)
                 .Select(e => new SearchUsersResponse
                 {
                     IdUser = e.Iduser,
@@ -149,7 +149,7 @@ namespace diet_server_api.Services.Implementation.Repository
             else
             {
                 var users = await _dbContext.Users
-                .Where(e => e.Firstname.ToLower() == firstName.ToLower() && e.Lastname.ToLower() == lastName.ToLower() && e.Role != Roles.PATIENT)
+                .Where(e => e.Firstname.ToLower() == firstName.ToLower().Trim() && e.Lastname.ToLower() == lastName.ToLower().Trim() && e.Role != Roles.PATIENT)
                 .Include(e => e.Doctor)
                 .Select(e => new SearchUsersResponse
                 {

@@ -152,7 +152,7 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                var patients = await _dbContext.Users.Where(e => e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true).Select(e => new PatientSearchResponse
+                var patients = await _dbContext.Users.Where(e => e.Lastname.ToLower() == lastName.ToLower().Trim() && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true).Select(e => new PatientSearchResponse
                 {
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
@@ -164,7 +164,7 @@ namespace diet_server_api.Services.Implementation.Repository
             }
             else
             {
-                var patients = await _dbContext.Users.Where(e => e.Firstname.ToLower() == firstName.ToLower() && e.Lastname.ToLower() == lastName.ToLower() && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true).Select(e => new PatientSearchResponse
+                var patients = await _dbContext.Users.Where(e => e.Firstname.ToLower() == firstName.ToLower().Trim() && e.Lastname.ToLower() == lastName.ToLower().Trim() && e.Role == Roles.PATIENT && e.Patient.Ispending == false && e.Isactive == true).Select(e => new PatientSearchResponse
                 {
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
@@ -180,7 +180,13 @@ namespace diet_server_api.Services.Implementation.Repository
             if (page < 1) page = 1;
             int pageSize = 9;
             var rows = await _dbContext.Patients.Where(e => e.Ispending == false).CountAsync();
-            var patients = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Patient.Ispending == false && e.Isactive == true).OrderBy(e => e.Firstname).Skip((page - 1) * pageSize).Take(pageSize).Select(e => new PatientsByPageResponse.PatientByPage
+            var patients = await _dbContext.Users
+            .Include(e => e.Patient)
+            .Where(e => e.Patient.Ispending == false && e.Isactive == true)
+            .OrderBy(e => e.Firstname)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(e => new PatientsByPageResponse.PatientByPage
             {
                 IdPatient = e.Iduser,
                 FirstName = e.Firstname,

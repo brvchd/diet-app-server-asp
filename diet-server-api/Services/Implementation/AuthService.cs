@@ -28,7 +28,7 @@ namespace diet_server_api.Services.Implementation
 
         public async Task<LoginResponse> Login(LoginRequest request)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email == request.Email.ToLower().Trim() && e.Isactive == true);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(e => e.Email.ToLower() == request.Email.Trim().ToLower() && e.Isactive == true);
             if (user == null) throw new NotFound("User not found or account is deactivated");
             var passwordToCompare = PasswordGenerator.GeneratePassword(request.Password, user.Salt);
             if (passwordToCompare != user.Password) throw new InvalidData("Incorrect credentials");

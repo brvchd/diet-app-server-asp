@@ -26,7 +26,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (exists) throw new AlreadyExists("Parameter already exists");
             var parameter = new Parameter
             {
-                Name = request.Name,
+                Name = request.Name.Trim(),
                 Measureunit = request.MeasureUnit
             };
             await _dbContext.Parameters.AddAsync(parameter);

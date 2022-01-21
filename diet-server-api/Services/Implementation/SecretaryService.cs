@@ -103,7 +103,8 @@ namespace diet_server_api.Services.Implementation
                 IdVisit = e.Idvisit,
                 DoctorFullName = $"{e.IddoctorNavigation.IduserNavigation.Firstname} {e.IddoctorNavigation.IduserNavigation.Lastname}",
                 PatientFullName = $"{e.IdpatientNavigation.IduserNavigation.Firstname} {e.IdpatientNavigation.IduserNavigation.Lastname}",
-                TimeToDisplay = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5)
+                TimeToDisplay = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5),
+                Date = e.Date
             }).ToListAsync();
 
             if (visits.Count == 0 && date.Date == DateTime.UtcNow.Date)
@@ -123,7 +124,8 @@ namespace diet_server_api.Services.Implementation
                     IdVisit = e.Idvisit,
                     DoctorFullName = $"{e.IddoctorNavigation.IduserNavigation.Firstname} {e.IddoctorNavigation.IduserNavigation.Lastname}",
                     PatientFullName = $"{e.IdpatientNavigation.IduserNavigation.Firstname} {e.IdpatientNavigation.IduserNavigation.Lastname}",
-                    TimeToDisplay = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5)
+                    TimeToDisplay = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5),
+                    Date = e.Date
                 }).ToListAsync();
             }
             if (visits.Count == 0) throw new NotFound("No results found");

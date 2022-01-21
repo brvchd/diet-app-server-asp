@@ -26,7 +26,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (mealExists) throw new AlreadyExists("Meal with such name already exists");
             var meal = new Meal()
             {
-                Nameofmeal = request.NameOfMeal,
+                Nameofmeal = request.NameOfMeal.Trim(),
                 Description = request.Description,
                 CookingUrl = request.CookingURL
             };

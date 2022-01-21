@@ -30,7 +30,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (exists) throw new AlreadyExists("Disease already exists");
             var disease = new Disease()
             {
-                Name = request.Name,
+                Name = request.Name.Trim(),
                 Description = request.Description,
                 Recomendation = request.Recomendation
             };

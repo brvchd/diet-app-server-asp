@@ -8,5 +8,6 @@ namespace diet_server_api.DTO.Responses.Secretary
         public string DoctorFullName { get; set; }
         public string PatientFullName { get; set; }
         public string TimeToDisplay { get; set; }
+        public DateTime Date { get; set; }
     }
 }

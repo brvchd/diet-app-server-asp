@@ -17,6 +17,7 @@ namespace diet_server_api.Controllers.Admin
         private readonly ITempUserService _tempUserService;
         private readonly IUserService _userService;
 
+
         public AdminController(IAdminService doctorRepoService, ITempUserService tempUserRepoService, IUserService userRepo)
         {
             _adminService = doctorRepoService;

@@ -18,11 +18,13 @@ namespace diet_server_api.Controllers.Doctor
     {
         private readonly IDietService _dietRepo;
         private readonly mdzcojxmContext _dbContext;
+        private readonly IMealService _mealService;
 
-        public DietController(IDietService dietRepo, mdzcojxmContext dbContext)
+        public DietController(IDietService dietRepo, mdzcojxmContext dbContext, IMealService mealService)
         {
             _dietRepo = dietRepo;
             _dbContext = dbContext;
+            _mealService = mealService;
         }
 
         [HttpPost]
@@ -141,6 +143,25 @@ namespace diet_server_api.Controllers.Doctor
             catch (NotFound ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("meals/calculated")]
+        public async Task<IActionResult> GetMealCalculated([FromQuery]string mealName, [FromQuery]int idDiet)
+        {
+            try
+            {
+                var response = await _mealService.SearchChangedMeal(mealName, idDiet);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(InvalidData ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

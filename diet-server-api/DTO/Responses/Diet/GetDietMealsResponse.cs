@@ -24,12 +24,18 @@ namespace diet_server_api.DTO.Responses.Diet
     public class MealRecipe
     {
         public int IdProduct { get; set; }
-        public decimal Amount { get; set; }
-        public decimal Size { get; set; }
+        public decimal CalculatedSize { get; set; }
         public string Name { get; set; }
         public string HomeMeasure { get; set; }
         public decimal HomeMeasureSize { get; set; }
         public string Unit { get; set; }
+        public List<ProductParamCalculated> Params { get; set; }
     }
+    public class ProductParamCalculated
+        {
+            public decimal CalculatedParamSize { get; set; }
+            public string ParamName { get; set; }
+            public string ParamMeasureUnit { get; set; }
+        }
 }
 

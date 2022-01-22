@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.ComTypes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +40,10 @@ namespace diet_server_api.Services.Implementation.Repository
 
             foreach (var meal in request.Meals)
             {
-                var mealRecipes = await _dbContext.Recipes.Where(e => e.Idmeal == meal.IdMeal).Select(e => new { RecipeId = e.Idrecipe }).ToListAsync();
+                var mealRecipes = await _dbContext.Recipes
+                .Where(e => e.Idmeal == meal.IdMeal)
+                .Select(e => new { RecipeId = e.Idrecipe })
+                .ToListAsync();
 
                 var mealTake = new Mealtake()
                 {
@@ -125,7 +129,6 @@ namespace diet_server_api.Services.Implementation.Repository
             if (!dietExist) throw new NotFound("Diet not found");
             var daysFilled = await _dbContext.Days.AnyAsync(e => e.Dietiddiet == idDiet);
             if (!daysFilled) throw new NotFound("Diet days are not filled yet");
-
             var result = await _dbContext.Days.Include(e => e.Mealtakes)
             .ThenInclude(e => e.Individualrecipes)
             .ThenInclude(e => e.IdrecipeNavigation)
@@ -148,17 +151,21 @@ namespace diet_server_api.Services.Implementation.Repository
                     NameOfMeal = e.Individualrecipes.First().IdrecipeNavigation.IdmealNavigation.Nameofmeal,
                     Description = e.Individualrecipes.First().IdrecipeNavigation.IdmealNavigation.Description,
                     Cooking_URL = e.Individualrecipes.First().IdrecipeNavigation.IdmealNavigation.CookingUrl,
-                    Recipes = e.Individualrecipes.Select(e => new MealRecipe
+                    Recipes = e.Individualrecipes.Select(i => new MealRecipe
                     {
-                        IdProduct = e.Idrecipe,
-                        Amount = e.IdrecipeNavigation.Amount,
-                        Size = e.IdrecipeNavigation.IdproductNavigation.Size,
-                        HomeMeasure = e.IdrecipeNavigation.IdproductNavigation.Homemeasure,
-                        HomeMeasureSize = e.IdrecipeNavigation.IdproductNavigation.Homemeasuresize,
-                        Unit = e.IdrecipeNavigation.IdproductNavigation.Unit,
-                        Name = e.IdrecipeNavigation.IdproductNavigation.Name
-                    })
-                })
+                        IdProduct = i.Idrecipe,
+                        CalculatedSize = e.Proportion * i.IdrecipeNavigation.Amount, 
+                        HomeMeasure = i.IdrecipeNavigation.IdproductNavigation.Homemeasure,
+                        HomeMeasureSize = i.IdrecipeNavigation.IdproductNavigation.Homemeasuresize,
+                        Unit = i.IdrecipeNavigation.IdproductNavigation.Unit,
+                        Name = i.IdrecipeNavigation.IdproductNavigation.Name,
+                        Params = i.IdrecipeNavigation.IdproductNavigation.ProductParameters.Select(p => new ProductParamCalculated{
+                            CalculatedParamSize = e.Proportion * p.Amount * (i.IdrecipeNavigation.Amount / i.IdrecipeNavigation.IdproductNavigation.Size),
+                            ParamName = p.IdparameterNavigation.Name,
+                            ParamMeasureUnit = p.IdparameterNavigation.Measureunit
+                        }).ToList()
+                    }).ToList() 
+                }).ToList()
             }).ToListAsync();
 
 

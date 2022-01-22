@@ -17,7 +17,7 @@ namespace diet_server_api.DTO.Requests.Diet
             [Required]
             public int IdMeal { get; set; }
             [Required]
-            [MinLength(4)]
+            [MinLength(5)]
             [MaxLength(15)]
             public string Time { get; set; }
             [Required]

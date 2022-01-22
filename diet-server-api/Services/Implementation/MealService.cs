@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Get;
+using diet_server_api.DTO.Responses.KnowledgeBase.Search;
 using diet_server_api.Exceptions;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -60,6 +61,8 @@ namespace diet_server_api.Services.Implementation.Repository
             var meals = await _dbContext.Meals
             .Include(e => e.Recipes)
             .ThenInclude(e => e.IdproductNavigation)
+            .ThenInclude(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
             .OrderBy(e => e.Nameofmeal)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -75,10 +78,16 @@ namespace diet_server_api.Services.Implementation.Repository
                     IdMealRecipe = e.Idrecipe,
                     Name = e.IdproductNavigation.Name,
                     Unit = e.IdproductNavigation.Unit,
-                    Size = e.IdproductNavigation.Size,
+                    CalculatedSize = e.IdproductNavigation.Size * (e.Amount / e.IdproductNavigation.Size),
                     HomeMeasure = e.IdproductNavigation.Homemeasure,
-                    HomeMeasureSize = e.IdproductNavigation.Homemeasuresize,
-                    Amount = e.Amount,
+                    HomeMeasureSize = e.IdproductNavigation.Homemeasuresize * (e.Amount / e.IdproductNavigation.Size),
+                    Amount = e.Amount,    
+                    Params = e.IdproductNavigation.ProductParameters.Select(p => new GetMealsResponse.MealRecipe.Param
+                    {
+                        CalculatedParamSize = p.Amount * (e.Amount / e.IdproductNavigation.Size),
+                        ParamName = p.IdparameterNavigation.Name,
+                        ParamMeasureUnit = p.IdparameterNavigation.Measureunit
+                    }).ToList()
                 }).ToList()
             }).ToListAsync();
             if (meals.Count == 0) throw new NotFound("No products found");
@@ -91,6 +100,69 @@ namespace diet_server_api.Services.Implementation.Repository
             };
         }
 
+        public async Task<SearchChangedMealResponse> SearchChangedMeal(string mealName, int idDiet)
+        {
+            if (string.IsNullOrWhiteSpace(mealName))
+            {
+                throw new InvalidData("Incorrect product name");
+            }
+            var mealExists = await _dbContext.Meals.AnyAsync(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim());
+            if (!mealExists) throw new NotFound("Meal not found");
+
+            var dietExists = await _dbContext.Diets.AnyAsync(e => e.Iddiet == idDiet);
+            if (!dietExists) throw new NotFound("Diet not found");
+
+            var proteinsPerMeal = await _dbContext.Diets.Where(e => e.Iddiet == idDiet).Select(e => e.Protein).FirstAsync();
+
+
+            var beforeCalculationProteins = await _dbContext.Recipes
+            .Include(e => e.IdmealNavigation)
+            .Include(e => e.IdproductNavigation)
+            .ThenInclude(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
+            .Where(e => e.IdmealNavigation.Nameofmeal.ToLower() == mealName.ToLower().Trim())
+            .Select(e => e.IdproductNavigation.ProductParameters
+                .Where(e => e.IdparameterNavigation.Name.ToLower() == "proteins")
+                .Select(x => x.Amount * (e.Amount / e.IdproductNavigation.Size)
+                ).SingleOrDefault()
+            ).SumAsync();
+
+            var proteinProportion = decimal.Round(proteinsPerMeal / beforeCalculationProteins, 3);
+
+            var meal = await _dbContext.Meals
+            .Include(e => e.Recipes)
+            .ThenInclude(e => e.IdproductNavigation)
+            .ThenInclude(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
+            .Where(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim())
+            .Select(e => new SearchChangedMealResponse
+            {
+                IdMeal = e.Idmeal,
+                Proportion = proteinProportion,
+                NameOfMeal = e.Nameofmeal,
+                Description = e.Description,
+                CookingURL = e.CookingUrl,
+                Recipes = e.Recipes.Select(r => new SearchChangedMealResponse.RecipeProduct
+                {
+                    IdProduct = r.Idproduct,
+                    IdMealRecipe = r.Idrecipe,
+                    Name = r.IdproductNavigation.Name,
+                    Unit = r.IdproductNavigation.Unit,
+                    CalculatedRecipeAmount = decimal.Round(proteinProportion * r.Amount,3),
+                    HomeMeasure = r.IdproductNavigation.Homemeasure,
+                    HomeMeasureSize = decimal.Round(proteinProportion * r.IdproductNavigation.Homemeasuresize * (r.Amount / r.IdproductNavigation.Size),1),
+                    Params = r.IdproductNavigation.ProductParameters.Select(p => new SearchChangedMealResponse.ProductParam
+                    {
+                        CalculatedParamSize = decimal.Round(proteinProportion * p.Amount * (r.Amount / r.IdproductNavigation.Size), 3), 
+                        ParamName = p.IdparameterNavigation.Name,
+                        ParamMeasureUnit = p.IdparameterNavigation.Measureunit
+                    }).ToList()
+                }).ToList()
+            }).SingleOrDefaultAsync();
+
+            return meal;
+        }
+
         public async Task<List<GetMealsResponse.MealRecipe>> SearchMeal(string mealName)
         {
             if (string.IsNullOrWhiteSpace(mealName))
@@ -100,6 +172,8 @@ namespace diet_server_api.Services.Implementation.Repository
             var meals = await _dbContext.Meals
             .Include(e => e.Recipes)
             .ThenInclude(e => e.IdproductNavigation)
+            .ThenInclude(e => e.ProductParameters)
+            .ThenInclude(e => e.IdparameterNavigation)
             .Where(e => e.Nameofmeal.ToLower() == mealName.ToLower().Trim())
             .Select(e => new GetMealsResponse.MealRecipe()
             {
@@ -113,10 +187,16 @@ namespace diet_server_api.Services.Implementation.Repository
                     IdMealRecipe = e.Idrecipe,
                     Name = e.IdproductNavigation.Name,
                     Unit = e.IdproductNavigation.Unit,
-                    Size = e.IdproductNavigation.Size,
+                    CalculatedSize = e.IdproductNavigation.Size * (e.Amount / e.IdproductNavigation.Size),
                     HomeMeasure = e.IdproductNavigation.Homemeasure,
-                    HomeMeasureSize = e.IdproductNavigation.Homemeasuresize,
-                    Amount = e.Amount,
+                    HomeMeasureSize = e.IdproductNavigation.Homemeasuresize * (e.Amount / e.IdproductNavigation.Size),
+                    Amount = e.Amount,    
+                    Params = e.IdproductNavigation.ProductParameters.Select(p => new GetMealsResponse.MealRecipe.Param
+                    {
+                        CalculatedParamSize = p.Amount * (e.Amount / e.IdproductNavigation.Size),
+                        ParamName = p.IdparameterNavigation.Name,
+                        ParamMeasureUnit = p.IdparameterNavigation.Measureunit
+                    }).ToList()
                 }).ToList()
             }).OrderBy(e => e.NameOfMeal).ToListAsync();
             if (meals.Count == 0) throw new NotFound("No meals found");

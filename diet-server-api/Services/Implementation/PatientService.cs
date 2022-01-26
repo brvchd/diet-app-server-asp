@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests;
+using diet_server_api.DTO.Requests.Patient;
 using diet_server_api.DTO.Responses;
 using diet_server_api.DTO.Responses.Doctor.Get;
 using diet_server_api.DTO.Responses.Doctor.Search;
@@ -16,7 +17,7 @@ using static diet_server_api.DTO.Requests.SurveySignUpRequest;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class PatientService : IPatientService
+    public class PatientService : IPatientService 
     {
         private readonly mdzcojxmContext _dbContext;
 
@@ -297,6 +298,22 @@ namespace diet_server_api.Services.Implementation.Repository
                 PAL = patient.PAL
             };
             return response;
+        }
+
+        public async Task FillReport(FillDayReportRequest request, int idPatient)
+        {
+            var day = await _dbContext.Days.Include(e => e.DietiddietNavigation).FirstOrDefaultAsync(e => e.DietiddietNavigation.Idpatient == idPatient && e.Idday == request.IdDay);
+            var days = await _dbContext.Days.Include(e => e.DietiddietNavigation).Select(e => e.DietiddietNavigation.Dailymeals).FirstOrDefaultAsync();
+            if(day == null) throw new NotFound("Day not found");
+            day.Patientreport = day.Patientreport == null ? request.PatientReport.Trim() : throw new AlreadyExists("Already filled");
+            if(request.Meals.Count != days) throw new InvalidData("Not all mealtakes filled");
+            foreach(var meal in request.Meals)
+            {
+                var mealTake = await _dbContext.Mealtakes.FirstOrDefaultAsync(e => e.Idmealtake == meal.IdMealTake);
+                if(mealTake == null) throw new NotFound("Meal take not found");
+                mealTake.Isfollowed = mealTake.Isfollowed == null ? meal.IsFollowed : throw new AlreadyExists("Already filled");
+            }
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

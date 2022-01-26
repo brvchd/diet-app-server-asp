@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Diet;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -80,13 +81,20 @@ namespace diet_server_api.Controllers.Doctor
 
 
         [HttpGet]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [Route("days/{idDiet}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDays([FromRoute] int idDiet)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var isPatientDiet = await _dbContext.Diets.AnyAsync(e => e.Iddiet == idDiet && e.Idpatient == nameIdentifier);
+            if (user.IsInRole("PATIENT") && !isPatientDiet)
+            {
+                return Forbid();
+            }
             try
             {
                 var response = await _dietRepo.GetDays(idDiet);
@@ -99,13 +107,19 @@ namespace diet_server_api.Controllers.Doctor
         }
 
         [HttpGet]
-        [Authorize(Roles = "DOCTOR")]
+        [Authorize(Roles = "DOCTOR, PATIENT")]
         [Route("diets/{idPatient}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPatietDiets([FromRoute] int idPatient)
         {
+            var user = HttpContext.User;
+            var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            if (user.IsInRole("PATIENT") && nameIdentifier != idPatient)
+            {
+                return Forbid();
+            }
             try
             {
                 var response = await _dietRepo.GetPatientDiets(idPatient);
@@ -128,6 +142,7 @@ namespace diet_server_api.Controllers.Doctor
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDietMeals([FromRoute] int idDiet)
         {
+
             var user = HttpContext.User;
             var nameIdentifier = int.Parse(user.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var isPatientDiet = await _dbContext.Diets.AnyAsync(e => e.Iddiet == idDiet && e.Idpatient == nameIdentifier);
@@ -148,7 +163,12 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("meals/calculated")]
-        public async Task<IActionResult> GetMealCalculated([FromQuery]string mealName, [FromQuery]int idDiet)
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMealCalculated([FromQuery] string mealName, [FromQuery] int idDiet)
         {
             try
             {
@@ -159,7 +179,7 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return NotFound(ex.Message);
             }
-            catch(InvalidData ex)
+            catch (InvalidData ex)
             {
                 return BadRequest(ex.Message);
             }

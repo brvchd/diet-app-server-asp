@@ -140,7 +140,7 @@ namespace diet_server_api.Services.Implementation.Repository
             var disease = await _dbContext.Diseases.FirstOrDefaultAsync(e => e.Iddisease == request.IdDisease);
             if (disease == null) throw new NotFound("Disease not found");
 
-            disease.Name = string.IsNullOrWhiteSpace(request.Name) ? disease.Name : request.Name.ToLower().Trim();
+            disease.Name = string.IsNullOrWhiteSpace(request.Name) ? disease.Name : request.Name.Trim();
             disease.Recomendation = string.IsNullOrWhiteSpace(request.Recomendation) ? disease.Recomendation : request.Recomendation;
             disease.Description = string.IsNullOrWhiteSpace(request.Description) ? disease.Description : request.Description;
 

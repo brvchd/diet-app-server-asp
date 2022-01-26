@@ -1,6 +1,7 @@
-using System.Runtime.InteropServices.ComTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Diet;
 using diet_server_api.DTO.Responses.Diet;
@@ -71,6 +72,21 @@ namespace diet_server_api.Services.Implementation.Repository
             if (!patientexists) throw new NotFound("Patient not found");
             var activeAccount = await _dbContext.Users.AnyAsync(e => e.Iduser == request.IdPatient && e.Isactive == true);
             if (!activeAccount) throw new NotActive("Account is not active");
+            if (request.DateFrom < DateTime.UtcNow.Date || request.DateTo < request.DateFrom || request.DateFrom > request.DateTo) throw new InvalidData("Date is incorrect");
+
+            var dietExists = await _dbContext.Diets.AnyAsync(e => e.Idpatient == request.IdPatient);
+            if(dietExists)
+            {
+                var note = new Note()
+                {
+                    Idpatient = request.IdPatient,
+                    Iddoctor = request.IdDoctor,
+                    Message = $"You new diet is {request.Name} and starts on {request.DateFrom:yyyy-MM-dd}",
+                    Dateofnote = DateTime.Now
+                };
+                await _dbContext.Notes.AddAsync(note);
+            }
+
             var diet = new Diet()
             {
                 Idpatient = request.IdPatient,
@@ -96,6 +112,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 await _dbContext.Dietsuppliments.AddAsync(suppldiet);
             }
 
+
             await _dbContext.SaveChangesAsync();
             return new CreateDietResponse
             {
@@ -112,7 +129,9 @@ namespace diet_server_api.Services.Implementation.Repository
             var daysFilled = await _dbContext.Days.Where(e => e.Dietiddiet == idDiet).CountAsync();
             var daysFilledNumbers = await _dbContext.Days
             .Where(e => e.Dietiddiet == idDiet)
-            .Select(e => e.Daynumber).ToListAsync();
+            .OrderBy(e => e.Daynumber)
+            .Select(e => e.Daynumber)
+            .ToListAsync();
             return new GetDietDaysResponse
             {
                 Days = dietDays,
@@ -145,6 +164,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 PatientReport = e.Patientreport,
                 Meals = e.Mealtakes.Select(e => new DayMealTake
                 {
+                    IdMealTake = e.Idmealtake,
                     Time = e.Time,
                     IsFollowed = e.Isfollowed,
                     Proportion = e.Proportion,
@@ -154,17 +174,18 @@ namespace diet_server_api.Services.Implementation.Repository
                     Recipes = e.Individualrecipes.Select(i => new MealRecipe
                     {
                         IdProduct = i.Idrecipe,
-                        CalculatedSize = e.Proportion * i.IdrecipeNavigation.Amount, 
+                        CalculatedSize = decimal.ToDouble(e.Proportion) * decimal.ToDouble(i.IdrecipeNavigation.Amount),
                         HomeMeasure = i.IdrecipeNavigation.IdproductNavigation.Homemeasure,
-                        HomeMeasureSize = i.IdrecipeNavigation.IdproductNavigation.Homemeasuresize,
+                        HomeMeasureSize = decimal.Round(e.Proportion * i.IdrecipeNavigation.IdproductNavigation.Homemeasuresize * (i.IdrecipeNavigation.Amount / i.IdrecipeNavigation.IdproductNavigation.Size), 1),
                         Unit = i.IdrecipeNavigation.IdproductNavigation.Unit,
                         Name = i.IdrecipeNavigation.IdproductNavigation.Name,
-                        Params = i.IdrecipeNavigation.IdproductNavigation.ProductParameters.Select(p => new ProductParamCalculated{
-                            CalculatedParamSize = e.Proportion * p.Amount * (i.IdrecipeNavigation.Amount / i.IdrecipeNavigation.IdproductNavigation.Size),
+                        Params = i.IdrecipeNavigation.IdproductNavigation.ProductParameters.Select(p => new ProductParamCalculated
+                        {
+                            CalculatedParamSize = decimal.ToDouble(e.Proportion) * decimal.ToDouble(p.Amount) * (decimal.ToDouble(i.IdrecipeNavigation.Amount) / decimal.ToDouble(i.IdrecipeNavigation.IdproductNavigation.Size)),
                             ParamName = p.IdparameterNavigation.Name,
                             ParamMeasureUnit = p.IdparameterNavigation.Measureunit
                         }).ToList()
-                    }).ToList() 
+                    }).ToList()
                 }).ToList()
             }).ToListAsync();
 

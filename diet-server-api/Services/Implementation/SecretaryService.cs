@@ -83,7 +83,7 @@ namespace diet_server_api.Services.Implementation
                 DoctorFullName = $"{e.IddoctorNavigation.IduserNavigation.Firstname} {e.IddoctorNavigation.IduserNavigation.Lastname}",
                 PatientFullName = $"{e.IdpatientNavigation.IduserNavigation.Firstname} {e.IdpatientNavigation.IduserNavigation.Lastname}",
                 PatientEmail = e.IdpatientNavigation.IduserNavigation.Email,
-                PatientDateOfBirth = e.IddoctorNavigation.IduserNavigation.Dateofbirth.ToString(),
+                PatientDateOfBirth = e.IdpatientNavigation.IduserNavigation.Dateofbirth.ToString(),
                 AppointmentDate = e.Date.ToString(),
                 AppointmentTime = ((int)e.Time.TotalHours + e.Time.ToString(@"\:mm\:ss")).Substring(0, 5),
                 Description = e.Description

@@ -9,6 +9,8 @@ namespace diet_server_api.DTO.Requests.Diet
         [Required]
         public int IdPatient { get; set; }
         [Required]
+        public int IdDoctor { get; set; }
+        [Required]
         [MinLength(1)]
         public string Name { get; set; }
         [Required]

@@ -54,6 +54,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (accountIsNotActive) throw new NotActive("Account is not active");
             var notes = await _dbContext.Notes.Include(e => e.IddoctorNavigation).ThenInclude(e => e.IduserNavigation).Where(e => e.Idpatient == idPatient).Select(e => new GetNotesResponse
             {
+                IdNote = e.Idnote,
                 CreatedBy = e.IddoctorNavigation.IduserNavigation.Firstname + " " + e.IddoctorNavigation.IduserNavigation.Lastname,
                 NoteText = e.Message,
                 NoteCreated = e.Dateofnote

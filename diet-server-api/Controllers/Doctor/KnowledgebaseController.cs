@@ -359,6 +359,24 @@ namespace diet_server_api.Controllers.Doctor
                 return NotFound(ex.Message);
             }
         }
+        [HttpPut]
+        [Route("meals")]
+        //[Authorize(Roles = "DOCTOR, SECRETARY")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateMeals(UpdateMealRequest request)
+        {
+            try
+            {
+                await _mealRepo.UpdateMeal(request);
+                return Ok();
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
 
         [HttpGet]
         [Route("meal/search")]

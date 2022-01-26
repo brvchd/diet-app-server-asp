@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using diet_server_api.DTO.Responses.Autocomplete;
 using diet_server_api.Models;
 using diet_server_api.Services.Implementation;
 using diet_server_api.Services.Implementation.Repository;
@@ -93,6 +94,9 @@ namespace diet_server_api
             services.AddScoped<IMealService, MealService>();
             services.AddScoped<IDietService, DietService>();
             services.AddScoped<ISecretaryService, SecretaryService>();
+            services.AddScoped<IAppointmentsService, AppointmentsService>();
+            services.AddScoped<IAutocompleteService,AutocompleteService>();
+            services.AddScoped<IInformationService, InformationService>();
 
             services.AddDbContext<mdzcojxmContext>(opt =>
                 opt

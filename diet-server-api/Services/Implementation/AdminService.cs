@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Admin;
 using diet_server_api.DTO.Responses.Admin;
-using diet_server_api.DTO.Responses.Secretary;
 using diet_server_api.Exceptions;
 using diet_server_api.Helpers;
 using diet_server_api.Models;

@@ -21,12 +21,12 @@ namespace diet_server_api.DTO.Responses.KnowledgeBase.Search
             // public decimal? CalculatedProductSize { get; set; }
             public string HomeMeasure { get; set; }
             public decimal HomeMeasureSize { get; set; }
-            public decimal CalculatedRecipeAmount { get; set; }
+            public double CalculatedRecipeAmount { get; set; }
             public List<ProductParam> Params { get; set; }
         }
         public class ProductParam
         {
-            public decimal CalculatedParamSize { get; set; }
+            public double CalculatedParamSize { get; set; }
             public string ParamName { get; set; }
             public string ParamMeasureUnit { get; set; }
         }

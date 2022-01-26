@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.KnowledgeBase.Add;
+using diet_server_api.DTO.Requests.KnowledgeBase.Update;
 using diet_server_api.DTO.Responses.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 using diet_server_api.DTO.Responses.KnowledgeBase.Search;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diet_server_api.Services.Implementation.Repository
 {
-    public class MealService : IMealService
+    public class MealService : IMealService 
     {
         private readonly mdzcojxmContext _dbContext;
 
@@ -148,12 +149,12 @@ namespace diet_server_api.Services.Implementation.Repository
                     IdMealRecipe = r.Idrecipe,
                     Name = r.IdproductNavigation.Name,
                     Unit = r.IdproductNavigation.Unit,
-                    CalculatedRecipeAmount = decimal.Round(proteinProportion * r.Amount,3),
+                    CalculatedRecipeAmount = decimal.ToDouble(proteinProportion) * decimal.ToDouble(r.Amount),
                     HomeMeasure = r.IdproductNavigation.Homemeasure,
                     HomeMeasureSize = decimal.Round(proteinProportion * r.IdproductNavigation.Homemeasuresize * (r.Amount / r.IdproductNavigation.Size),1),
                     Params = r.IdproductNavigation.ProductParameters.Select(p => new SearchChangedMealResponse.ProductParam
                     {
-                        CalculatedParamSize = decimal.Round(proteinProportion * p.Amount * (r.Amount / r.IdproductNavigation.Size), 3), 
+                        CalculatedParamSize = decimal.ToDouble(proteinProportion) * decimal.ToDouble(p.Amount) * (decimal.ToDouble(r.Amount) / decimal.ToDouble(r.IdproductNavigation.Size)), 
                         ParamName = p.IdparameterNavigation.Name,
                         ParamMeasureUnit = p.IdparameterNavigation.Measureunit
                     }).ToList()
@@ -201,6 +202,16 @@ namespace diet_server_api.Services.Implementation.Repository
             }).OrderBy(e => e.NameOfMeal).ToListAsync();
             if (meals.Count == 0) throw new NotFound("No meals found");
             return meals;
+        }
+
+        public async Task UpdateMeal(UpdateMealRequest request)
+        {
+            var meal = await _dbContext.Meals.FirstOrDefaultAsync(e => e.Idmeal == request.IdMeal);
+            if(meal == null) throw new NotFound("Meal not found");
+            meal.Nameofmeal = string.IsNullOrWhiteSpace(request.MealName) ? meal.Nameofmeal : request.MealName.Trim();
+            meal.Description = string.IsNullOrWhiteSpace(request.Description) ? meal.Description : request.Description;
+            meal.CookingUrl = string.IsNullOrWhiteSpace(request.Description) ? meal.CookingUrl : request.CookingURL;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

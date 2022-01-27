@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using diet_server_api.DTO.Responses.Doctor.Get;
 using diet_server_api.DTO.Responses.Patient;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +63,7 @@ namespace diet_server_api.Services.Implementation
                 Date = e.Date
             }).ToListAsync();
 
-            if (visits.Count == 0 && date.Date == DateTime.UtcNow.Date)
+            if (visits.Count == 0 && date.Date == TimeConverter.GetCurrentPolishTime().Date)
             {
                 var closestDate = await _dbContext.Visits
                 .Where(e => e.Date > date)

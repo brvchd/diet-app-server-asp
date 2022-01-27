@@ -6,6 +6,7 @@ using diet_server_api.DTO.Requests.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Add;
 using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 Iddoctor = request.IdDoctor,
                 Idpatient = request.IdPatient,
                 Message = request.Note,
-                Dateofnote = DateTime.UtcNow
+                Dateofnote = TimeConverter.GetCurrentPolishTime()
             };
 
             await _dbContext.Notes.AddAsync(note);

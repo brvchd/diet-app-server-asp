@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace diet_server_api.Controllers.Doctor
@@ -17,6 +19,7 @@ namespace diet_server_api.Controllers.Doctor
 
         [HttpGet]
         [Route("full/{idPatient}")]
+        [Authorize(Roles = "DOCTOR")]
         public async Task<IActionResult> GetFullInfo([FromRoute] int idPatient, [FromQuery] int? idDiet)
         {
             try
@@ -31,6 +34,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpGet]
         [Route("mid/{idPatient}")]
+        [Authorize(Roles = "DOCTOR")]
         public async Task<IActionResult> GetMidInfo([FromRoute] int idPatient)
         {
             try
@@ -45,6 +49,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpGet]
         [Route("less/{idPatient}")]
+        [Authorize(Roles = "DOCTOR")]
         public async Task<IActionResult> GetLessInfo([FromRoute] int idPatient, [FromQuery] int? idDiet)
         {
             try

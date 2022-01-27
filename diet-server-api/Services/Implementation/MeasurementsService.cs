@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using diet_server_api.DTO.Requests.Patient;
 using diet_server_api.DTO.Responses.Patient;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Helpers.Calculators;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
@@ -24,13 +25,13 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var exists = await _dbContext.Users.Include(e => e.Patient).AnyAsync(e => e.Iduser == request.Idpatient && e.Patient.Ispending == false && e.Isactive == true);
             if (!exists) throw new NotFound("Patient not found");
-            var measurementExists = await _dbContext.Measurements.AnyAsync(e => e.Idpatient == request.Idpatient && e.Date.Date == DateTime.UtcNow.Date && e.Whomeasured == whoMeasured);
+            var measurementExists = await _dbContext.Measurements.AnyAsync(e => e.Idpatient == request.Idpatient && e.Date.Date == TimeConverter.GetCurrentPolishTime().Date && e.Whomeasured == whoMeasured);
             if (measurementExists) throw new AlreadyExists("Measurement has been already created today by you");
 
             var measurements = new Measurement()
             {
                 Idpatient = request.Idpatient,
-                Date = DateTime.UtcNow,
+                Date = TimeConverter.GetCurrentPolishTime(),
                 Height = request.Height,
                 Weight = request.Weight,
                 Waistcircumference = request.Waistcircumference,
@@ -95,7 +96,7 @@ namespace diet_server_api.Services.Implementation.Repository
         {
             var patient = await _dbContext.Users.Include(e => e.Patient).Where(e => e.Iduser == idPatient).FirstOrDefaultAsync();
             if (patient == null) throw new NotFound("Patient not found");
-            if (date > DateTime.UtcNow) throw new InvalidData("Incorrect date provided");
+            if (date > TimeConverter.GetCurrentPolishTime()) throw new InvalidData("Incorrect date provided");
             var measurements = await _dbContext.Measurements
             .Where(e => e.Idpatient == idPatient && e.Date.Date == date.Date && e.Whomeasured.ToLower() == whomeasured.ToLower().Trim())
             .Select(e => new GetMeasurementsByDateResponse
@@ -120,5 +121,57 @@ namespace diet_server_api.Services.Implementation.Repository
             if (measurements.Count == 0) throw new NotFound("No measurments found");
             return measurements;
         }
+
+        public async Task<GetPatientReport> GetReport(int idPatient)
+        {
+            var patientExists = await _dbContext.Patients.AnyAsync(e => e.Iduser == idPatient && e.Ispending == false && e.IduserNavigation.Isactive == true);
+            if (!patientExists) throw new NotFound("Patient not found");
+            var initialMeasurement = await _dbContext.Measurements
+            .Where(e => e.Idpatient == idPatient)
+            .OrderBy(e => e.Date)
+            .Select(e => new GetPatientReport.MeasurementReport
+            {
+                Height = e.Height,
+                Weight = e.Weight,
+                Date = e.Date,
+                HipCircum = e.Hipcircumference,
+                WaistCircum = e.Waistcircumference,
+                BicepsCircum = e.Bicepscircumference,
+                ChestCircum = e.Chestcircumference,
+                ThighCircum = e.Thighcircumference,
+                CalfCircum = e.Calfcircumference,
+                WaistLowerCircum = e.Waistlowercircumference,
+                WhoMeasured = e.Whomeasured
+            }).FirstOrDefaultAsync();
+
+            var newMeasurements = await _dbContext.Measurements
+            .Where(e => e.Idpatient == idPatient && e.Bicepscircumference != null)
+            .OrderByDescending(e => e.Date)
+            .Take(2)
+            .Select(e => new GetPatientReport.MeasurementReport
+            {
+                Height = e.Height,
+                Weight = e.Weight,
+                Date = e.Date,
+                HipCircum = e.Hipcircumference,
+                WaistCircum = e.Waistcircumference,
+                BicepsCircum = e.Bicepscircumference,
+                ChestCircum = e.Chestcircumference,
+                ThighCircum = e.Thighcircumference,
+                CalfCircum = e.Calfcircumference,
+                WaistLowerCircum = e.Waistlowercircumference,
+                WhoMeasured = e.Whomeasured
+            })
+            .OrderBy(e => e.Date)
+            .ToListAsync();
+
+            var response = new GetPatientReport()
+            {
+                InitialReport = initialMeasurement,
+                NewReports = newMeasurements,
+            };
+            return response;
+        }
+
     }
 }

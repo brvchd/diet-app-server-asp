@@ -12,5 +12,6 @@ namespace diet_server_api.Services.Interfaces.Repository
         Task<List<GetMeasurementsResponse>> GetMeasurements(int idPatient);
         Task<List<GetMeasurementsByDateResponse>> GetMeasurements(int idPatient, DateTime date, string whomeasured);
         Task<List<GetMeasurementResponse>> GetMeasurement(int idPatient);
+        Task<GetPatientReport> GetReport(int idPatient);
     }
 }

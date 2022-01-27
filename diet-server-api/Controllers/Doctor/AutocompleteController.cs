@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using diet_server_api.Exceptions;
 using diet_server_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,7 @@ namespace diet_server_api.Controllers.Doctor
         }
         [HttpGet]
         [Route("diseases")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -38,6 +40,7 @@ namespace diet_server_api.Controllers.Doctor
         } 
         [HttpGet]
         [Route("products")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -55,6 +58,7 @@ namespace diet_server_api.Controllers.Doctor
         } 
         [HttpGet]
         [Route("meals")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -72,6 +76,7 @@ namespace diet_server_api.Controllers.Doctor
         } 
         [HttpGet]
         [Route("patients")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -89,6 +94,7 @@ namespace diet_server_api.Controllers.Doctor
         } 
         [HttpGet]
         [Route("doctors")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -106,6 +112,7 @@ namespace diet_server_api.Controllers.Doctor
         } 
         [HttpGet]
         [Route("supplements")]
+        [Authorize(Roles = "DOCTOR, SECRETARY")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -123,6 +130,7 @@ namespace diet_server_api.Controllers.Doctor
         } 
         [HttpGet]
         [Route("users")]
+        [Authorize(Roles = "DOCTOR, SECRETARY, ADMIN")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status200OK)]

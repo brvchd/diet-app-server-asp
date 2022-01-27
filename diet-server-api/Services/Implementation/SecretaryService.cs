@@ -36,7 +36,7 @@ namespace diet_server_api.Services.Implementation
             if (!patientExists) throw new NotFound("Patient not found");
             var patientIsActive = await _dbContext.Users.AnyAsync(e => e.Iduser == request.IdPatient && e.Isactive == true);
             if (!patientIsActive) throw new NotActive("Account is not active");
-            if (request.AppointmentDate < DateTime.UtcNow) throw new InvalidData("Date is not correct");
+            if (request.AppointmentDate < TimeConverter.GetCurrentPolishTime()) throw new InvalidData("Date is not correct");
 
             var appointmentTime = request.AppointmentDate.TimeOfDay;
             var alreadyBooked = await _dbContext.Visits.AnyAsync(e => e.Iddoctor == request.IdDoctor && e.Date == request.AppointmentDate && e.Time == appointmentTime);
@@ -58,7 +58,7 @@ namespace diet_server_api.Services.Implementation
         {
             var visit = await _dbContext.Visits
             .FirstOrDefaultAsync(e => e.Idvisit == idVisit);
-            if (visit.Time <= DateTime.UtcNow.TimeOfDay && visit.Date <= DateTime.Now) throw new InvalidData("Not possible to cancel visit");
+            if (visit.Time <= TimeConverter.GetCurrentPolishTime().TimeOfDay && visit.Date <= DateTime.Now) throw new InvalidData("Not possible to cancel visit");
             _dbContext.Visits.Remove(visit);
             await _dbContext.SaveChangesAsync();
         }
@@ -107,7 +107,7 @@ namespace diet_server_api.Services.Implementation
                 Date = e.Date
             }).ToListAsync();
 
-            if (visits.Count == 0 && date.Date == DateTime.UtcNow.Date)
+            if (visits.Count == 0 && date.Date == TimeConverter.GetCurrentPolishTime().Date)
             {
                 var closestDate = await _dbContext.Visits
                 .Where(e => e.Date > date)

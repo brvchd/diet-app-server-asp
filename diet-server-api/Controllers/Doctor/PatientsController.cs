@@ -108,6 +108,24 @@ namespace diet_server_api.Controllers.Doctor
             }
         }
         [HttpGet]
+        [Route("patient/measurements/reports/{idPatient}")]
+        [Authorize(Roles = "DOCTOR")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetMeasurementReport([FromRoute] int idPatient)
+        {
+            try
+            {
+                var response = await _measurementRepo.GetReport(idPatient);
+                return Ok(response);
+            }
+            catch (NotFound ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+        [HttpGet]
         [Route("patient/measurements/{idPatient}")]
         [Authorize(Roles = "DOCTOR, PATIENT")]
         [ProducesResponseType(StatusCodes.Status200OK)]

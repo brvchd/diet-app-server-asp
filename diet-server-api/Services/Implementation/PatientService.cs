@@ -38,7 +38,7 @@ namespace diet_server_api.Services.Implementation.Repository
             var existingPhoneNumber = await _dbContext.Users.AnyAsync(e => e.Phonenumber == request.PhoneNumber);
             if (existingPhoneNumber) throw new AlreadyExists("Phone number already used");
 
-            if (request.DateOfBirth >= DateTime.UtcNow) throw new InvalidData("Incorrect data of birth");
+            if (request.DateOfBirth >= TimeConverter.GetCurrentPolishTime()) throw new InvalidData("Incorrect data of birth");
 
             var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email.ToLower() == request.AccessEmail.ToLower().Trim());
             if (tempUser == null) throw new NotFound("User not found");
@@ -79,7 +79,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 IdpatientNavigation = patient,
                 Height = request.Height,
                 Weight = request.Weight,
-                Date = DateTime.UtcNow,
+                Date = TimeConverter.GetCurrentPolishTime(),
                 Hipcircumference = request.HipCircumference,
                 Waistcircumference = request.WaistCircumference,
                 Whomeasured = Roles.PATIENT
@@ -90,7 +90,7 @@ namespace diet_server_api.Services.Implementation.Repository
             var questionary = new Questionnaire()
             {
                 IdpatientNavigation = patient,
-                Databadania = DateTime.UtcNow,
+                Databadania = TimeConverter.GetCurrentPolishTime(),
                 Education = request.Education,
                 Profession = request.Profession,
                 Mainproblems = request.MainProblems,
@@ -169,7 +169,8 @@ namespace diet_server_api.Services.Implementation.Repository
                 {
                     IdPatient = e.Iduser,
                     FirstName = e.Firstname,
-                    LastName = e.Lastname
+                    LastName = e.Lastname,
+                    DateOfBirth = e.Dateofbirth
                 }).OrderBy(e => e.FirstName).ToListAsync();
                 if (patients.Count == 0) throw new NotFound("Patients not found");
                 return patients;

@@ -7,6 +7,7 @@ using diet_server_api.DTO.Requests.Diet;
 using diet_server_api.DTO.Responses.Diet;
 using diet_server_api.DTO.Responses.KnowledgeBase.Get;
 using diet_server_api.Exceptions;
+using diet_server_api.Helpers;
 using diet_server_api.Models;
 using diet_server_api.Services.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -72,7 +73,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (!patientexists) throw new NotFound("Patient not found");
             var activeAccount = await _dbContext.Users.AnyAsync(e => e.Iduser == request.IdPatient && e.Isactive == true);
             if (!activeAccount) throw new NotActive("Account is not active");
-            if (request.DateFrom < DateTime.UtcNow.Date || request.DateTo < request.DateFrom || request.DateFrom > request.DateTo) throw new InvalidData("Date is incorrect");
+            if (request.DateFrom < TimeConverter.GetCurrentPolishTime().Date || request.DateTo < request.DateFrom || request.DateFrom > request.DateTo) throw new InvalidData("Date is incorrect");
 
             var dietExists = await _dbContext.Diets.AnyAsync(e => e.Idpatient == request.IdPatient);
             if(dietExists)

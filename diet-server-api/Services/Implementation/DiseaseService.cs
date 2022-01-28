@@ -27,12 +27,13 @@ namespace diet_server_api.Services.Implementation.Repository
         public async Task<AddDiseaseResponse> AddDisease(AddDiseaseRequest request)
         {
             var exists = await _dbContext.Diseases.AnyAsync(e => e.Name.ToLower().Trim() == request.Name.ToLower().Trim());
+            if(string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Name)) throw new InvalidData("Incorrect data provided");
             if (exists) throw new AlreadyExists("Disease already exists");
             var disease = new Disease()
             {
                 Name = request.Name.Trim(),
-                Description = request.Description,
-                Recomendation = request.Recomendation
+                Description = request.Description.Trim(),
+                Recomendation = request.Recomendation.Trim()
             };
             await _dbContext.Diseases.AddAsync(disease);
             await _dbContext.SaveChangesAsync();
@@ -122,6 +123,7 @@ namespace diet_server_api.Services.Implementation.Repository
         }
         public async Task<List<SearchDiseaseResponse>> SearchDisease(string diseaseName)
         {
+            if(string.IsNullOrWhiteSpace(diseaseName)) throw new NotFound("Disease not found");
             var disease = await _dbContext.Diseases
             .Where(e => e.Name.ToLower() == diseaseName.ToLower().Trim())
             .Select(e => new SearchDiseaseResponse()
@@ -141,8 +143,8 @@ namespace diet_server_api.Services.Implementation.Repository
             if (disease == null) throw new NotFound("Disease not found");
 
             disease.Name = string.IsNullOrWhiteSpace(request.Name) ? disease.Name : request.Name.Trim();
-            disease.Recomendation = string.IsNullOrWhiteSpace(request.Recomendation) ? disease.Recomendation : request.Recomendation;
-            disease.Description = string.IsNullOrWhiteSpace(request.Description) ? disease.Description : request.Description;
+            disease.Recomendation = string.IsNullOrWhiteSpace(request.Recomendation) ? disease.Recomendation : request.Recomendation.Trim();
+            disease.Description = string.IsNullOrWhiteSpace(request.Description) ? disease.Description : request.Description.Trim();
 
             await _dbContext.SaveChangesAsync();
             return new UpdateDiseaseResponse

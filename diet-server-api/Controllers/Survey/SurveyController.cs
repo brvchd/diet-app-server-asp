@@ -55,6 +55,10 @@ namespace diet_server_api.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch(InvalidData ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace diet_server_api.DTO.Requests
@@ -132,9 +133,7 @@ namespace diet_server_api.DTO.Requests
         [MaxLength(150)]
         public string FoodBetweenMeals { get; set; }
         [Required]
-        [MinLength(1)]
-        [MaxLength(5)]
-        public MealsBeforeDiet[] Meals { get; set; }
+        public List<MealsBeforeDiet> Meals { get; set; }
         public class MealsBeforeDiet
         {
             [Required]
@@ -142,6 +141,7 @@ namespace diet_server_api.DTO.Requests
             [Required]
             [MaxLength(30)]
             public string AtTime { get; set; }
+            [Required]
             [MaxLength(150)]
             public string FoodToEat { get; set; }
         }

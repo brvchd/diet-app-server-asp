@@ -82,7 +82,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 {
                     Idpatient = request.IdPatient,
                     Iddoctor = request.IdDoctor,
-                    Message = $"You new diet is {request.Name} and starts on {request.DateFrom:yyyy-MM-dd}",
+                    Message = $"Your new diet is {request.Name} and starts on {request.DateFrom:yyyy-MM-dd}",
                     Dateofnote = DateTime.Now
                 };
                 await _dbContext.Notes.AddAsync(note);

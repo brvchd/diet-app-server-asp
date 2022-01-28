@@ -47,6 +47,10 @@ namespace diet_server_api.Controllers.Doctor
             {
                 return BadRequest(ex.Message);
             }
+            catch(InvalidData ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
         [HttpPost]

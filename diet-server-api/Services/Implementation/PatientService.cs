@@ -39,6 +39,7 @@ namespace diet_server_api.Services.Implementation.Repository
             if (existingPhoneNumber) throw new AlreadyExists("Phone number already used");
 
             if (request.DateOfBirth >= TimeConverter.GetCurrentPolishTime()) throw new InvalidData("Incorrect data of birth");
+            if(request.Meals.Count > 5 || request.Meals.Count < 1) throw new InvalidData("Provide proper amount of meals");
 
             var tempUser = await _dbContext.TempUsers.FirstOrDefaultAsync(e => e.Email.ToLower() == request.AccessEmail.ToLower().Trim());
             if (tempUser == null) throw new NotFound("User not found");
@@ -307,7 +308,6 @@ namespace diet_server_api.Services.Implementation.Repository
             var days = await _dbContext.Days.Include(e => e.DietiddietNavigation).Select(e => e.DietiddietNavigation.Dailymeals).FirstOrDefaultAsync();
             if(day == null) throw new NotFound("Day not found");
             day.Patientreport = day.Patientreport == null ? request.PatientReport.Trim() : throw new AlreadyExists("Already filled");
-            if(request.Meals.Count != days) throw new InvalidData("Not all mealtakes filled");
             foreach(var meal in request.Meals)
             {
                 var mealTake = await _dbContext.Mealtakes.FirstOrDefaultAsync(e => e.Idmealtake == meal.IdMealTake);

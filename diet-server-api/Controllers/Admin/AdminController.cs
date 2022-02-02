@@ -26,40 +26,6 @@ namespace diet_server_api.Controllers.Admin
         }
 
         [HttpPost]
-        [Route("dev/tempuser")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddTempUser(TemporaryUserRequest user)
-        {
-            try
-            {
-                var response = await _tempUserService.AddTempUser(user);
-                return CreatedAtAction(nameof(AddTempUser), response);
-
-            }
-            catch (AlreadyExists ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("dev/tempusers")]
-        public async Task<IActionResult> GetTempUsers()
-        {
-            var response = await _tempUserService.GetTempUsers();
-            return Ok(response);
-        }
-        [HttpGet]
-        [Route("dev/users")]
-        public async Task<IActionResult> GetALLUsers()
-        {
-
-            var response = await _userService.GetUsers();
-            return Ok(response);
-        }
-
-        [HttpPost]
         [Route("users")]
         [Authorize(Roles = "ADMIN")]
         [ProducesResponseType(StatusCodes.Status200OK)]

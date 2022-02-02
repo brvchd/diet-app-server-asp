@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-12-26 21:00:28.671
+-- Last modification date: 2022-02-02 19:50:31.66
 
 -- foreign keys
 ALTER TABLE Day
@@ -47,7 +47,7 @@ ALTER TABLE Product_Parameter
 ALTER TABLE Product_Parameter
     DROP CONSTRAINT Product_Parameter_Products;
 
-ALTER TABLE Questionary
+ALTER TABLE Questionnaire
     DROP CONSTRAINT Questionary_Patient;
 
 ALTER TABLE Recipe
@@ -101,7 +101,7 @@ DROP TABLE Product;
 
 DROP TABLE Product_Parameter;
 
-DROP TABLE Questionary;
+DROP TABLE Questionnaire;
 
 DROP TABLE Recipe;
 

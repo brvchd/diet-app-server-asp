@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2021-12-26 21:43:45.585
+-- Last modification date: 2022-02-02 19:50:31.66
 
 -- tables
 -- Table: Day
@@ -83,7 +83,7 @@ CREATE TABLE MealTake (
     idDay int  NOT NULL,
     Time varchar(500)  NOT NULL,
     IsFollowed boolean  NULL,
-    Proportion decimal(10,2)  NOT NULL,
+    Proportion decimal(10,4)  NOT NULL,
     CONSTRAINT MealTake_pk PRIMARY KEY (idMealTake)
 );
 
@@ -168,8 +168,8 @@ CREATE TABLE Product_Parameter (
     CONSTRAINT Product_Parameter_pk PRIMARY KEY (idProduct_Parameter)
 );
 
--- Table: Questionary
-CREATE TABLE Questionary (
+-- Table: Questionnaire
+CREATE TABLE Questionnaire (
     IdQuestionary serial  NOT NULL,
     idPatient int  NOT NULL,
     DataBadania date  NOT NULL,
@@ -208,7 +208,7 @@ CREATE TABLE Questionary (
     HypersensitivityProducts varchar(150)  NOT NULL,
     AlergieProducts varchar(150)  NOT NULL,
     BetweenMealsFood varchar(150)  NULL,
-    CONSTRAINT Questionary_pk PRIMARY KEY (IdQuestionary)
+    CONSTRAINT Questionnaire_pk PRIMARY KEY (IdQuestionary)
 );
 
 -- Table: Recipe
@@ -249,6 +249,7 @@ CREATE TABLE Users (
     Salt varchar(150)  NOT NULL,
     RefreshToken varchar(300)  NULL,
     RefreshTokenExp timestamp  NULL,
+    isActive boolean  NOT NULL,
     CONSTRAINT Users_pk PRIMARY KEY (idUser)
 );
 
@@ -331,7 +332,7 @@ ALTER TABLE MealTake ADD CONSTRAINT MealTake_Day
 -- Reference: MealsEat_PendingUser (table: MealsBeforeDiet)
 ALTER TABLE MealsBeforeDiet ADD CONSTRAINT MealsEat_PendingUser
     FOREIGN KEY (idQuestionary)
-    REFERENCES Questionary (IdQuestionary)  
+    REFERENCES Questionnaire (IdQuestionary)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -384,8 +385,8 @@ ALTER TABLE Product_Parameter ADD CONSTRAINT Product_Parameter_Products
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Questionary_Patient (table: Questionary)
-ALTER TABLE Questionary ADD CONSTRAINT Questionary_Patient
+-- Reference: Questionary_Patient (table: Questionnaire)
+ALTER TABLE Questionnaire ADD CONSTRAINT Questionary_Patient
     FOREIGN KEY (idPatient)
     REFERENCES Patient (idUser)  
     NOT DEFERRABLE 

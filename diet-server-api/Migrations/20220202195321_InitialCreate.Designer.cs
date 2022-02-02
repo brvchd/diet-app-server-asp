@@ -10,7 +10,7 @@ using diet_server_api.Models;
 namespace diet_server_api.Migrations
 {
     [DbContext(typeof(mdzcojxmContext))]
-    [Migration("20220120004306_InitialCreate")]
+    [Migration("20220202195321_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

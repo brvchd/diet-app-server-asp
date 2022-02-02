@@ -128,7 +128,7 @@ namespace diet_server_api.Services.Implementation.Repository
                 ).SingleOrDefault()
             ).SumAsync();
 
-            var proteinProportion = decimal.Round(proteinsPerMeal / beforeCalculationProteins, 3);
+            var proteinProportion = decimal.Round(proteinsPerMeal / beforeCalculationProteins, 2);
 
             var meal = await _dbContext.Meals
             .Include(e => e.Recipes)

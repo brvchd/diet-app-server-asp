@@ -60,7 +60,7 @@ namespace diet_server_api.Services.Implementation
                 AlergieProds = e.Patient.Questionnaires.First().Alergieproducts,
                 PAL = e.Patient.Pal,
                 CurrentDiet = currentDiet,
-                SelectedDiet = selectedDiet
+                SelectedDiet = selectedDiet  
             })
             .FirstOrDefaultAsync();
             return user;

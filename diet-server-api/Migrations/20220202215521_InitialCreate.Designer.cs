@@ -10,7 +10,7 @@ using diet_server_api.Models;
 namespace diet_server_api.Migrations
 {
     [DbContext(typeof(mdzcojxmContext))]
-    [Migration("20220202195321_InitialCreate")]
+    [Migration("20220202215521_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -353,8 +353,8 @@ namespace diet_server_api.Migrations
                         .HasColumnName("isfollowed");
 
                     b.Property<decimal>("Proportion")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
                         .HasColumnName("proportion");
 
                     b.Property<string>("Time")

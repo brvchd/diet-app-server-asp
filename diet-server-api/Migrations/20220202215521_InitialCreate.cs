@@ -547,7 +547,7 @@ namespace diet_server_api.Migrations
                     idday = table.Column<int>(type: "integer", nullable: false),
                     time = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     isfollowed = table.Column<bool>(type: "boolean", nullable: true),
-                    proportion = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false)
+                    proportion = table.Column<decimal>(type: "numeric(10,4)", precision: 10, scale: 4, nullable: false)
                 },
                 constraints: table =>
                 {

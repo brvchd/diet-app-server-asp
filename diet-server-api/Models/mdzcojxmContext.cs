@@ -357,7 +357,7 @@ namespace diet_server_api.Models
                 entity.Property(e => e.Isfollowed).HasColumnName("isfollowed");
 
                 entity.Property(e => e.Proportion)
-                    .HasPrecision(10, 2)
+                    .HasPrecision(10, 4)
                     .HasColumnName("proportion");
 
                 entity.Property(e => e.Time)

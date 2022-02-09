@@ -78,7 +78,7 @@ namespace diet_server_api.Controllers.doctor
             try
             {
                 await _doctorService.RejectPendingPatient(idPatient);
-                return Ok("Patient rejected successfully");
+                return Ok();
             }
             catch (NotFound ex)
             {

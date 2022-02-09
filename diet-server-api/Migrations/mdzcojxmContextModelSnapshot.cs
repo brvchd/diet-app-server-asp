@@ -351,8 +351,8 @@ namespace diet_server_api.Migrations
                         .HasColumnName("isfollowed");
 
                     b.Property<decimal>("Proportion")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("numeric(10,4)")
                         .HasColumnName("proportion");
 
                     b.Property<string>("Time")
